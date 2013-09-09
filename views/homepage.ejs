@@ -78,12 +78,37 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     <!-- Grid Container below -->
     <div class="container">
 
+  <!-- Button trigger modal -->
+  <a data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch demo modal</a>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Modal title</h4>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
       
       <div class="row ">
       <% for (var i = 0; i < 120 ; i++) { 
     // display 120 rows of cats %>
 	<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 ">
+	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img src="<%= test_news_image %>"/>
+	  </a>
 	</div>
 <% } %>
 
@@ -91,6 +116,29 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
 
 
     </div> <!-- /container -->
+  <!-- Modal -->
+
+<% for (var i =0; i < 120; i++){ %>
+  <div class="modal fade" id="storyModal<%= i %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= i %>" aria-hidden="true">
+    <div class="modal-dialog">                                                                                                                                                     
+      <div class="modal-content">                                                                                                                                                  
+        <div class="modal-header">                                                                                                                                                 
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
+          <h4 class="modal-title">Modal title<%= i %></h4>                                                                                           
+        </div>                                                                                                                 
+        <div class="modal-body">                                                                                                                                                   
+          ...                                                                                                                                                                      
+        </div>                                                                                                                                                                     
+        <div class="modal-footer">                                                                                                                                                 
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>                                                                                        
+          <button type="button" class="btn btn-primary">Save changes</button>                                                                                                      
+        </div>                                                                                                                                                                     
+      </div><!-- /.modal-content -->                                                                                                                                               
+    </div><!-- /.modal-dialog -->                                                                                                                                                  
+  </div><!-- /.modal -->                                                                                                                                                            <% } %>
+                              
+
+
 
 </body>
 
