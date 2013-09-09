@@ -1,0 +1,46 @@
+/*
+suspect the container css is messing up the grid layout. Overwrite the max-width css with 10k px */
+.container {
+  padding-left: 0px;
+  padding-right: 0px;
+  /* color: #ffffff;*/
+  max-width: 10000px;
+}
+
+
+/* no add this currently
+div.addthis_toolbox {
+  width:210px;
+  margin: 0 auto;
+}
+*/
+
+p {font-size:12px;}
+
+li {font-size:12px;}
+
+h2 {
+  font-family: 'Maven Pro', sans-serif;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  margin-left: 15px;
+}
+
+h3 {
+  font-family: 'Maven Pro', sans-serif;
+}
+
+.row {
+  margin-bottom: 20px;
+}
+.row .row {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+[class*="col-lg-"] {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: rgba(0,0,0,.2);
+  border: 1px solid rgba(0,0,0,.6);
+}

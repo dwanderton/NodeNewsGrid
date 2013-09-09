@@ -42,6 +42,7 @@ var indexfn = function(request, response) {
     response.render("homepage", {
 	name: Constants.APP_NAME,
 	title: "My First " + Constants.APP_NAME,
+	test_news_image: Constants.TESTIMAGE,
 	product_name: Constants.PRODUCT_NAME,
 	twitter_username: Constants.TWITTER_USERNAME,
 	twitter_tweet: Constants.TWITTER_TWEET,

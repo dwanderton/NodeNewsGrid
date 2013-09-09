@@ -21,7 +21,8 @@
     - http://webdesign.about.com/od/localization/l/blhtmlcodes-cur.htm#codes
 */
 var Constants = {
-  APP_NAME: "Bitstarter", 
+  APP_NAME: "NewsGrid",
+  TESTIMAGE: "http://placekitten.com/144/81",
   FUNDING_TARGET: 10.00,
   FUNDING_UNIT_SYMBOL: "mBTC",
   FUNDING_SI_SCALE: 1000,
@@ -30,7 +31,7 @@ var Constants = {
   PRODUCT_SHORT_DESCRIPTION: "One sentence description.",
   TWITTER_USERNAME: "nodejs",
   TWITTER_TWEET: "This student crowdfunder looks interesting.",
-  COINBASE_PREORDER_DATA_CODE: "13b56883764b54e6ab56fef3bcc7229c",
+  COINBASE_PREORDER_DATA_CODE: "d5392cfb11c9250f150e6e63e634bc6c",
   days_left: function() {
       return Math.max(Math.ceil((this.FUNDING_END_DATE - new Date()) / (1000*60*60*24)), 0);
   }
