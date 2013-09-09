@@ -1,6 +1,6 @@
 /*
 suspect the container css is messing up the grid layout. Overwrite the max-width css with 10k px */
-.container {
+.grid-container {
   padding-left: 0px;
   padding-right: 0px;
   /* color: #ffffff;*/
@@ -42,6 +42,9 @@ h3 {
     /*padding to zero to remove blank space above and below images */
   padding-top:0px;
   padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+
   background-color: rgba(0,0,0,.2);
   border: 1px solid rgba(0,0,0,.6);
 }
