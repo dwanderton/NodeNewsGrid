@@ -39,8 +39,9 @@ h3 {
 }
 
 [class*="col-lg-"] {
-  padding-top: 15px;
-  padding-bottom: 15px;
+    /*padding to zero to remove blank space above and below images */
+  padding-top:0px;
+  padding-bottom: 0px;
   background-color: rgba(0,0,0,.2);
   border: 1px solid rgba(0,0,0,.6);
 }
