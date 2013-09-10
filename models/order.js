@@ -15,10 +15,12 @@ var uu = require('underscore');
 var coinbase = require('./coinbase');
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define("Order", {
-	coinbase_id: {type: DataTypes.STRING, unique: true, allowNull: false},
-	amount: {type: DataTypes.FLOAT},
-	time: {type: DataTypes.STRING, allowNull: false}
+    return sequelize.define("bbcstory", {
+	title: {type: DataTypes.STRING},
+	thumbnail: {type: DataTypes.STRING(150), allowNull: false},
+	link: {type: DataTypes.STRING(150), allowNull: false},
+	published: {type: DataTypes.BIGINT, allowNull: false},
+	description: {type: DataTypes.STRING(600), allowNull: false}
     }, {
 	classMethods: {
 	    numOrders: function() {
@@ -159,4 +161,4 @@ module.exports = function(sequelize, DataTypes) {
 	    }
 	}
     });
-};
+}; /* Hopefully this will now work*/
