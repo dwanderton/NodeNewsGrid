@@ -128,6 +128,59 @@ module.exports = function(sequelize, DataTypes) {
 		    });
 		}
 	    },
+	    addBBCNewsfromJSON: function(bbc_story_obj, cb) {
+		/*
+		  Add from JSON only if order has not already been added to
+		  our database.
+
+		  Note the tricky use of var _Order. We use this to pass in
+		  the Order class to the success callback, as 'this' within
+		  the scope of the callback is redefined to not be the Order
+		  class but rather an individual Order instance.
+
+		  Put another way: within this classmethod, 'this' is
+		  'Order'. But within the callback of Order.find, 'this'
+		  corresponds to the individual instance. We could also
+		  do something where we accessed the class to which an instance
+		  belongs, but this method is a bit more clear.
+		*/
+		var stories = bbc_story_obj; // story json from bbc api
+		    var _Stories = this;
+		    _Stories.find({where: {published: stories[0].published}}).success(function(story_instance) {
+			if (story_instance) {
+			    // order already exists, do nothing
+			    console.log("exists!");
+			    cb();
+			} else {
+			    console.log("Doesn't Exist!");
+			    var new_story_instance = _Stories.build({
+				title: stories[0].title,
+				published: stories[0].published,
+				thumbnail: stories[0].thumbnail,
+				link: stories[0].link,
+				description: stories[0].description
+			    });
+			    new_story_instance.save().success(function() {
+				cb();
+			    }).error(function(err) {
+				cb(err);
+			    });
+			    /*
+			       Above Build instance and save.
+
+			       Uses the _Order from the enclosing scope,
+			       as 'this' within the callback refers to the current
+			       found instance.
+
+			       Note also that for the amount, we convert
+			       satoshis (the smallest Bitcoin denomination,
+			       corresponding to 1e-8 BTC, aka 'Bitcents') to
+			       BTC.
+			    */ 
+			}
+		    });
+		
+	    },
 	    refreshFromCoinbase: function(cb) {
 		/*
 		  This function hits Coinbase to download the latest list of
@@ -136,15 +189,17 @@ module.exports = function(sequelize, DataTypes) {
 		  cb(err). Note that one can add much more error handling
 		  here; we've removed that for the sake of clarity.
 		*/
-		var _Order = this;
-		coinbase.get_bbc_world_news_json(function(err, order) {
-		    /* _Order.addAllFromJSON(orders, cb);*/
-		    console.log(order[0]);
+		var _Story = this;
+		coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){ 
+		    console.log(bbc_world_stories[0]);
 		    console.log("Think we now have stories");
+		    _Story.addBBCNewsfromJSON(bbc_world_stories, cb);
 		});
+/* now redundant -- prepare for deletion
 		coinbase.get_coinbase_json(1, function(err, orders) {
 		    _Order.addAllFromJSON(orders, cb);
 		});
+*/
 	    }
 	},
 	instanceMethods: {
@@ -166,4 +221,4 @@ module.exports = function(sequelize, DataTypes) {
 	    }
 	}
     });
-}; /* Hopefully this will now work*/
+};
