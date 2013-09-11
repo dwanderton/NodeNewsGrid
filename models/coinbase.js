@@ -38,6 +38,13 @@ var coinbase_api_url = function(page) {
         page.toString() + "&api_key=" + process.env.COINBASE_API_KEY;
 };
 
+
+var bbc_api_url = function() {
+    return "http://api.bbcnews.appengine.co.uk/stories/world";
+};
+
+
+
 var get_ncoinbase_page = function(init, cb) {
     request.get(coinbase_api_url(init), function(err, resp, body) {
         var orders_json = JSON.parse(body);
@@ -45,6 +52,7 @@ var get_ncoinbase_page = function(init, cb) {
         cb(null, orders_json.num_pages);
     });
 };
+
 
 var ncoinbase_page2coinbase_json = function(npage, cb) {
     console.log("Starting ncoinbase_page2coinbase_json with npage = " + npage);
@@ -61,6 +69,18 @@ var ncoinbase_page2coinbase_json = function(npage, cb) {
         cb(null, uu.flatten(results));
     });
 };
+
+
+var bbc_api_url2world_news_json = function(cb) {
+   request.get(bbc_api_url(), function(err,resp,body){
+       var world_news_json = JSON.parse(body);
+       console.log("Finished API request for BBC World News Stories");
+       console.log(world_news_json); /*for debugging*/ 
+       cb(null, world_news_json.stories);
+   });
+};
+
+var get_bbc_world_news_json = async.compose(bbc_api_url2world_news_json);
 
 var get_coinbase_json = async.compose(ncoinbase_page2coinbase_json,
                                       get_ncoinbase_page);
@@ -82,4 +102,5 @@ var debug_get_coinbase_json = function() {
 };
 
 module.exports = { 'get_coinbase_json': get_coinbase_json,
-                   'debug_get_coinbase_json': debug_get_coinbase_json};
+                   'debug_get_coinbase_json': debug_get_coinbase_json,
+		   'get_bbc_world_news_json': get_bbc_world_news_json};
