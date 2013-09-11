@@ -137,6 +137,11 @@ module.exports = function(sequelize, DataTypes) {
 		  here; we've removed that for the sake of clarity.
 		*/
 		var _Order = this;
+		coinbase.get_bbc_world_news_json(function(err, order) {
+		    /* _Order.addAllFromJSON(orders, cb);*/
+		    console.log(order[0]);
+		    console.log("Think we now have stories");
+		});
 		coinbase.get_coinbase_json(1, function(err, orders) {
 		    _Order.addAllFromJSON(orders, cb);
 		});

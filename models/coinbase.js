@@ -75,12 +75,12 @@ var bbc_api_url2world_news_json = function(cb) {
    request.get(bbc_api_url(), function(err,resp,body){
        var world_news_json = JSON.parse(body);
        console.log("Finished API request for BBC World News Stories");
-       console.log(world_news_json); /*for debugging*/ 
+       /*console.log(world_news_json.stories); for debugging*/ 
        cb(null, world_news_json.stories);
    });
 };
 
-var get_bbc_world_news_json = async.compose(bbc_api_url2world_news_json);
+var get_bbc_world_news_json = bbc_api_url2world_news_json;
 
 var get_coinbase_json = async.compose(ncoinbase_page2coinbase_json,
                                       get_ncoinbase_page);
