@@ -145,26 +145,28 @@ module.exports = function(sequelize, DataTypes) {
 		  belongs, but this method is a bit more clear.
 		*/
 		var stories = bbc_story_obj; // story json from bbc api
-		    var _Stories = this;
-		    _Stories.find({where: {published: stories[0].published}}).success(function(story_instance) {
+		    var i =0;
+		var _Stories = this;
+		    _Stories.find({where: {title: stories[i].title}}).success(function(story_instance) {
 			if (story_instance) {
 			    // order already exists, do nothing
-			    console.log("exists!");
+			    console.log("story exists - skipping...!");
 			    cb();
 			} else {
-			    console.log("Doesn't Exist!");
+			    console.log("story doesn't exist - creating...");
 			    var new_story_instance = _Stories.build({
-				title: stories[0].title,
-				published: stories[0].published,
-				thumbnail: stories[0].thumbnail,
-				link: stories[0].link,
-				description: stories[0].description
+				title: stories[i].title,
+				published: stories[i].published,
+				thumbnail: stories[i].thumbnail,
+				link: stories[i].link,
+				description: stories[i].description
 			    });
 			    new_story_instance.save().success(function() {
 				cb();
 			    }).error(function(err) {
 				cb(err);
 			    });
+			    }
 			    /*
 			       Above Build instance and save.
 
@@ -177,8 +179,8 @@ module.exports = function(sequelize, DataTypes) {
 			       corresponding to 1e-8 BTC, aka 'Bitcents') to
 			       BTC.
 			    */ 
-			}
 		    });
+		
 		
 	    },
 	    refreshFromCoinbase: function(cb) {
@@ -190,9 +192,8 @@ module.exports = function(sequelize, DataTypes) {
 		  here; we've removed that for the sake of clarity.
 		*/
 		var _Story = this;
-		coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){ 
-		    console.log(bbc_world_stories[0]);
-		    console.log("Think we now have stories");
+		coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){
+		    console.log("BBC World stories api queried.");
 		    _Story.addBBCNewsfromJSON(bbc_world_stories, cb);
 		});
 /* now redundant -- prepare for deletion
