@@ -32,7 +32,16 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     <script src="js/bootstrap.min.js"></script>
     <!-- end jQuery-->
 
-  </head>
+    <!-- time to get tooltip working -->
+
+    <script type="text/javascript">
+    $(function () {
+        $(".tooltipnow").tooltip();
+    });
+    </script>
+    <!-- end of tooltip -->
+
+</head>
 
   <body>
 
@@ -83,7 +92,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     // display stories currently in db %>
 	<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 ">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
-	    <img src="<%= world_bbc_stories[i].thumbnail %>" />
+	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	  </a>
 	</div>
 <% } %>
