@@ -93,11 +93,11 @@ global.db.sequelize.sync().complete(function(err) {
     if (err) {
 	throw err;
     } else {
-	var DB_REFRESH_INTERVAL_SECONDS = 600;
+	var DB_REFRESH_INTERVAL_SECONDS = 100;
 	async.series([
 	    function(cb) {
 		// Mirror the orders before booting up the server
-		console.log("Initial mirror of Coinbase orders at " + new Date());
+		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
 	    },
 	    function(cb) {
@@ -108,7 +108,7 @@ global.db.sequelize.sync().complete(function(err) {
 
 		// Start a simple daemon to refresh Coinbase orders periodically
 		setInterval(function() {
-		    console.log("Refresh db at " + new Date());
+		    console.log("Refresh news db at " + new Date());
 		    global.db.Order.refreshFromCoinbase(cb);
 		}, DB_REFRESH_INTERVAL_SECONDS*1000);
 		cb(null);

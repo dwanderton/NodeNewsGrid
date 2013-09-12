@@ -145,7 +145,7 @@ module.exports = function(sequelize, DataTypes) {
 		  belongs, but this method is a bit more clear.
 		*/
 		var stories = bbc_story_obj; // story json from bbc api
-		    var i =0;
+		    var i = Math.floor((Math.random()*40)+1);
 		var _Stories = this;
 		    _Stories.find({where: {title: stories[i].title}}).success(function(story_instance) {
 			if (story_instance) {
