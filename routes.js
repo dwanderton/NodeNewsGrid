@@ -39,7 +39,9 @@ var build_errfn = function(errmsg, response) {
    the query to the database, and packaging it all up in a request.
 */
 var indexfn = function(request, response) {
-    response.render("homepage", {
+    var successcb = function(world_bbc_stories_json){
+	response.render("homepage", { 
+	world_bbc_stories: world_bbc_stories_json,
 	name: Constants.APP_NAME,
 	title: "My First " + Constants.APP_NAME,
 	test_news_image: Constants.TESTIMAGE,
@@ -48,12 +50,15 @@ var indexfn = function(request, response) {
 	twitter_tweet: Constants.TWITTER_TWEET,
 	product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
 	coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-    });
+	});
+    };
+    var errcb = build_errfn('unable to retrieve orders', response);
+    global.db.Order.allToJSON(successcb, errcb);
 };
 
 var orderfn = function(request, response) {
-    var successcb = function(orders_json) {
-	response.render("orderpage", {orders: orders_json});
+    var successcb = function(world_bbc_stories_json) {
+	response.render("orderpage", {world_bbc_stories: world_bbc_stories_json});
     };
     var errcb = build_errfn('error retrieving orders', response);
     global.db.Order.allToJSON(successcb, errcb);

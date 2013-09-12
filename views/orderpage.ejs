@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Stories</title>
+    <title>BBC World stories</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://d396qusza40orc.cloudfront.net/startup%2Fcode%2Fbootstrap-combined.no-icons.min.css">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css">
@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="container">
-      <h2>Stories in the database</h2>
+      <h2>BBC World stories in the database</h2>
       <table class="table table-striped">
         <thead>
 	  <th>Thumbnail</th>
@@ -20,12 +20,12 @@
           <th>Created at</th>
         </thead>
         <tbody>
-          <% for(var i = 0; i < orders.length; i++) {%>
+          <% for(var i = 0; i < world_bbc_stories.length; i++) {%>
              <tr>
-	       <td><img src="<%= orders[i].thumbnail %>" /></td>
-               <td><%= orders[i].title %></td>
-               <td><%= orders[i].published %></td>
-               <td><%= orders[i].createdAt %></td>
+	       <td><img src="<%= world_bbc_stories[i].thumbnail %>" /></td>
+               <td><%= world_bbc_stories[i].title %></td>
+               <td><%= world_bbc_stories[i].published %></td>
+               <td><%= world_bbc_stories[i].createdAt %></td>
              </tr>
              <% } %>
       </table>
