@@ -193,8 +193,13 @@ module.exports = function(sequelize, DataTypes) {
 		*/
 		var _Story = this;
 		coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){
-		    console.log("BBC World stories api queried.");
-		    _Story.addBBCNewsfromJSON(bbc_world_stories, cb);
+		    if(err){
+			console.log("refresh not possible at this time from BBC World stories api");
+			cb();
+		    } else {
+			    console.log("refresh should be successful from BBC World stories api");
+			    _Story.addBBCNewsfromJSON(bbc_world_stories, cb);
+			    };
 		});
 /* now redundant -- prepare for deletion
 		coinbase.get_coinbase_json(1, function(err, orders) {

@@ -41,6 +41,21 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     </script>
     <!-- end of tooltip -->
 
+    <!-- HoverIntent start-->
+    <script src="js/hoverIntent.min.js"></script>
+
+    <!-- Lets get our fade on -->
+    <script>
+      $(document).ready(function() {
+        $('div.col-lg-1 img').hoverIntent(function(){
+            $(this).fadeTo('fast', 1);
+        }, function(){
+            $(this).fadeTo('fast', 0.5);
+        });
+      });
+    </script>
+    <!-- hoverintent finish -->
+
 </head>
 
   <body>
@@ -87,7 +102,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     <!-- Grid Container below -->
     <div class="grid-container">
       
-      <div class="row ">
+      <div class="row">
  <% for (var i = world_bbc_stories.length-1; i > 0 ; i--) { 
     // display stories currently in db %>
 	<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 ">
