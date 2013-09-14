@@ -162,20 +162,38 @@ module.exports = function(sequelize, DataTypes) {
 				cb(err);
 			    });
 			} else {
-			    console.log("story doesn't exist - creating...");
-			    var new_story_instance = _Stories.build({
-				title: stories[i].title,
-				published: stories[i].published,
-				thumbnail: stories[i].thumbnail,
-				link: stories[i].link,
-				description: stories[i].description
-			    });
-			    new_story_instance.save().success(function() {
-				cb();
-			    }).error(function(err) {
-				cb(err);
-			    });
-			    }
+			    /* check if the image url is already referenced in the database - may overwrite story details */
+			     _Stories.find({where: {thumbnail: stories[i].thumbnail}}).success(function(story_instance2) {
+				 if (story_instance) {
+				     console.log("thumbnail exists - updating current story!");
+				     story_instance2.updateAttributes({
+					 published: stories[i].published,
+					 title: stories[i].title,
+					 link: stories[i].link,
+					 description: stories[i].description
+				     }).success(function() {
+					 cb();
+				     }).error(function(err) {
+					 cb(err);
+				     });
+				 } else {
+				     console.log("story doesn't exist - creating...");
+				     var new_story_instance = _Stories.build({
+					 title: stories[i].title,
+					 published: stories[i].published,
+					 thumbnail: stories[i].thumbnail,
+					 link: stories[i].link,
+					 description: stories[i].description
+				     });
+				     new_story_instance.save().success(function() {
+					 cb();
+				     }).error(function(err) {
+					 cb(err);
+				     });
+				 };
+				 });
+			}
+										      
 			    /*
 			       Above Build instance and save.
 
