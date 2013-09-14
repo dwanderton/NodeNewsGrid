@@ -150,8 +150,17 @@ module.exports = function(sequelize, DataTypes) {
 		    _Stories.find({where: {title: stories[i].title}}).success(function(story_instance) {
 			if (story_instance) {
 			    // order already exists, do nothing
-			    console.log("story exists - skipping...!");
-			    cb();
+			    console.log("story exists - updating current story!");
+			    story_instance.updateAttributes({
+				published: stories[i].published,
+				thumbnail: stories[i].thumbnail,
+				link: stories[i].link,
+				description: stories[i].description
+			    }).success(function() {
+				cb();
+			    }).error(function(err) {
+				cb(err);
+			    });
 			} else {
 			    console.log("story doesn't exist - creating...");
 			    var new_story_instance = _Stories.build({
