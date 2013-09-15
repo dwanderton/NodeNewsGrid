@@ -143,19 +143,25 @@ module.exports = function(sequelize, DataTypes) {
 		  corresponds to the individual instance. We could also
 		  do something where we accessed the class to which an instance
 		  belongs, but this method is a bit more clear.
+
+		  NOTE ON CALLBACKS:
+		  http://tobyho.com/2011/11/02/callbacks-in-loops/
+		  Note that when using a for loop we need to provide a variable in the scope of the loop that does not alter as the loop continues we do this by passing the value of i to an inner function as ii.
 		*/
 		var stories = bbc_story_obj; // story json from bbc api
 		    var i = Math.floor((Math.random()*40)+1);
 		var _Stories = this;
-		    _Stories.find({where: {title: stories[i].title}}).success(function(story_instance) {
+		for (var i = 0, len = stories.length; i < len; i++){
+		    !function outer(ii){
+		    _Stories.find({where: {title: stories[ii].title}}).success(function(story_instance) {
 			if (story_instance) {
 			    // order already exists, do nothing
 			    console.log("story exists - updating current story!");
 			    story_instance.updateAttributes({
-				published: stories[i].published,
-				thumbnail: stories[i].thumbnail,
-				link: stories[i].link,
-				description: stories[i].description
+				published: stories[ii].published,
+				thumbnail: stories[ii].thumbnail,
+				link: stories[ii].link,
+				description: stories[ii].description
 			    }).success(function() {
 				cb();
 			    }).error(function(err) {
@@ -163,14 +169,14 @@ module.exports = function(sequelize, DataTypes) {
 			    });
 			} else {
 			    /* check if the image url is already referenced in the database - may overwrite story details */
-			     _Stories.find({where: {thumbnail: stories[i].thumbnail}}).success(function(story_instance2) {
+			     _Stories.find({where: {thumbnail: stories[ii].thumbnail}}).success(function(story_instance2) {
 				 if (story_instance) {
 				     console.log("thumbnail exists - updating current story!");
 				     story_instance2.updateAttributes({
-					 published: stories[i].published,
-					 title: stories[i].title,
-					 link: stories[i].link,
-					 description: stories[i].description
+					 published: stories[ii].published,
+					 title: stories[ii].title,
+					 link: stories[ii].link,
+					 description: stories[ii].description
 				     }).success(function() {
 					 cb();
 				     }).error(function(err) {
@@ -179,11 +185,11 @@ module.exports = function(sequelize, DataTypes) {
 				 } else {
 				     console.log("story doesn't exist - creating...");
 				     var new_story_instance = _Stories.build({
-					 title: stories[i].title,
-					 published: stories[i].published,
-					 thumbnail: stories[i].thumbnail,
-					 link: stories[i].link,
-					 description: stories[i].description
+					 title: stories[ii].title,
+					 published: stories[ii].published,
+					 thumbnail: stories[ii].thumbnail,
+					 link: stories[ii].link,
+					 description: stories[ii].description
 				     });
 				     new_story_instance.save().success(function() {
 					 cb();
@@ -192,6 +198,9 @@ module.exports = function(sequelize, DataTypes) {
 				     });
 				 };
 				 });
+			}
+			});
+			}(i)
 			}
 										      
 			    /*
@@ -206,7 +215,7 @@ module.exports = function(sequelize, DataTypes) {
 			       corresponding to 1e-8 BTC, aka 'Bitcents') to
 			       BTC.
 			    */ 
-		    });
+		   
 		
 		
 	    },

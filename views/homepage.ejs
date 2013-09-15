@@ -55,7 +55,13 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
       });
     </script>
     <!-- hoverintent finish -->
-
+    
+    <!-- Google font for logo -->
+	 <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+	 <style>
+	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
+	   </style>
+    <!-- end google font for logo -->
 </head>
 
   <body>
@@ -69,7 +75,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">NewsGrid</a>
+          <a class="navbar-brand" href="#">&nbsp;NewsGrid&nbsp;</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -127,8 +133,10 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
           <h4 class="modal-title"><%= world_bbc_stories[i].title %></h4>                                                                                           
         </div>                                                                                                                 
-        <div class="modal-body">                                                                                                                                                   
-          <%= world_bbc_stories[i].description %>                                                                                                                                           
+        <div class="modal-body">
+	      	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" style="height: 81px; width: 144px;">
+       <%= world_bbc_stories[i].description %>                                                                                               
+	                
         </div>                                                                                                                                                                     
         <div class="modal-footer">                                                                                                                                                 
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>                                                                                        
