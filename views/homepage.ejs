@@ -109,9 +109,9 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     <div class="grid-container">
       
       <div class="row">
- <% for (var i = world_bbc_stories.length-1; i > 0 ; i--) { 
+ <% for (var i = 120; i > 0 ; i--) { 
     // display stories currently in db %>
-	<div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 ">
+	<div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	  </a>
@@ -124,7 +124,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     </div> <!-- /container -->
   <!-- Modal -->
 
-<% for (var i = world_bbc_stories.length-1; i > 0 ; i--) { 
+<% for (var i =120; i > 0 ; i--) { 
     // modals for stories currently in db %>
   <div class="modal fade" id="storyModal<%= i %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= i %>" aria-hidden="true">
     <div class="modal-dialog">                                                                                                                                                     
