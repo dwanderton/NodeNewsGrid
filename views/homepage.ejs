@@ -134,16 +134,16 @@ for (i; i > 0 ; i--) {
 
 <% for (var j; j > 0 ; j--) { 
     // modals for stories currently in db %>
-  <div class="modal fade" id="storyModal<%= i %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= i %>" aria-hidden="true">
+  <div class="modal fade" id="storyModal<%= j %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= j %>" aria-hidden="true">
     <div class="modal-dialog">                                                                                                                                                     
       <div class="modal-content">                                                                                                                                                  
         <div class="modal-header">                                                                                                                                                 
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
-          <h4 class="modal-title"><%= world_bbc_stories[i].title %></h4>                                                                                           
+          <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>                                                                                           
         </div>                                                                                                                 
         <div class="modal-body">
-	      	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" style="height: 81px; width: 144px;">
-       <%= world_bbc_stories[i].description %>                                                                                               
+	      	    <img data-toggle="tooltip" src="<%= world_bbc_stories[j].thumbnail %>" title="<%= world_bbc_stories[j].title %>" class="tooltipnow" style="height: 81px; width: 144px;">
+       <%= world_bbc_stories[j].description %>                                                                                               
 	                
         </div>                                                                                                                                                                     
         <div class="modal-footer">                                                                                                                                                 
