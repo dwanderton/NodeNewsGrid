@@ -85,6 +85,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
 
+
 for(var ii in ROUTES) {
     app.get(ROUTES[ii].path, ROUTES[ii].fn);
 }
@@ -115,4 +116,9 @@ global.db.sequelize.sync().complete(function(err) {
 	    }
 	]);
     }
+});
+
+// 404 error handling must go last see: http://expressjs.com/faq.html how do you handle 404s? 
+app.use(function(req, res, next){
+  res.send(404, 'Sorry cant find that!');
 });
