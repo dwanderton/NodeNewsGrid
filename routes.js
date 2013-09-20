@@ -56,12 +56,11 @@ var indexfn = function(request, response) {
 	});
     };
     var errcb = build_errfn('unable to retrieve orders', response);
-    global.db.Order.allToJSON(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
 };
 
 
 var dashboardfn = function(request, response) {
-    ensureAuthenticated,
     console.log("dashboard accessed");
     var successcb = function() {
 	response.render("dashboard", {
@@ -78,6 +77,7 @@ var dashboardfn = function(request, response) {
     };
     var errcb = build_errfn('error obtaining dashboard stats', response);
     global.db.Order.allToJSON(successcb, errcb);
+    
 };
 
 // POST /auth/browserid
@@ -157,7 +157,7 @@ var define_routes = function(dict) {
 	return uu.object(uu.zip(['path', 'fn'], [item[0], item[1]]));
     };
     return uu.map(uu.pairs(dict), toroute);
-};
+}; 
 
 var ROUTES = define_routes({
     '/': indexfn,
@@ -170,11 +170,11 @@ var ROUTES = define_routes({
     '/refresh_orders': refresh_orderfn
 });
 
-function ensureAuthenticated(req, res, next) {                                                                   
-  if (req.isAuthenticated()) { return next(); }                                                                  
-  res.redirect('/login')                                                                                         
-}                                                                                                                
 
+function ensureAuthenticated(req, res, next) { 
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login')
+}
 
 
 module.exports = ROUTES;
