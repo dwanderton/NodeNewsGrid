@@ -76,7 +76,7 @@ var dashboardfn = function(request, response) {
 	});
     };
     var errcb = build_errfn('error obtaining dashboard stats', response);
-    global.db.Order.allToJSON(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
     
 };
 
@@ -106,7 +106,7 @@ var orderfn = function(request, response) {
 	response.render("orderpage", {world_bbc_stories: world_bbc_stories_json});
     };
     var errcb = build_errfn('error retrieving orders', response);
-    global.db.Order.allToJSON(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
 };
 
 var api_orderfn = function(request, response) {
@@ -119,7 +119,7 @@ var api_orderfn = function(request, response) {
 	response.json(data);
     };
     var errcb = build_errfn('error retrieving API orders', response);
-    global.db.Order.totals(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.totals(successcb, errcb));
 };
 
 var refresh_orderfn = function(request, response) {
@@ -131,7 +131,7 @@ var refresh_orderfn = function(request, response) {
 	    response.redirect("/orders");
 	}
     };
-    global.db.Order.refreshFromCoinbase(cb);
+    ensureAuthenticated(request, response, global.db.Order.refreshFromCoinbase(cb));
 };
 
 
@@ -170,9 +170,13 @@ var ROUTES = define_routes({
     '/refresh_orders': refresh_orderfn
 });
 
-
+// Simple route middleware to ensure user is authenticated. 
+//   Use this route middleware on any resource that needs to be protected.  If                                  
+//   the request is authenticated (typically via a persistent login session),                                   
+//   the request will proceed.  Otherwise, the user will be redirected to the                                   //   login page. 
 function ensureAuthenticated(req, res, next) { 
   if (req.isAuthenticated()) { return next; }
+    // consider passing the intended journey location to redirect so that the user journey can continue as planned
   res.redirect('/login')
 }
 
