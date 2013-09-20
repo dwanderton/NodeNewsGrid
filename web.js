@@ -3,7 +3,48 @@ var express = require('express')
   , path    = require('path')
   , async   = require('async')
   , db      = require('./models')
+  , passport = require('passport')
+  , util = require('util')
+  , PersonaStrategy = require('passport-persona').Strategy
   , ROUTES  = require('./routes');
+
+
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.  However, since this example does not
+//   have a database of user records, the BrowserID verified email address
+//   is serialized and deserialized.
+passport.serializeUser(function(user, done) {
+  done(null, user.email);
+});
+
+passport.deserializeUser(function(email, done) {
+  done(null, { email: email });
+});
+
+// Use the PersonaStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a BrowserID verified email address), and invoke
+//   a callback with a user object.
+passport.use(new PersonaStrategy({
+    audience: 'ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080'
+  },
+  function(email, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's email address is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the email address with a user record in your database, and
+      // return that user instead.
+      return done(null, { email: email })
+    });
+  }
+));
+
+
 
 /*
   Initialize the Express app, the E in the MEAN stack (from mean.io).
@@ -84,9 +125,28 @@ app.set('port', process.env.PORT || 8080);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
+app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.session({ secret: 'keyboard cat' }));
+  // Initialize Passport!  Also use passport.session() middleware, to support
+  // persistent login sessions (recommended).
+  app.use(passport.initialize());
+  app.use(passport.session());
 
 for(var ii in ROUTES) {
     app.get(ROUTES[ii].path, ROUTES[ii].fn);
+}
+
+
+// Simple route middleware to ensure user is authenticated.
+//   Use this route middleware on any resource that needs to be protected.  If
+//   the request is authenticated (typically via a persistent login session),
+//   the request will proceed.  Otherwise, the user will be redirected to the
+//   login page.
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login')
 }
 
 global.db.sequelize.sync().complete(function(err) {
@@ -116,3 +176,5 @@ global.db.sequelize.sync().complete(function(err) {
 	]);
     }
 });
+
+
