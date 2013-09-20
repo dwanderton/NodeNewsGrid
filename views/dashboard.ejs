@@ -97,6 +97,11 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
       <div class="row">	
 	<div class="col-lg-8 col-md-1 col-sm-2 col-xs-3">
 	  Welcome to Dashboard
+<% if (!user) { %>
+        <h2>Welcome! Please log in.</h2>
+<% } else { %>
+        <h2>Hello, <%= user.email %>.</h2>
+<% } %>
 	</div>
       </div>
 

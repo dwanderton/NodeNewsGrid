@@ -133,6 +133,11 @@ app.use(express.cookieParser());
   // persistent login sessions (recommended).
   app.use(passport.initialize());
   app.use(passport.session());
+app.post('/auth/browserid', 
+  passport.authenticate('persona', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 for(var ii in ROUTES) {
     app.get(ROUTES[ii].path, ROUTES[ii].fn);

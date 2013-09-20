@@ -1,5 +1,8 @@
 var uu      = require('underscore')
   , db      = require('./models')
+  , passport = require('passport')
+  , util = require('util')
+  , PersonaStrategy = require('passport-persona').Strategy
   , Constants = require('./constants');
 
 var build_errfn = function(errmsg, response) {
@@ -58,9 +61,11 @@ var indexfn = function(request, response) {
 
 
 var dashboardfn = function(request, response) {
+    ensureAuthenticated,
     console.log("dashboard accessed");
     var successcb = function() {
 	response.render("dashboard", {
+	user: request.user,
 	name: Constants.APP_NAME,
 	title:  Constants.APP_NAME,
 	test_news_image: Constants.TESTIMAGE,
@@ -74,6 +79,27 @@ var dashboardfn = function(request, response) {
     var errcb = build_errfn('error obtaining dashboard stats', response);
     global.db.Order.allToJSON(successcb, errcb);
 };
+
+// POST /auth/browserid
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  BrowserID authentication will verify the assertion obtained from
+//   the browser via the JavaScript API.
+var personaAuthenticatefn =
+   function(req, res) {
+       passport.authenticate('persona', { failureRedirect: '/login' }),
+       res.redirect('/');
+  };
+
+var loginfn = function(req, res){
+    res.render('login', { user: req.user });
+};
+
+var logoutfn = 
+    function(req, res){
+	req.logout();
+	res.redirect('/login');
+    };
+
 
 var orderfn = function(request, response) {
     var successcb = function(world_bbc_stories_json) {
@@ -135,10 +161,20 @@ var define_routes = function(dict) {
 
 var ROUTES = define_routes({
     '/': indexfn,
+    '/login': loginfn,
+    '/logout': logoutfn,
+    '/auth/browserid': personaAuthenticatefn,
     '/dashboard': dashboardfn,
     '/orders': orderfn,
     '/api/orders': api_orderfn,
     '/refresh_orders': refresh_orderfn
 });
+
+function ensureAuthenticated(req, res, next) {                                                                   
+  if (req.isAuthenticated()) { return next(); }                                                                  
+  res.redirect('/login')                                                                                         
+}                                                                                                                
+
+
 
 module.exports = ROUTES;
