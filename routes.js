@@ -44,6 +44,7 @@ var build_errfn = function(errmsg, response) {
 var indexfn = function(request, response) {
     var successcb = function(world_bbc_stories_json){
 	response.render("homepage", { 
+	user: request.user,
 	world_bbc_stories: world_bbc_stories_json,
 	name: Constants.APP_NAME,
 	title:  Constants.APP_NAME,
