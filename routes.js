@@ -103,7 +103,7 @@ var twitterAuthenticatefn =
       passport.authenticate('twitter');
     // The request will be redirected to Twitter for authentication, so this
     // function will not be called.
-  });
+  };
 
 // GET /auth/twitter/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -114,7 +114,7 @@ var twitterCallbackAuthenticatefn =
   function(req, res) {
     passport.authenticate('twitter', { failureRedirect: '/login' }),
     res.redirect('/');
-  });
+  };
 
 var loginfn = function(req, res){
     res.render('login', { user: req.user });
