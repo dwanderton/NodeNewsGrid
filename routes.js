@@ -3,6 +3,7 @@ var uu      = require('underscore')
   , passport = require('passport')
   , util = require('util')
   , PersonaStrategy = require('passport-persona').Strategy
+  , TwitterStrategy = require('passport-twitter').Strategy
   , Constants = require('./constants');
 
 var build_errfn = function(errmsg, response) {
@@ -91,6 +92,30 @@ var personaAuthenticatefn =
        res.redirect('/');
   };
 
+
+// GET /auth/twitter
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  The first step in Twitter authentication will involve redirecting
+//   the user to twitter.com.  After authorization, the Twitter will redirect
+//   the user back to this application at /auth/twitter/callback
+var twitterAuthenticatefn =
+  function(req, res){
+      passport.authenticate('twitter');
+    // The request will be redirected to Twitter for authentication, so this
+    // function will not be called.
+  });
+
+// GET /auth/twitter/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+var twitterCallbackAuthenticatefn =
+  function(req, res) {
+    passport.authenticate('twitter', { failureRedirect: '/login' }),
+    res.redirect('/');
+  });
+
 var loginfn = function(req, res){
     res.render('login', { user: req.user });
 };
@@ -165,6 +190,8 @@ var ROUTES = define_routes({
     '/login': loginfn,
     '/logout': logoutfn,
     '/auth/browserid': personaAuthenticatefn,
+    '/auth/twitter': twitterAuthenticatefn,
+    '/auth/twitter/callback': twitterCallbackAuthenticatefn,
     '/dashboard': dashboardfn,
     '/orders': orderfn,
     '/api/orders': api_orderfn,
