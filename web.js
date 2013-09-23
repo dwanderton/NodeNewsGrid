@@ -57,7 +57,6 @@ passport.use(new TwitterStrategy({
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
-
       // To keep the example simple, the user's Twitter profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Twitter account with a user record in your database,
@@ -164,6 +163,8 @@ app.post('/auth/browserid',
     res.redirect('/');
   });
 
+
+//add in middle ware function here as this is where the app.get construct is made
 for(var ii in ROUTES) {
     app.get(ROUTES[ii].path, ROUTES[ii].fn);
 }

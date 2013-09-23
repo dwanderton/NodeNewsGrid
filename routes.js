@@ -100,6 +100,7 @@ var personaAuthenticatefn =
 //   the user back to this application at /auth/twitter/callback
 var twitterAuthenticatefn = passport.authenticate('twitter');
 
+
 // GET /auth/twitter/callback
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
