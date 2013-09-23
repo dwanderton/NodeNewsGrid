@@ -18,11 +18,11 @@ var express = require('express')
 //   have a database of user records, the BrowserID verified email address
 //   is serialized and deserialized.
 passport.serializeUser(function(user, done) {
-  done(null, user.email);
+  done(null, user);
 });
 
-passport.deserializeUser(function(email, done) {
-  done(null, { email: email });
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
 });
 
 // Use the PersonaStrategy within Passport.

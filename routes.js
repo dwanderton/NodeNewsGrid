@@ -98,12 +98,7 @@ var personaAuthenticatefn =
 //   request.  The first step in Twitter authentication will involve redirecting
 //   the user to twitter.com.  After authorization, the Twitter will redirect
 //   the user back to this application at /auth/twitter/callback
-var twitterAuthenticatefn =
-  function(req, res){
-      passport.authenticate('twitter');
-    // The request will be redirected to Twitter for authentication, so this
-    // function will not be called.
-  };
+var twitterAuthenticatefn = passport.authenticate('twitter');
 
 // GET /auth/twitter/callback
 //   Use passport.authenticate() as route middleware to authenticate the
