@@ -88,7 +88,6 @@ var dashboardfn = function(request, response) {
 //   the browser via the JavaScript API.
 var personaAuthenticatefn =
    function(req, res) {
-       passport.authenticate('persona', { failureRedirect: '/login' }),
        res.redirect('/');
   };
 
@@ -163,14 +162,15 @@ var refresh_orderfn = function(request, response) {
 /*
    Helper functions which create a ROUTES array for export and use by web.js
 
-   Each element in the ROUTES array has two fields: path and fn,
+   Each element in the ROUTES array has three fields: path, middleware and fn,
    corresponding to the relative path (the resource asked for by the HTTP
-   request) and the function executed when that resource is requested.
+   request) the middleware employed and the function executed when that resource is requested.
 
-     [ { path: '/', fn: [Function] },
-       { path: '/orders', fn: [Function] },
-       { path: '/api/orders', fn: [Function] },
-       { path: '/refresh_orders', fn: [Function] } ]
+   // current version:
+     [ { path: '/': [middleware, Function] },
+       { path: '/orders', [middleware, Function] },
+       { path: '/api/orders', [middleware, Function] },
+       { path: '/refresh_orders', [middleware, Function]} ]
 
    It is certainly possible to implement define_routes with a simple for
    loop, but we use a few underscore methods (object, zip, map, pairs), just
@@ -188,7 +188,7 @@ var ROUTES = define_routes({
     '/': [undefined, indexfn],
     '/login': [undefined, loginfn],
     '/logout': [undefined, logoutfn],
-    '/auth/browserid': [undefined, personaAuthenticatefn],
+    '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
     '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
     '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
     '/dashboard': [undefined, dashboardfn],
