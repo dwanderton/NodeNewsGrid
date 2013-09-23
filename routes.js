@@ -98,7 +98,11 @@ var personaAuthenticatefn =
 //   request.  The first step in Twitter authentication will involve redirecting
 //   the user to twitter.com.  After authorization, the Twitter will redirect
 //   the user back to this application at /auth/twitter/callback
-var twitterAuthenticatefn = passport.authenticate('twitter');
+var twitterAuthenticatefn =   
+  function(req, res){
+    // The request will be redirected to Twitter for authentication, so this
+    // function will not be called.
+  };
 
 
 // GET /auth/twitter/callback
@@ -108,7 +112,6 @@ var twitterAuthenticatefn = passport.authenticate('twitter');
 //   which, in this example, will redirect the user to the home page.
 var twitterCallbackAuthenticatefn =
   function(req, res) {
-    passport.authenticate('twitter', { failureRedirect: '/login' }),
     res.redirect('/');
   };
 
@@ -176,22 +179,22 @@ var refresh_orderfn = function(request, response) {
 */
 var define_routes = function(dict) {
     var toroute = function(item) {
-	return uu.object(uu.zip(['path', 'fn'], [item[0], item[1]]));
+	return uu.object(uu.zip(['path','middleware', 'fn'], [item[0], item[1][0], item[1][1]]));
     };
     return uu.map(uu.pairs(dict), toroute);
 }; 
 
 var ROUTES = define_routes({
-    '/': indexfn,
-    '/login': loginfn,
-    '/logout': logoutfn,
-    '/auth/browserid': personaAuthenticatefn,
-    '/auth/twitter': twitterAuthenticatefn,
-    '/auth/twitter/callback': twitterCallbackAuthenticatefn,
-    '/dashboard': dashboardfn,
-    '/orders': orderfn,
-    '/api/orders': api_orderfn,
-    '/refresh_orders': refresh_orderfn
+    '/': [undefined, indexfn],
+    '/login': [undefined, loginfn],
+    '/logout': [undefined, logoutfn],
+    '/auth/browserid': [undefined, personaAuthenticatefn],
+    '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
+    '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
+    '/dashboard': [undefined, dashboardfn],
+    '/orders': [undefined, orderfn],
+    '/api/orders': [undefined, api_orderfn],
+    '/refresh_orders': [undefined, refresh_orderfn]
 });
 
 // Simple route middleware to ensure user is authenticated. 

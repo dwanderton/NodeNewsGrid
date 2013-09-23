@@ -164,9 +164,14 @@ app.post('/auth/browserid',
   });
 
 
-//add in middle ware function here as this is where the app.get construct is made
+//add in middleware function here as this is where the app.get construct is made
+// Below: add middleware if it exists else don't. Simples.
 for(var ii in ROUTES) {
-    app.get(ROUTES[ii].path, ROUTES[ii].fn);
+    if(!ROUTES[ii].middleware){
+	app.get(ROUTES[ii].path, ROUTES[ii].fn);
+    } else {
+	app.get(ROUTES[ii].path, ROUTES[ii].middleware, ROUTES[ii].fn);
+	}
 }
 
 global.db.sequelize.sync().complete(function(err) {
