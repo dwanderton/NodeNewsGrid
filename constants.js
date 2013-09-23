@@ -22,19 +22,9 @@
 */
 var Constants = {
   APP_NAME: "NewsGrid",
-  TESTIMAGE: "http://placekitten.com/144/81",
-  FUNDING_TARGET: 10.00,
-  FUNDING_UNIT_SYMBOL: "mBTC",
-  FUNDING_SI_SCALE: 1000,
-  FUNDING_END_DATE: new Date("September 8, 2013"),
-  PRODUCT_NAME: "Product: Development Version",
-  PRODUCT_SHORT_DESCRIPTION: "One sentence description.",
-  TWITTER_USERNAME: "nodejs",
-  TWITTER_TWEET: "This student crowdfunder looks interesting.",
+  TWITTER_USERNAME: "thenewsgrid",
+  TWITTER_TWEET: "Changing the way news is viewed today http://thenewsgrid.com Check it Out! ",
   COINBASE_PREORDER_DATA_CODE: "d5392cfb11c9250f150e6e63e634bc6c",
-  days_left: function() {
-      return Math.max(Math.ceil((this.FUNDING_END_DATE - new Date()) / (1000*60*60*24)), 0);
-  }
 };
 
 module.exports = Constants;

@@ -13,7 +13,11 @@
     "express": "~3.3.4",
     "async": "~0.2.9",
     "request": "~2.27.0",
-    "underscore": "~1.5.1"
+    "underscore": "~1.5.1",
+    "passport": "~0.1.17",
+    "passport-persona": "~0.1.7",
+    "passport-facebook": "~1.0.1",
+    "passport-twitter": "~1.0.2"
   },
   "engines": {
     "node": "0.10.12",

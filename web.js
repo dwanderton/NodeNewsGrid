@@ -3,7 +3,94 @@ var express = require('express')
   , path    = require('path')
   , async   = require('async')
   , db      = require('./models')
+  , passport = require('passport')
+  , util = require('util')
+  , PersonaStrategy = require('passport-persona').Strategy
+  , TwitterStrategy = require('passport-twitter').Strategy
+  , FacebookStrategy = require('passport-facebook').Strategy
   , ROUTES  = require('./routes');
+
+
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.  However, since this example does not
+//   have a database of user records, the BrowserID verified email address
+//   is serialized and deserialized.
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+// Use the PersonaStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a BrowserID verified email address), and invoke
+//   a callback with a user object.
+passport.use(new PersonaStrategy({
+    audience: 'ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080'
+  },
+  function(email, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's email address is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the email address with a user record in your database, and
+      // return that user instead.
+      return done(null, { email: email })
+    });
+  }
+));
+
+// Use the TwitterStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a token, tokenSecret, and Twitter profile), and
+//   invoke a callback with a user object.
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      // To keep the example simple, the user's Twitter profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Twitter account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+
+
+// Use the FacebookStrategy within Passport.
+//   Strategies in Passport require a `verify` function, which accept
+//   credentials (in this case, an accessToken, refreshToken, and Facebook
+//   profile), and invoke a callback with a user object.
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's Facebook profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Facebook account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+
+
 
 /*
   Initialize the Express app, the E in the MEAN stack (from mean.io).
@@ -84,10 +171,29 @@ app.set('port', process.env.PORT || 8080);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
+app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.session({ secret: 'keyboard cat' }));
+  // Initialize Passport!  Also use passport.session() middleware, to support
+  // persistent login sessions (recommended).
+  app.use(passport.initialize());
+  app.use(passport.session());
+app.post('/auth/browserid', 
+  passport.authenticate('persona', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 
+//add in middleware function here as this is where the app.get construct is made
+// Below: add middleware if it exists else don't. Simples.
 for(var ii in ROUTES) {
-    app.get(ROUTES[ii].path, ROUTES[ii].fn);
+    if(!ROUTES[ii].middleware){
+	app.get(ROUTES[ii].path, ROUTES[ii].fn);
+    } else {
+	app.get(ROUTES[ii].path, ROUTES[ii].middleware, ROUTES[ii].fn);
+	}
 }
 
 global.db.sequelize.sync().complete(function(err) {

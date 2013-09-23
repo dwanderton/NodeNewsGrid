@@ -1,5 +1,9 @@
 var uu      = require('underscore')
   , db      = require('./models')
+  , passport = require('passport')
+  , util = require('util')
+  , PersonaStrategy = require('passport-persona').Strategy
+  , TwitterStrategy = require('passport-twitter').Strategy
   , Constants = require('./constants');
 
 var build_errfn = function(errmsg, response) {
@@ -41,6 +45,7 @@ var build_errfn = function(errmsg, response) {
 var indexfn = function(request, response) {
     var successcb = function(world_bbc_stories_json){
 	response.render("homepage", { 
+	user: request.user,
 	world_bbc_stories: world_bbc_stories_json,
 	name: Constants.APP_NAME,
 	title:  Constants.APP_NAME,
@@ -53,7 +58,7 @@ var indexfn = function(request, response) {
 	});
     };
     var errcb = build_errfn('unable to retrieve orders', response);
-    global.db.Order.allToJSON(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
 };
 
 
@@ -61,6 +66,7 @@ var dashboardfn = function(request, response) {
     console.log("dashboard accessed");
     var successcb = function() {
 	response.render("dashboard", {
+	user: request.user,
 	name: Constants.APP_NAME,
 	title:  Constants.APP_NAME,
 	test_news_image: Constants.TESTIMAGE,
@@ -72,15 +78,84 @@ var dashboardfn = function(request, response) {
 	});
     };
     var errcb = build_errfn('error obtaining dashboard stats', response);
-    global.db.Order.allToJSON(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
+    
 };
+
+// POST /auth/browserid
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  BrowserID authentication will verify the assertion obtained from
+//   the browser via the JavaScript API.
+var personaAuthenticatefn =
+   function(req, res) {
+       res.redirect('/');
+  };
+
+
+// GET /auth/twitter
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  The first step in Twitter authentication will involve redirecting
+//   the user to twitter.com.  After authorization, the Twitter will redirect
+//   the user back to this application at /auth/twitter/callback
+var twitterAuthenticatefn =   
+  function(req, res){
+    // The request will be redirected to Twitter for authentication, so this
+    // function will not be called.
+  };
+
+
+// GET /auth/twitter/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+var twitterCallbackAuthenticatefn =
+  function(req, res) {
+    res.redirect('/');
+  };
+
+// GET /auth/facebook
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  The first step in Facebook authentication will involve
+//   redirecting the user to facebook.com.  After authorization, Facebook will
+//   redirect the user back to this application at /auth/facebook/callback
+var facebookAuthenticatefn =
+  function(req, res){
+    // The request will be redirected to Facebook for authentication, so this
+    // function will not be called.
+  };
+
+// GET /auth/facebook/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+var facebookCallbackAuthenticatefn =
+  function(req, res) {
+    res.redirect('/');
+  };
+
+
+
+
+
+var loginfn = function(req, res){
+    res.render('login', { user: req.user });
+};
+
+var logoutfn = 
+    function(req, res){
+	req.logout();
+	res.redirect('/login');
+    };
+
 
 var orderfn = function(request, response) {
     var successcb = function(world_bbc_stories_json) {
 	response.render("orderpage", {world_bbc_stories: world_bbc_stories_json});
     };
     var errcb = build_errfn('error retrieving orders', response);
-    global.db.Order.allToJSON(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
 };
 
 var api_orderfn = function(request, response) {
@@ -93,7 +168,7 @@ var api_orderfn = function(request, response) {
 	response.json(data);
     };
     var errcb = build_errfn('error retrieving API orders', response);
-    global.db.Order.totals(successcb, errcb);
+    ensureAuthenticated(request, response, global.db.Order.totals(successcb, errcb));
 };
 
 var refresh_orderfn = function(request, response) {
@@ -105,21 +180,22 @@ var refresh_orderfn = function(request, response) {
 	    response.redirect("/orders");
 	}
     };
-    global.db.Order.refreshFromCoinbase(cb);
+    ensureAuthenticated(request, response, global.db.Order.refreshFromCoinbase(cb));
 };
 
 
 /*
    Helper functions which create a ROUTES array for export and use by web.js
 
-   Each element in the ROUTES array has two fields: path and fn,
+   Each element in the ROUTES array has three fields: path, middleware and fn,
    corresponding to the relative path (the resource asked for by the HTTP
-   request) and the function executed when that resource is requested.
+   request) the middleware employed and the function executed when that resource is requested.
 
-     [ { path: '/', fn: [Function] },
-       { path: '/orders', fn: [Function] },
-       { path: '/api/orders', fn: [Function] },
-       { path: '/refresh_orders', fn: [Function] } ]
+   // current version:
+     [ { path: '/': [middleware, Function] },
+       { path: '/orders', [middleware, Function] },
+       { path: '/api/orders', [middleware, Function] },
+       { path: '/refresh_orders', [middleware, Function]} ]
 
    It is certainly possible to implement define_routes with a simple for
    loop, but we use a few underscore methods (object, zip, map, pairs), just
@@ -128,17 +204,35 @@ var refresh_orderfn = function(request, response) {
 */
 var define_routes = function(dict) {
     var toroute = function(item) {
-	return uu.object(uu.zip(['path', 'fn'], [item[0], item[1]]));
+	return uu.object(uu.zip(['path','middleware', 'fn'], [item[0], item[1][0], item[1][1]]));
     };
     return uu.map(uu.pairs(dict), toroute);
-};
+}; 
 
 var ROUTES = define_routes({
-    '/': indexfn,
-    '/dashboard': dashboardfn,
-    '/orders': orderfn,
-    '/api/orders': api_orderfn,
-    '/refresh_orders': refresh_orderfn
+    '/': [undefined, indexfn],
+    '/login': [undefined, loginfn],
+    '/logout': [undefined, logoutfn],
+    '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
+    '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
+    '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
+    '/auth/facebook': [passport.authenticate('facebook'), facebookAuthenticatefn],
+    '/auth/facebook/callback':[passport.authenticate('facebook', { failureRedirect: '/login' }), facebookCallbackAuthenticatefn],
+    '/dashboard': [undefined, dashboardfn],
+    '/orders': [undefined, orderfn],
+    '/api/orders': [undefined, api_orderfn],
+    '/refresh_orders': [undefined, refresh_orderfn]
 });
+
+// Simple route middleware to ensure user is authenticated. 
+//   Use this route middleware on any resource that needs to be protected.  If                                  
+//   the request is authenticated (typically via a persistent login session),                                   
+//   the request will proceed.  Otherwise, the user will be redirected to the                                   //   login page. 
+function ensureAuthenticated(req, res, next) { 
+  if (req.isAuthenticated()) { return next; }
+    // consider passing the intended journey location to redirect so that the user journey can continue as planned
+  res.redirect('/login')
+}
+
 
 module.exports = ROUTES;
