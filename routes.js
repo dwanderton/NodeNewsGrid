@@ -106,7 +106,8 @@ var twitterAuthenticatefn =
 //   which, in this example, will redirect the user to the home page.
 var twitterCallbackAuthenticatefn =
   function(req, res) {
-    res.redirect('/');
+      global.db.TwitterUser.addTwitterUserElseContinue(req.user.id, function(){});
+      res.redirect('/');
   };
 
 // GET /auth/facebook
@@ -127,6 +128,7 @@ var facebookAuthenticatefn =
 //   which, in this example, will redirect the user to the home page.
 var facebookCallbackAuthenticatefn =
   function(req, res) {
+    global.db.FacebookUser.addFacebookUserElseContinue(req.user.id, function(){});
     res.redirect('/');
   };
 
