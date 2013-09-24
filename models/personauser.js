@@ -113,7 +113,7 @@ module.exports = function(sequelize, DataTypes) {
 		    });
 		}
 	    },
-	    addPersonaUserElseUpdate: function(personaEmail, cb) {
+	    addPersonaUserElseContinue: function(personaEmail, cb) {
 		/*
 		  Add user email only if user email has not already been added to
 		  our database.
@@ -147,7 +147,7 @@ module.exports = function(sequelize, DataTypes) {
 					 cb();
 				     }
 			             var new_user_instance = _User.build({
-					 email: dbUserEmail
+					 email: userEmail
 				     });
 				     new_user_instance.save().success(function() {
 					 cb();

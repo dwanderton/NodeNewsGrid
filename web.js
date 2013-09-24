@@ -182,7 +182,9 @@ app.use(express.cookieParser());
 app.post('/auth/browserid', 
   passport.authenticate('persona', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/');
+      console.log("Assumed Persona Logged in - Check if user account exists.");
+      global.db.PersonaUser.addPersonaUserElseContinue(req.user.email, function(){});
+      res.redirect('/');
   });
 
 

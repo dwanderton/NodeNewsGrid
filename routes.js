@@ -83,13 +83,8 @@ var dashboardfn = function(request, response) {
 };
 
 // POST /auth/browserid
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  BrowserID authentication will verify the assertion obtained from
-//   the browser via the JavaScript API.
-var personaAuthenticatefn =
-   function(req, res) {
-       res.redirect('/');
-  };
+//  in web.js
+
 
 
 // GET /auth/twitter
@@ -212,8 +207,8 @@ var define_routes = function(dict) {
 var ROUTES = define_routes({
     '/': [undefined, indexfn],
     '/login': [undefined, loginfn],
-    '/logout': [undefined, logoutfn],
-    '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
+    '/logout': [ undefined, logoutfn],
+// Now is in web.js as post not get request (this list is converted to gets )   '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
     '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
     '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
     '/auth/facebook': [passport.authenticate('facebook'), facebookAuthenticatefn],
