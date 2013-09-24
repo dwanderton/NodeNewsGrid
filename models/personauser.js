@@ -137,11 +137,11 @@ module.exports = function(sequelize, DataTypes) {
 		var _User = this;
 		_User.find({where: {email: userEmail}}).success(function(dbUserEmail) {
 			if (dbUserEmail) {
-			    // order already exists, do nothing
-			    console.log("user exists! Welcome back :)");
+			    // user already exists, do nothing
+			    console.log("Persona user exists! Welcome back :)");
 			    cb();
 			} else {
-			    console.log("user doesn't exist - Woop! creating...");
+			    console.log("Persona user doesn't exist - Woop! creating...");
 				     if(userEmail.length > 74){
 					 console.log("Oops crazy long email addresses not welcome here!");
 					 cb();
