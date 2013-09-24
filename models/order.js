@@ -226,7 +226,7 @@ module.exports = function(sequelize, DataTypes) {
 		  callback passed in expects a single error argument,
 		  cb(err). Note that one can add much more error handling
 		  here; we've removed that for the sake of clarity.
-		*/
+		
 		var _Story = this;
 		coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){
 		    if(err){
@@ -236,7 +236,7 @@ module.exports = function(sequelize, DataTypes) {
 			    console.log("refresh should be successful from BBC World stories api");
 			    _Story.addBBCNewsfromJSON(bbc_world_stories, cb);
 			    };
-		});
+		});*/
 /* now redundant -- prepare for deletion
 		coinbase.get_coinbase_json(1, function(err, orders) {
 		    _Order.addAllFromJSON(orders, cb);

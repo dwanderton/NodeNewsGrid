@@ -200,12 +200,13 @@ global.db.sequelize.sync().complete(function(err) {
     if (err) {
 	throw err;
     } else {
-	var DB_REFRESH_INTERVAL_SECONDS = 100;
+	var DB_REFRESH_INTERVAL_SECONDS = 600; //Change for production to 100 or 200
 	async.series([
 	    function(cb) {
 		// Mirror the orders before booting up the server
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
+		global.db.PersonaUser.refreshFromCoinbase(cb);
 	    },
 	    function(cb) {
 		// Begin listening for HTTP requests to Express app
