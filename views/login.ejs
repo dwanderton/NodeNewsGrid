@@ -45,44 +45,54 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
 
 	</head>
 <body>
+
+<div>
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">NewsGrid</h4>
+            </div>
 <% if (!user) { %>
-<p>
-                        <a href="/">Home</a> | 
-                        <a href="/account">Account</a> | 
-                        <a href="/login">Login</a>
-                        </p>
+            <div class="modal-body">
+                  <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
+	 <a href="#"> <img height="80px" width="80px" src="http://people.mozilla.org/~smartell/persona/assets/persona-logo.png" id="browserid"/></a>
+          <h4>Persona</h4>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
+          <a href="/auth/twitter"><img height="80px" width="80px" src="https://abs.twimg.com/a/1379631158/images/resources/twitter-bird-white-on-blue.png"></a>
+          <h4>Twitter</h4> 
+	</div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
+	  <a href="/auth/facebook"><img height="80px" width="80px" src="/img/FB-f-Logo__blue_512.png"></a>
+          <h4>Facebook</h4>
+	</div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
 
-        <h2>Welcome! Please log in.</h2>
+            </div>
+
+            <div class="modal-footer">
+	      <p style="align:centre">Please login to NewsGrid with one of the above services!</p>
+            </div>
 <% } else { %>
-<-p>
+            <div class="modal-body">
+	      <p style="align:centre"> You are already logged in to NewsGrid click <a href="/">here</a> to continue.</p>
+            </div>
 
-                        <A href="/">Home</a> | 
-                        <a href="/account">Account</a> | 
-                        <a href="/logout">Log Out</a>
-                        </p>
+            <div class="modal-footer">
+	      <p style="align:centre"></p>
+            </div>
+<% } %>	
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
 
-        <h2>Hello, <%= user.email %>.</-h2>
-<% } %>			
+
+		
 <form action="/auth/browserid" method="post" style="display:none;">
 	<input type="text" name="assertion"/>
 </form>
 
-
-      <!-- Three columns of text below the carousel -->
-      <div class="row">
-        <div class="col-lg-4">
-	 <a href="#"> <img height="140px" width="140px" src="http://people.mozilla.org/~smartell/persona/assets/persona-logo.png" id="browserid"/></a>
-          <h2>Persona</h2>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <a href="/auth/twitter"><img height="140px" width="140px" src="https://abs.twimg.com/a/1379631158/images/resources/twitter-bird-white-on-blue.png"></a>
-          <h2>Twitter</h2> 
-	</div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <a href="/auth/facebook"><img height="140px" width="140px" src="/img/FB-f-Logo__blue_512.png"></a>
-          <h2>Facebook</h2>
-	</div><!-- /.col-lg-4 -->
-      </div><!-- /.row -->
 
 
 
