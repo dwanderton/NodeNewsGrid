@@ -50,7 +50,8 @@ if (!global.hasOwnProperty('db')) {
         Order: sq.import(__dirname + '/order'),
 	PersonaUser: sq.import(__dirname + '/personauser'),
 	TwitterUser: sq.import(__dirname + '/twitteruser'),
-	FacebookUser: sq.import(__dirname + '/facebookuser')
+	FacebookUser: sq.import(__dirname + '/facebookuser'),
+	PersonaHistory: sq.import(__dirname + '/personahistories')
     };
 }
 module.exports = global.db;

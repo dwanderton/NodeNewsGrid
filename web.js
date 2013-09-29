@@ -208,9 +208,6 @@ global.db.sequelize.sync().complete(function(err) {
 		// Mirror the orders before booting up the server
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
-		global.db.PersonaUser.refreshFromCoinbase(cb);
-		global.db.TwitterUser.refreshFromCoinbase(cb);
-		global.db.FacebookUser.refreshFromCoinbase(cb);
 	    },
 	    function(cb) {
 		// Begin listening for HTTP requests to Express app
