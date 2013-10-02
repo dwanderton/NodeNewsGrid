@@ -172,14 +172,10 @@ var api_orderfn = function(request, response) {
 
 var api_storyreadfn = function(request, response) {
     var successcb = function(storiesRead) {
-	var data = uu.extend(storiesRead,
-			     {target: Constants.FUNDING_TARGET,
-			      unit_symbol: Constants.FUNDING_UNIT_SYMBOL
-			      /* days_left: Constants.days_left() */});
-	data.total_funded *= Constants.FUNDING_SI_SCALE;
+	var data = storiesRead;
 	response.json(data);
     };
-    var errcb = build_errfn('error retrieving API orders', response);
+    var errcb = build_errfn('error retrieving API stories read list', response);
     ensureAuthenticated(request, response, global.db.PersonaHistory.listOfStoriesRead(successcb, errcb));
 };
 
