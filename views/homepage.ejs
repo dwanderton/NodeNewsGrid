@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en" ng-app><head>
     <link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -64,8 +64,8 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     <!-- end google font for logo -->
 </head>
 
-  <body>
-
+  <body ng-controller="StoriesReadCtrl">
+<h1>{{stories_read}}</h1>
     <!-- Fixed panel Navigation here -->
 <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
