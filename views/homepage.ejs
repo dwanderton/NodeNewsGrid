@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app><head>
+<html lang="en"><head>
     <link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -52,10 +52,22 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
         }, function(){
             $(this).fadeTo('fast', 0.5);
         });
+      
+    $.getJSON("/api/storyread", function( data ){
+      for (i =0, len = data.length; i < len; i++){
+      data.each(function(entry){
+      console.log(entry.bbcpublished);
+      });
+					}
+     var fadeMe = "div.";
+      fadeMe += data.bbcpublished; 
+      fadeMe += " img";
+      console.log(fadeMe);
+      $(fadeMe).fadeTo('fast',0.5);
+    });
       });
     </script>
     <!-- hoverintent finish -->
-    
     <!-- Google font for logo -->
 	 <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 	 <style>
@@ -64,8 +76,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     <!-- end google font for logo -->
 </head>
 
-  <body ng-controller="StoriesReadCtrl">
-<h1>{{stories_read}}</h1>
+  <body>
     <!-- Fixed panel Navigation here -->
 <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -124,7 +135,7 @@ if (60 >= world_bbc_stories.length-1){
 }
 for (i; i > 0 ; i--) { 
     // display stories currently in db %>
-	<div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">
+        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	  </a>
