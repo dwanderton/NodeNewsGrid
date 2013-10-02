@@ -16,6 +16,16 @@ module.exports = function(sequelize, DataTypes) {
 		this.count().success(function(c) {
 		    console.log("There have been  %s stories read by Persona Users", c);});
 	    },
+	    listOfStoriesRead: function(successcb, errcb) {
+                this.findAll().success(function(storiesRead) {
+                    successcb(storiesRead);
+                }).error(errcb);
+            },
+	    addToStoriesRead: function(story_obj, cb) {
+                this.findAll().success(function(storiesRead) {
+                    successcb(storiesRead);
+                }).error(errcb);
+            },
 	    allToJSON: function(successcb, errcb) {
 		this.findAll()
 		    .success(function(orders) {

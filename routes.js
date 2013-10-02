@@ -160,12 +160,27 @@ var api_orderfn = function(request, response) {
 	var data = uu.extend(totals,
 			     {target: Constants.FUNDING_TARGET,
 			      unit_symbol: Constants.FUNDING_UNIT_SYMBOL,
-			      days_left: Constants.days_left()});
+			      name: "My name is David"
+			      /* days_left: Constants.days_left() */});
 	data.total_funded *= Constants.FUNDING_SI_SCALE;
 	response.json(data);
     };
     var errcb = build_errfn('error retrieving API orders', response);
     ensureAuthenticated(request, response, global.db.Order.totals(successcb, errcb));
+};
+
+
+var api_storyreadfn = function(request, response) {
+    var successcb = function(storiesRead) {
+	var data = uu.extend(storiesRead,
+			     {target: Constants.FUNDING_TARGET,
+			      unit_symbol: Constants.FUNDING_UNIT_SYMBOL
+			      /* days_left: Constants.days_left() */});
+	data.total_funded *= Constants.FUNDING_SI_SCALE;
+	response.json(data);
+    };
+    var errcb = build_errfn('error retrieving API orders', response);
+    ensureAuthenticated(request, response, global.db.PersonaHistory.listOfStoriesRead(successcb, errcb));
 };
 
 var refresh_orderfn = function(request, response) {
@@ -218,6 +233,7 @@ var ROUTES = define_routes({
     '/dashboard': [undefined, dashboardfn],
     '/orders': [undefined, orderfn],
     '/api/orders': [undefined, api_orderfn],
+    '/api/storyread': [undefined, api_storyreadfn],
     '/refresh_orders': [undefined, refresh_orderfn]
 });
 
