@@ -8,7 +8,7 @@ var coinbase = require('./coinbase');
 
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define("personahistories", {
-	email: {type: DataTypes.STRING(75), unique: true, allowNull:false},
+	email: {type: DataTypes.STRING(75), allowNull:false},
 	bbcpublished: {type: DataTypes.BIGINT, allowNull: false}
     }, {
 	classMethods: {
@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
 		    console.log("There have been  %s stories read by Persona Users", c);});
 	    },
 	    listOfStoriesRead: function(successcb, errcb) {
-                this.find({where: {email: 'dwanderton@gmail.com'}, attributes: ['bbcpublished']}).success(function(storiesRead) {
+                this.findAll({where: {email: 'dwanderton@gmail.com'}, attributes: ['bbcpublished']}).success(function(storiesRead) {
                     successcb(storiesRead);
                 }).error(errcb);
             },

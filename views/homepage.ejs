@@ -54,16 +54,13 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
         });
       
     $.getJSON("/api/storyread", function( data ){
-      for (i =0, len = data.length; i < len; i++){
-      data.each(function(entry){
-      console.log(entry.bbcpublished);
-      });
-					}
-     var fadeMe = "div.";
-      fadeMe += data.bbcpublished; 
+      $.each(data, function(dataElement, dataValue){
+      var fadeMe = "div.";
+      fadeMe += dataValue.bbcpublished; 
       fadeMe += " img";
-      console.log(fadeMe);
-      $(fadeMe).fadeTo('fast',0.5);
+      $(fadeMe).fadeTo('fast', 0.5);
+      });
+			
     });
       });
     </script>
