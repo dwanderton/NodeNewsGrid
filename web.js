@@ -187,6 +187,14 @@ app.post('/auth/browserid',
       res.redirect('/');
   });
 
+// api for jQuery posting of stories read
+app.post('/api/addstoryread', function(req, res) {
+    console.log("Add story api queried by: " + req.user.id + req.user.email + " req body: " + req.body.storyViewed);
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.write(String(req.user.email));
+    res.end();
+});
+                                               
 
 //add in middleware function here as this is where the app.get construct is made
 // Below: add middleware if it exists else don't. Simples.

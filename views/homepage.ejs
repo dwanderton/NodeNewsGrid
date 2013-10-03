@@ -52,6 +52,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
         }, function(){
             $(this).fadeTo('fast', 0.5);
             var storyclass = $(this).parent().parent().attr('class').split(/\s/);
+            $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
             console.log(storyclass[storyclass.length -1]);
             
       });

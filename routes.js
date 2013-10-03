@@ -156,17 +156,15 @@ var orderfn = function(request, response) {
 };
 
 var api_orderfn = function(request, response) {
-    var successcb = function(totals) {
-	var data = uu.extend(totals,
-			     {target: Constants.FUNDING_TARGET,
-			      unit_symbol: Constants.FUNDING_UNIT_SYMBOL,
+    var successcb = function() {
+	var data = uu.extend(
+			     {
 			      name: "My name is David"
-			      /* days_left: Constants.days_left() */});
-	data.total_funded *= Constants.FUNDING_SI_SCALE;
+			     });
 	response.json(data);
     };
     var errcb = build_errfn('error retrieving API orders', response);
-    ensureAuthenticated(request, response, global.db.Order.totals(successcb, errcb));
+    ensureAuthenticated(request, response, successcb());
 };
 
 
