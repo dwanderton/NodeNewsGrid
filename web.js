@@ -189,10 +189,27 @@ app.post('/auth/browserid',
 
 // api for jQuery posting of stories read
 app.post('/api/addstoryread', function(req, res) {
-    console.log("Add story api queried by: " + req.user.id + req.user.email + " req body: " + req.body.storyViewed);
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.write(String(req.user.email));
-    res.end();
+    var build_errfn = function(errmsg, response) {                                                                                                                                                        
+    return function errfn(err) {
+        console.log(err);                                                                                                                                                                                  
+        response.send(errmsg);
+    };                                                                                                                                                                                                     
+    };
+
+    if(req.user.provider == "twitter"){
+    console.log("Add story api posted to by twitter id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
+    }else if (req.user.provider == "facebook"){
+	    console.log("Add story api posted to by facebook id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
+	} else{
+	    var successcb = function(){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end();
+		console.log("Add story api posted to by persona email: " + req.user.email + " Story viewed: " + req.body.storyViewed)
+		};
+	    var errcb = build_errfn('error posting to stories read', res);
+	    global.db.PersonaHistory.addToStoriesRead(req.user.email, req.body.storyViewed, successcb, errcb);
+	}
+
 });
                                                
 

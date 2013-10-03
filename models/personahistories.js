@@ -21,11 +21,38 @@ module.exports = function(sequelize, DataTypes) {
                     successcb(storiesRead);
                 }).error(errcb);
             },
-	    addToStoriesRead: function(story_obj, cb) {
-                this.findAll().success(function(storiesRead) {
-                    successcb(storiesRead);
-                }).error(errcb);
-            },
+	    addToStoriesRead: function(userEmail, story_id, successcb, errcb) {
+		/* Posted to from /api/addstoryread, as a persona user has viewed the story the request is redirected to 
+		 here and the story id and user email will be added to the personahistories db*/
+		
+		var personaEmail = userEmail;
+		var readStoryID = story_id;
+		    var _StoryRead = this;
+		    _StoryRead.find({where: {email: personaEmail, bbcpublished: story_id}}).success(function(story_instance) {
+			if (story_instance) {
+			    // story read already exists, do nothing
+			    successcb();
+			} else {
+			    /*
+			       Build instance and save.
+
+			       Uses the _StoryRead from the enclosing scope,
+			       as 'this' within the callback refers to the current
+			       found instance.
+			    */
+			    var new_storyread_instance = _StoryRead.build({
+				email: personaEmail,
+				bbcpublished: readStoryID
+			    });
+			    new_storyread_instance.save().success(function() {
+				successcb();
+			    }).error(function(err) {
+				errcb(err);
+			    });
+			}
+		    });
+		
+	    },
 	    allToJSON: function(successcb, errcb) {
 		this.findAll()
 		    .success(function(orders) {
