@@ -173,8 +173,15 @@ var api_storyreadfn = function(request, response) {
 	var data = storiesRead;
 	response.json(data);
     };
-    var errcb = build_errfn('error retrieving API stories read list', response);
-    ensureAuthenticated(request, response, global.db.PersonaHistory.listOfStoriesRead(successcb, errcb));
+    var errcb = build_errfn('error posting to stories read', res);
+    if(req.user.provider == "twitter"){
+	        ensureAuthenticated(request, response, global.db.TwitterHistory.listOfStoriesRead(req.user.id, successcb, errcb));
+                };
+    }else if (req.user.provider == "facebook"){
+	ensureAuthenticated(request, response, global.db.FacebookHistory.listOfStoriesRead(req.user.id, successcb, errcb));
+        } else{
+	    ensureAuthenticated(request, response, global.db.PersonaHistory.listOfStoriesRead(req.user.email, successcb, errcb));
+        }
 };
 
 var refresh_orderfn = function(request, response) {
