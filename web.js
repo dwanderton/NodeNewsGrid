@@ -197,7 +197,13 @@ app.post('/api/addstoryread', function(req, res) {
     };
 
     if(req.user.provider == "twitter"){
-    console.log("Add story api posted to by twitter id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
+	    var successcb = function(){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end();
+		console.log("Add story api posted to by twitter id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
+		};
+	    var errcb = build_errfn('error posting to stories read', res);
+	    global.db.TwitterHistory.addToStoriesRead(req.user.id, req.body.storyViewed, successcb, errcb);
     }else if (req.user.provider == "facebook"){
 	    console.log("Add story api posted to by facebook id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
 	} else{
