@@ -16,8 +16,8 @@ module.exports = function(sequelize, DataTypes) {
 		this.count().success(function(c) {
 		    console.log("There have been  %s stories read by Persona Users", c);});
 	    },
-	    listOfStoriesRead: function(successcb, errcb) {
-                this.findAll({where: {email: 'dwanderton@gmail.com'}, attributes: ['bbcpublished']}).success(function(storiesRead) {
+	    listOfStoriesRead: function(userEmail, successcb, errcb) {
+                this.findAll({where: {email: userEmail}, attributes: ['bbcpublished']}).success(function(storiesRead) {
                     successcb(storiesRead);
                 }).error(errcb);
             },
