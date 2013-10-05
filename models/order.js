@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
 		    console.log("There are %s Orders", c);});
 	    },
 	    allToJSON: function(successcb, errcb) {
-		this.findAll({order: 'updatedAt DESC',limit: '144'})
+		this.findAll({order: 'updatedAt DESC',limit: '60'})
 		    .success(function(orders) {
 			successcb(uu.invoke(orders, 'toJSON'));
 		    })
