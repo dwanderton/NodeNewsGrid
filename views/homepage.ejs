@@ -51,10 +51,11 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
             $(this).fadeTo('fast', 1);
         }, function(){
             $(this).fadeTo('fast', 0.5);
-            var storyclass = $(this).parent().parent().attr('class').split(/\s/);
-            $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
-            console.log(storyclass[storyclass.length -1]);
-            
+            if (!$(this).hasClass("indb")){
+              var storyclass = $(this).parent().parent().attr('class').split(/\s/);
+              $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
+              $(this).addClass("indb");
+            };
       });
       
     $.getJSON("/api/storyread", function( data ){
@@ -63,6 +64,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
       fadeMe += dataValue.bbcpublished; 
       fadeMe += " img";
       $(fadeMe).fadeTo('fast', 0.5);
+      $(fadeMe).addClass("indb");
       });
 			
     });
