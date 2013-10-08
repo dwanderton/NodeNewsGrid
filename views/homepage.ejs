@@ -93,32 +93,32 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-             <li><a href="#">Default</a></li>
+            <li class="active"><a href="/"><span class="glyphicon glyphicon-home"></span></a></li>
+            <li><a href="/favorites"><span class="glyphicon glyphicon-star"></span></a></li>
+            <li><a href="/popular"><span class="glyphicon glyphicon-thumbs-up"></span></a></li>
+            <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span></a></li>
+            <li><a href="#about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
+	    <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></li>
+<!--            <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-		<% if(user.provider == 'twitter'){ %> <%= user.username %><% } %>
-		<% if(user.provider == 'facebook'){ %><%= user.displayName %><% } %>
-		<% if(!user.provider){ %><%= user.email %><% } %>
+		<span class="glyphicon glyphicon-user"</span>
 		<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="#">Another action</a></li> 
                 <li class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li><a href="#">One more separated link</a></li> -->
               </ul>
             </li>
+<!--
 	    <li><a href="#">Option 1</a></li>
             <li><a href="#">Option 2</a></li>
-          </ul>
+-->    
+</ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
