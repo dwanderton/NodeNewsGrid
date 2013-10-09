@@ -16,11 +16,7 @@
     <link href="css/grid.css" rel="stylesheet">
   <!-- attempt to get bg working -->
 <style type="text/css">
-body { background: url(img/bg.jpg) no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+body { 
   /* padding added to support fixed navbar */
   padding-top: 70px;
 }
@@ -72,7 +68,7 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
     </script>
     <!-- hoverintent finish -->
     <!-- Google font for logo -->
-	 <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 	 <style>
 	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
 	   </style>
@@ -161,9 +157,14 @@ for (i; i > 0 ; i--) {
           <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>                                                                                           
         </div>                                                                                                                 
         <div class="modal-body">
-	      	    <img data-toggle="tooltip" src="<%= world_bbc_stories[j].thumbnail %>" title="<%= world_bbc_stories[j].title %>" class="tooltipnow" style="height: 81px; width: 144px;">
-       <%= world_bbc_stories[j].description %>                                                                                               
-	                
+	  <div class="row">
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+	      <img src="<%= world_bbc_stories[j].thumbnail %>" style="height: 81px; width: 144px;">
+	    </div>
+	    <div class="col-lg-7 col-md-7 col-sm-7">
+	      <%= world_bbc_stories[j].description %>      
+	    </div>
+	  </div>              
         </div>                                                                                                                                                                     
       </div><!-- /.modal-content -->                                                                                                                                               
     </div><!-- /.modal-dialog -->                                                                                                                                                  
