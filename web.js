@@ -31,7 +31,7 @@ passport.deserializeUser(function(obj, done) {
 //   credentials (in this case, a BrowserID verified email address), and invoke
 //   a callback with a user object.
 passport.use(new PersonaStrategy({
-    audience: 'ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080'
+    audience: 'ec2-54-213-78-101.us-west-2.compute.amazonaws.com:7080'
   },
   function(email, done) {
     // asynchronous verification, for effect...
@@ -53,7 +53,7 @@ passport.use(new PersonaStrategy({
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080/auth/twitter/callback"
+    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:7080/auth/twitter/callback"
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
@@ -75,7 +75,7 @@ passport.use(new TwitterStrategy({
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:8080/auth/facebook/callback"
+    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:7080/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
@@ -167,7 +167,7 @@ passport.use(new FacebookStrategy({
 var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 7080);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
