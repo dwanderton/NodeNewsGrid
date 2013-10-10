@@ -241,11 +241,11 @@ global.db.sequelize.sync().complete(function(err) {
     } else {
 	var DB_REFRESH_INTERVAL_SECONDS = 600; //Change for production to 100 or 200
 	async.series([
-	    function(cb) {
+/*	    function(cb) {
 		// Mirror the orders before booting up the server
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
-	    },
+	    }, */
 	    function(cb) {
 		// Begin listening for HTTP requests to Express app
 		http.createServer(app).listen(app.get('port'), function() {
@@ -253,12 +253,12 @@ global.db.sequelize.sync().complete(function(err) {
 		});
 
 		// Start a simple daemon to refresh Coinbase orders periodically
-		setInterval(function() {
+/*		setInterval(function() {
 		    console.log("Refresh news db at " + new Date());
 		    global.db.Order.refreshFromCoinbase(cb);
-		}, DB_REFRESH_INTERVAL_SECONDS*1000);
+		}, DB_REFRESH_INTERVAL_SECONDS*1000); */
 		cb(null);
-	    }
+	    } 
 	]);
     }
 });
