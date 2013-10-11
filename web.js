@@ -219,6 +219,20 @@ app.post('/api/addstoryread', function(req, res) {
 		console.log("Add story api posted to by persona email: " + req.user.email + " Story viewed: " + req.body.storyViewed)
 		};
 	    var errcb = build_errfn('error posting to stories read', res);
+	    function getMethods(obj) {
+  var result = [];
+  for (var id in obj) {
+    try {
+      if (typeof(obj[id]) == "function") {
+        result.push(id + ": " + obj[id].toString());
+      }
+    } catch (err) {
+      result.push(id + ": inaccessible");
+    }
+  }
+  return result;
+}
+	    global.db.PersonaUser.findPersonaUser(req.user.email, this.setHistories(req.body.storyViewed));
 	    global.db.PersonaHistory.addToStoriesRead(req.user.email, req.body.storyViewed, successcb, errcb);
 	}
 
@@ -241,11 +255,11 @@ global.db.sequelize.sync().complete(function(err) {
     } else {
 	var DB_REFRESH_INTERVAL_SECONDS = 600; //Change for production to 100 or 200
 	async.series([
-/*	    function(cb) {
+	    function(cb) {
 		// Mirror the orders before booting up the server
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
-	    }, */
+	    }, 
 	    function(cb) {
 		// Begin listening for HTTP requests to Express app
 		http.createServer(app).listen(app.get('port'), function() {
@@ -265,5 +279,5 @@ global.db.sequelize.sync().complete(function(err) {
 
 // 404 error handling must go last see: http://expressjs.com/faq.html how do you handle 404s? 
 app.use(function(req, res, next){
-  res.send(404, 'Sorry cant find that!');
+  res.render('404');
 });
