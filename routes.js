@@ -42,23 +42,13 @@ var build_errfn = function(errmsg, response) {
    on the networking aspects of parsing the request and response, initiating
    the query to the database, and packaging it all up in a request.
 */
-var indexfn = function(request, response) {
-    var successcb = function(world_bbc_stories_json){
-	response.render("homepage", { 
-	user: request.user,
-	world_bbc_stories: world_bbc_stories_json,
-	name: Constants.APP_NAME,
-	title:  Constants.APP_NAME,
-	test_news_image: Constants.TESTIMAGE,
-	product_name: Constants.PRODUCT_NAME,
-	twitter_username: Constants.TWITTER_USERNAME,
-	twitter_tweet: Constants.TWITTER_TWEET,
-	product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-	coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-	});
-    };
-    var errcb = build_errfn('unable to retrieve orders', response);
-    ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
+var indexfn = function(req, res) {
+    console.log("index called");
+    var showIndex = function(){ 
+	console.log("show index called");
+	res.render("rhomepage");
+	};
+    ensureAuthenticated(req, res, showIndex());
 };
 
 

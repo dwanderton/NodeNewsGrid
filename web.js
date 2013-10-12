@@ -286,7 +286,7 @@ global.db.sequelize.sync().complete(function(err) {
 				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
 			    }, function(err,html) {
 				// handling of the rendered html output goes here
-				fs.writeFile(__dirname + "/views/rhomepage.html", html, function(err) {
+				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
 				    if(err) {
 					console.log("Failed to render new homepage html")
 					console.log(err);
