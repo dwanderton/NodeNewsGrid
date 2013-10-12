@@ -19,6 +19,14 @@ module.exports = function(sequelize, DataTypes) {
 	email: {type: DataTypes.STRING(75), unique: true, allowNull:false},
     }, {
 	classMethods: {
+            findPersonaUser: function(personaEmail, cb){
+            var userEmail  = personaEmail;
+                var _User = this;
+                _User.find({where: {email: userEmail}}).success(function(dbUserEmail){
+                    cb(dbUserEmail);
+                    });
+                },
+	  
 	    numPersonaUsers: function() {
 		this.count().success(function(c) {
 		    console.log("There are %s unique Persona Users", c);});
