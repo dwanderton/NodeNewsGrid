@@ -149,13 +149,12 @@ module.exports = function(sequelize, DataTypes) {
 		  Note that when using a for loop we need to provide a variable in the scope of the loop that does not alter as the loop continues we do this by passing the value of i to an inner function as ii.
 		*/
 		var stories = bbc_story_obj; // story json from bbc api
-		    var i = Math.floor((Math.random()*40)+1);
 		var _Stories = this;
 		for (var i = 0, len = stories.length; i < len; i++){
 		    !function outer(ii){
 		    _Stories.find({where: {title: stories[ii].title}}).success(function(story_instance) {
 			if (story_instance) {
-			    // order already exists, do nothing
+			    // story already exists, do nothing
 			    console.log("story exists - updating current story!");
 			    story_instance.updateAttributes({
 				published: stories[ii].published,
@@ -183,6 +182,9 @@ module.exports = function(sequelize, DataTypes) {
 					 cb(err);
 				     });
 				 } else {
+				     if (stories[ii].link.match(/^.*sport.*$/)){
+					 console.log("sport - no thanks");
+					 } else {
 				     console.log("story doesn't exist - creating...");
 				     var new_story_instance = _Stories.build({
 					 title: stories[ii].title,
@@ -196,6 +198,7 @@ module.exports = function(sequelize, DataTypes) {
 				     }).error(function(err) {
 					 cb(err);
 				     });
+				 };
 				 };
 				 });
 			}
