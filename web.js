@@ -264,7 +264,7 @@ global.db.sequelize.sync().complete(function(err) {
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
 		
-		    console.log("Initila construct Homepage at " + new Date());
+		    console.log("Initial construct Homepage at " + new Date());
 			var successcb = function(world_bbc_stories_json){
 		 	    app.render("homepage", {
 				world_bbc_stories: world_bbc_stories_json,
