@@ -263,6 +263,35 @@ global.db.sequelize.sync().complete(function(err) {
 		// Mirror the orders before booting up the server
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
+		
+		    console.log("Initila construct Homepage at " + new Date());
+			var successcb = function(world_bbc_stories_json){
+		 	    app.render("homepage", {
+				world_bbc_stories: world_bbc_stories_json,
+				name: Constants.APP_NAME,
+				title:  Constants.APP_NAME,
+				test_news_image: Constants.TESTIMAGE,
+				product_name: Constants.PRODUCT_NAME,
+				twitter_username: Constants.TWITTER_USERNAME,
+				twitter_tweet: Constants.TWITTER_TWEET,
+				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+			    }, function(err,html) {
+				// handling of the rendered html output goes here
+				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
+				    if(err) {
+					console.log("Failed to render new homepage html")
+					console.log(err);
+				    } else {
+					console.log("The newly rendered homepage html was saved!");
+				    }
+				}); 				
+			    });
+			};
+			var errcb = build_errfn('unable to retrieve orders');
+		    global.db.Order.allToJSON(successcb, errcb);
+
+
 	    }, 
 	    function(cb) {
 		// Begin listening for HTTP requests to Express app
