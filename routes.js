@@ -70,6 +70,14 @@ var dashboardfn = function(request, response) {
     
 };
 
+
+var popularfn = function(req, res){
+    var showMostPop = function(){
+	res.render("rmostpop");
+    };
+    ensureAuthenticated(req, res, showMostPop());
+};
+
 // POST /auth/browserid
 //  in web.js
 
@@ -213,7 +221,8 @@ var ROUTES = define_routes({
     '/': [undefined, indexfn],
     '/login': [undefined, loginfn],
     '/logout': [ undefined, logoutfn],
-// Now is in web.js as post not get request (this list is converted to gets )   '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
+    '/popular': [ undefined, popularfn],
+    // Now is in web.js as post not get request (this list is converted to gets )   '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
     '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
     '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
     '/auth/facebook': [passport.authenticate('facebook'), facebookAuthenticatefn],
