@@ -47,7 +47,15 @@ if (!global.hasOwnProperty('db')) {
     global.db = {
         Sequelize: Sequelize,
         sequelize: sq,
-        Order: sq.import(__dirname + '/order')
+        Order: sq.import(__dirname + '/order'),
+	PersonaUser: sq.import(__dirname + '/personauser'),
+	TwitterUser: sq.import(__dirname + '/twitteruser'),
+	FacebookUser: sq.import(__dirname + '/facebookuser'),
+	PersonaHistory: sq.import(__dirname + '/personahistories'),
+	TwitterHistory: sq.import(__dirname + '/twitterhistories'),
+	FacebookHistory: sq.import(__dirname + '/facebookhistories'),
+	PersonaHisAssoc: sq.import(__dirname + '/personahisassoc.js'),
+	BBCSportStories: sq.import(__dirname + '/sportbbc.js')
     };
 }
 module.exports = global.db;

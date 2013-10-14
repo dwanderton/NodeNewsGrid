@@ -13,20 +13,20 @@
    seen on the client side and then import that on both the client- and
    server-side (and then perhaps obfuscate the code prior to serving it up).
 */
-var API_ORDER_ROUTE = '/api/orders';
-function OrdersCtrl($http, $scope) {
+var API_ORDER_ROUTE = '/api/storyread';
+function StoriesReadCtrl($http, $scope) {
   $http.get(API_ORDER_ROUTE).success(function(data, status, headers, config) {
     if (data.error) {
       $scope.error = data.error;
     } else {
-      $scope.num_orders = data.num_orders;
-      $scope.total_funded = data.total_funded.toFixed(2);
+      $scope.stories_read = data.bbcpublished;
+      /* $scope.total_funded = data.total_funded.toFixed(2);
       $scope.unit_symbol = data.unit_symbol;
       $scope.target = data.target;
       $scope.days_left = data.days_left ? data.days_left : 0;
-      $scope.percentage_funded = Math.min($scope.total_funded / $scope.target * 100.0, 100);
+      $scope.percentage_funded = Math.min($scope.total_funded / $scope.target * 100.0, 100); */
     }
   }).error(function(data, status, headers, config) {
-    $scope.error = "Error fetching order statistics.";
+    $scope.error = "Error fetching read statistics.";
   });
 }

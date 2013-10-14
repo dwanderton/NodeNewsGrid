@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Passport-Persona Example</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+		<script src="https://login.persona.org/include.js" type="text/javascript"></script>
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="David Anderton 2013">
+
+    <!-- Bootstrap core CSS -->
+<!-- Latest compiled and minified CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- attempt to get bg working -->
+<style type="text/css">
+body { background: url(img/bg.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  /* padding added to support fixed navbar */
+  padding-top: 70px;
+}
+
+</style>
+  <!-- lets get ac working -->
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- end jQuery-->
+
+
+    
+    <!-- Google font for logo -->
+     <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+      <style>
+	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
+	      </style>
+    <!-- end google font for logo -->
+</head>
+
+	</head>
+<body>
+
+<div>
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">NewsGrid</h4>
+            </div>
+<% if (!user) { %>
+            <div class="modal-body">
+                  <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
+	 <a href="#"> <img height="80px" width="80px" src="http://people.mozilla.org/~smartell/persona/assets/persona-logo.png" id="browserid"/></a>
+          
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
+          <a href="/auth/twitter"><img height="80px" width="80px" src="https://abs.twimg.com/a/1379631158/images/resources/twitter-bird-white-on-blue.png"></a>
+          
+	</div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
+	  <a href="/auth/facebook"><img height="80px" width="80px" src="/img/FB-f-Logo__blue_512.png"></a>
+         
+	</div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+
+            </div>
+
+            <div class="modal-footer">
+	      <p style="align:centre">Please login to NewsGrid with one of the above services!</p>
+            </div>
+<% } else { %>
+            <div class="modal-body">
+	      <p style="align:centre"> You are already logged in to NewsGrid click <a href="/">here</a> to continue.</p>
+            </div>
+
+            <div class="modal-footer">
+	      <p style="align:centre"></p>
+            </div>
+<% } %>	
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+
+		
+<form action="/auth/browserid" method="post" style="display:none;">
+	<input type="text" name="assertion"/>
+</form>
+
+
+
+
+
+
+<script>
+  $("#browserid").click(function(){
+    navigator.id.get(function(assertion) {
+      if (assertion) {
+        $("input").val(assertion);
+        $("form").submit();
+      } else {
+        location.reload();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,9 +1,100 @@
 var express = require('express')
   , http    = require('http')
   , path    = require('path')
+  , fs      = require('fs')
   , async   = require('async')
   , db      = require('./models')
+  , passport = require('passport')
+  , util = require('util')
+  , PersonaStrategy = require('passport-persona').Strategy
+  , TwitterStrategy = require('passport-twitter').Strategy
+  , FacebookStrategy = require('passport-facebook').Strategy
+  , Constants = require('./constants')
   , ROUTES  = require('./routes');
+
+
+var build_errfn = function(errmsg, response) {                                                                                                                                                                  return function errfn(err) {                                                                                                                                                                                    console.log(err);                                                                                                                                                                                           response.send(errmsg);                                                                                                                                                                                  };                                                                                                                                                                                                      };
+
+// Passport session setup.
+//   To support persistent login sessions, Passport needs to be able to
+//   serialize users into and deserialize users out of the session.  Typically,
+//   this will be as simple as storing the user ID when serializing, and finding
+//   the user by ID when deserializing.  However, since this example does not
+//   have a database of user records, the BrowserID verified email address
+//   is serialized and deserialized.
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+// Use the PersonaStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a BrowserID verified email address), and invoke
+//   a callback with a user object.
+passport.use(new PersonaStrategy({
+    audience: 'ec2-54-213-78-101.us-west-2.compute.amazonaws.com:7080'
+  },
+  function(email, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's email address is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the email address with a user record in your database, and
+      // return that user instead.
+      return done(null, { email: email })
+    });
+  }
+));
+
+// Use the TwitterStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a token, tokenSecret, and Twitter profile), and
+//   invoke a callback with a user object.
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:7080/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      // To keep the example simple, the user's Twitter profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Twitter account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+
+
+// Use the FacebookStrategy within Passport.
+//   Strategies in Passport require a `verify` function, which accept
+//   credentials (in this case, an accessToken, refreshToken, and Facebook
+//   profile), and invoke a callback with a user object.
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://ec2-54-213-78-101.us-west-2.compute.amazonaws.com:7080/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's Facebook profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Facebook account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
+
+
 
 /*
   Initialize the Express app, the E in the MEAN stack (from mean.io).
@@ -80,45 +171,177 @@ var express = require('express')
 var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 7080);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
+app.use(express.cookieParser());
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.session({ secret: 'keyboard cat' }));
+  // Initialize Passport!  Also use passport.session() middleware, to support
+  // persistent login sessions (recommended).
+  app.use(passport.initialize());
+  app.use(passport.session());
+app.post('/auth/browserid', 
+  passport.authenticate('persona', { failureRedirect: '/login' }),
+  function(req, res) {
+      console.log("Assumed Persona Logged in - Check if user account exists.");
+      global.db.PersonaUser.addPersonaUserElseContinue(req.user.email, function(){});
+      res.redirect('/');
+  });
 
+// api for jQuery posting of stories read
+app.post('/api/addstoryread', function(req, res) {
+    var build_errfn = function(errmsg, response) {                                                                                                                                                        
+    return function errfn(err) {
+        console.log(err);                                                                                                                                                                                  
+        response.send(errmsg);
+    };                                                                                                                                                                                                     
+    };
 
+    if(req.user.provider == "twitter"){
+	    var successcb = function(){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end();
+		console.log("Add story api posted to by twitter id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
+		};
+	    var errcb = build_errfn('error posting to stories read', res);
+	    global.db.TwitterHistory.addToStoriesRead(req.user.id, req.body.storyViewed, successcb, errcb);
+    }else if (req.user.provider == "facebook"){
+	    var successcb = function(){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end();
+		console.log("Add story api posted to by facebook id: " + req.user.id + " Story viewed: " + req.body.storyViewed)
+		};
+	    var errcb = build_errfn('error posting to stories read', res);
+	    global.db.FacebookHistory.addToStoriesRead(req.user.id, req.body.storyViewed, successcb, errcb);
+	} else{
+	    var successcb = function(){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end();
+		console.log("Add story api posted to by persona email: " + req.user.email + " Story viewed: " + req.body.storyViewed)
+		};
+	    var errcb = build_errfn('error posting to stories read', res);
+	    function getMethods(obj) {
+  var result = [];
+  for (var id in obj) {
+    try {
+      if (typeof(obj[id]) == "function") {
+        result.push(id + ": " + obj[id].toString());
+      }
+    } catch (err) {
+      result.push(id + ": inaccessible");
+    }
+  }
+  return result;
+}
+	    global.db.PersonaUser.findPersonaUser(req.user.email, this.setHistories(req.body.storyViewed));
+	    global.db.PersonaHistory.addToStoriesRead(req.user.email, req.body.storyViewed, successcb, errcb);
+	}
+
+});
+                                               
+
+//add in middleware function here as this is where the app.get construct is made
+// Below: add middleware if it exists else don't. Simples.
 for(var ii in ROUTES) {
-    app.get(ROUTES[ii].path, ROUTES[ii].fn);
+    if(!ROUTES[ii].middleware){
+	app.get(ROUTES[ii].path, ROUTES[ii].fn);
+    } else {
+	app.get(ROUTES[ii].path, ROUTES[ii].middleware, ROUTES[ii].fn);
+	}
 }
 
 global.db.sequelize.sync().complete(function(err) {
     if (err) {
 	throw err;
     } else {
-	var DB_REFRESH_INTERVAL_SECONDS = 100;
+	var DB_REFRESH_INTERVAL_SECONDS = 30; //Change for production to 100 or 200
 	async.series([
 	    function(cb) {
 		// Mirror the orders before booting up the server
 		console.log("Initial pull from BBC News api at " + new Date());
 		global.db.Order.refreshFromCoinbase(cb);
-	    },
+		
+		    console.log("Initial construct Homepage at " + new Date());
+			var successcb = function(world_bbc_stories_json){
+		 	    app.render("homepage", {
+				world_bbc_stories: world_bbc_stories_json,
+				name: Constants.APP_NAME,
+				title:  Constants.APP_NAME,
+				test_news_image: Constants.TESTIMAGE,
+				product_name: Constants.PRODUCT_NAME,
+				twitter_username: Constants.TWITTER_USERNAME,
+				twitter_tweet: Constants.TWITTER_TWEET,
+				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+			    }, function(err,html) {
+				// handling of the rendered html output goes here
+				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
+				    if(err) {
+					console.log("Failed to render new homepage html")
+					console.log(err);
+				    } else {
+					console.log("The newly rendered homepage html was saved!");
+				    }
+				}); 				
+			    });
+			};
+			var errcb = build_errfn('unable to retrieve orders');
+		    global.db.Order.allToJSON(successcb, errcb);
+
+
+	    }, 
 	    function(cb) {
 		// Begin listening for HTTP requests to Express app
 		http.createServer(app).listen(app.get('port'), function() {
 		    console.log("Listening on " + app.get('port'));
 		});
 
-		// Start a simple daemon to refresh Coinbase orders periodically
+		// Start a daemon to auto construct the homepage grid to a static file
 		setInterval(function() {
+		    console.log("Construct Homepage at " + new Date());
+			var successcb = function(world_bbc_stories_json){
+		 	    app.render("homepage", {
+				world_bbc_stories: world_bbc_stories_json,
+				name: Constants.APP_NAME,
+				title:  Constants.APP_NAME,
+				test_news_image: Constants.TESTIMAGE,
+				product_name: Constants.PRODUCT_NAME,
+				twitter_username: Constants.TWITTER_USERNAME,
+				twitter_tweet: Constants.TWITTER_TWEET,
+				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+			    }, function(err,html) {
+				// handling of the rendered html output goes here
+				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
+				    if(err) {
+					console.log("Failed to render new homepage html")
+					console.log(err);
+				    } else {
+					console.log("The newly rendered homepage html was saved!");
+				    }
+				}); 				
+			    });
+			};
+			var errcb = build_errfn('unable to retrieve orders');
+		    global.db.Order.allToJSON(successcb, errcb);
+		    
+		}, DB_REFRESH_INTERVAL_SECONDS*1000); 
+
+		// Start a simple daemon to refresh Coinbase orders periodically
+/*		setInterval(function() {
 		    console.log("Refresh news db at " + new Date());
 		    global.db.Order.refreshFromCoinbase(cb);
-		}, DB_REFRESH_INTERVAL_SECONDS*1000);
+		}, DB_REFRESH_INTERVAL_SECONDS*1000); */
 		cb(null);
-	    }
+	    } 
 	]);
     }
 });
 
 // 404 error handling must go last see: http://expressjs.com/faq.html how do you handle 404s? 
 app.use(function(req, res, next){
-  res.send(404, 'Sorry cant find that!');
+  res.render('404');
 });

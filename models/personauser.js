@@ -15,35 +15,28 @@ var uu = require('underscore');
 var coinbase = require('./coinbase');
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define("bbcstory", {
-	title: {type: DataTypes.STRING},
-	thumbnail: {type: DataTypes.STRING(150), allowNull: false},
-	link: {type: DataTypes.STRING(150), allowNull: false},
-	published: {type: DataTypes.BIGINT, allowNull: false},
-	description: {type: DataTypes.STRING(600), allowNull: false}
+    return sequelize.define("personausers", {
+	email: {type: DataTypes.STRING(75), unique: true, allowNull:false},
     }, {
 	classMethods: {
-	    numOrders: function() {
+            findPersonaUser: function(personaEmail, cb){
+            var userEmail  = personaEmail;
+                var _User = this;
+                _User.find({where: {email: userEmail}}).success(function(dbUserEmail){
+                    cb(dbUserEmail);
+                    });
+                },
+	  
+	    numPersonaUsers: function() {
 		this.count().success(function(c) {
-		    console.log("There are %s Orders", c);});
+		    console.log("There are %s unique Persona Users", c);});
 	    },
 	    allToJSON: function(successcb, errcb) {
-		this.findAll({order: 'updatedAt DESC',limit: '60'})
+		this.findAll()
 		    .success(function(orders) {
 			successcb(uu.invoke(orders, 'toJSON'));
 		    })
 		    .error(errcb);
-	    },
-	    totals: function(successcb, errcb) {
-		this.findAll().success(function(orders) {
-		    var total_funded = 0.0;
-		    orders.forEach(function(order) {
-			total_funded += parseFloat(order.amount);
-		    });
-		    var totals = {total_funded: total_funded,
-				  num_orders: orders.length};
-		    successcb(totals);
-		}).error(errcb);
 	    },
 	    addAllFromJSON: function(orders, errcb) {
 		/*
@@ -128,18 +121,18 @@ module.exports = function(sequelize, DataTypes) {
 		    });
 		}
 	    },
-	    addBBCNewsfromJSON: function(bbc_story_obj, cb) {
+	    addPersonaUserElseContinue: function(personaEmail, cb) {
 		/*
-		  Add from JSON only if order has not already been added to
+		  Add user email only if user email has not already been added to
 		  our database.
 
-		  Note the tricky use of var _Order. We use this to pass in
-		  the Order class to the success callback, as 'this' within
-		  the scope of the callback is redefined to not be the Order
-		  class but rather an individual Order instance.
+		  Note the tricky use of var _User. We use this to pass in
+		  the PersonaUser class to the success callback, as 'this' within
+		  the scope of the callback is redefined to not be the PersonaUser
+		  class but rather an individual PersonaUser instance.
 
 		  Put another way: within this classmethod, 'this' is
-		  'Order'. But within the callback of Order.find, 'this'
+		  'PersonaUser'. But within the callback of Order.find, 'this'
 		  corresponds to the individual instance. We could also
 		  do something where we accessed the class to which an instance
 		  belongs, but this method is a bit more clear.
@@ -148,68 +141,33 @@ module.exports = function(sequelize, DataTypes) {
 		  http://tobyho.com/2011/11/02/callbacks-in-loops/
 		  Note that when using a for loop we need to provide a variable in the scope of the loop that does not alter as the loop continues we do this by passing the value of i to an inner function as ii.
 		*/
-		var stories = bbc_story_obj; // story json from bbc api
-		var _Stories = this;
-		for (var i = 0, len = stories.length; i < len; i++){
-		    !function outer(ii){
-		    _Stories.find({where: {title: stories[ii].title}}).success(function(story_instance) {
-			if (story_instance) {
-			    // story already exists, do nothing
-			    console.log("story exists - updating current story!");
-			    story_instance.updateAttributes({
-				published: stories[ii].published,
-				thumbnail: stories[ii].thumbnail,
-				link: stories[ii].link,
-				description: stories[ii].description
-			    }).success(function() {
-				cb();
-			    }).error(function(err) {
-				cb(err);
-			    });
+		var userEmail  = personaEmail;
+		var _User = this;
+		_User.find({where: {email: userEmail}}).success(function(dbUserEmail) {
+			if (dbUserEmail) {
+			    // user already exists, do nothing
+			    console.log("Persona user exists! Welcome back :)");
+			    cb();
 			} else {
-			    /* check if the image url is already referenced in the database - may overwrite story details */
-			     _Stories.find({where: {thumbnail: stories[ii].thumbnail}}).success(function(story_instance2) {
-				 if (story_instance) {
-				     console.log("thumbnail exists - updating current story!");
-				     story_instance2.updateAttributes({
-					 published: stories[ii].published,
-					 title: stories[ii].title,
-					 link: stories[ii].link,
-					 description: stories[ii].description
-				     }).success(function() {
+			    console.log("Persona user doesn't exist - Woop! creating...");
+				     if(userEmail.length > 74){
+					 console.log("Oops crazy long email addresses not welcome here!");
 					 cb();
-				     }).error(function(err) {
-					 cb(err);
+				     }
+			             var new_user_instance = _User.build({
+					 email: userEmail
 				     });
-				 } else {
-				     if (stories[ii].link.match(/^.*sport.*$/)){
-					 console.log("sport - no thanks");
-					 } else {
-				     console.log("story doesn't exist - creating...");
-				     var new_story_instance = _Stories.build({
-					 title: stories[ii].title,
-					 published: stories[ii].published,
-					 thumbnail: stories[ii].thumbnail,
-					 link: stories[ii].link,
-					 description: stories[ii].description
-				     });
-				     new_story_instance.save().success(function() {
+				     new_user_instance.save().success(function() {
 					 cb();
 				     }).error(function(err) {
 					 cb(err);
 				     });
 				 };
-				 };
-				 });
-			}
-			});
-			}(i)
-			}
-										      
+				 });						      
 			    /*
 			       Above Build instance and save.
 
-			       Uses the _Order from the enclosing scope,
+			       Uses the _User from the enclosing scope,
 			       as 'this' within the callback refers to the current
 			       found instance.
 
@@ -218,8 +176,6 @@ module.exports = function(sequelize, DataTypes) {
 			       corresponding to 1e-8 BTC, aka 'Bitcents') to
 			       BTC.
 			    */ 
-		   
-		
 		
 	    },
 	    refreshFromCoinbase: function(cb) {
@@ -231,7 +187,10 @@ module.exports = function(sequelize, DataTypes) {
 		  here; we've removed that for the sake of clarity.
 		*/
 		var _Story = this;
-		coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){
+		cb();
+		
+		/* Deleted below shortly?
+		   coinbase.get_bbc_world_news_json(function(err, bbc_world_stories){
 		    if(err){
 			console.log("refresh not possible at this time from BBC World stories api");
 			cb();
@@ -239,7 +198,7 @@ module.exports = function(sequelize, DataTypes) {
 			    console.log("refresh should be successful from BBC World stories api");
 			    _Story.addBBCNewsfromJSON(bbc_world_stories, cb);
 			    };
-		});
+		});*/ 
 /* now redundant -- prepare for deletion
 		coinbase.get_coinbase_json(1, function(err, orders) {
 		    _Order.addAllFromJSON(orders, cb);

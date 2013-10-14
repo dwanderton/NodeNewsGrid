@@ -16,11 +16,7 @@
     <link href="css/grid.css" rel="stylesheet">
   <!-- attempt to get bg working -->
 <style type="text/css">
-body { background: url(img/bg.jpg) no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+body { 
   /* padding added to support fixed navbar */
   padding-top: 70px;
 }
@@ -51,13 +47,28 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
             $(this).fadeTo('fast', 1);
         }, function(){
             $(this).fadeTo('fast', 0.5);
-        });
+            if (!$(this).hasClass("indb")){
+              var storyclass = $(this).parent().parent().attr('class').split(/\s/);
+              $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
+              $(this).addClass("indb");
+            };
+      });
+      
+    $.getJSON("/api/storyread", function( data ){
+      $.each(data, function(dataElement, dataValue){
+      var fadeMe = "div.";
+      fadeMe += dataValue.bbcpublished; 
+      fadeMe += " img";
+      $(fadeMe).fadeTo('fast', 0.5);
+      $(fadeMe).addClass("indb");
+      });
+			
+    });
       });
     </script>
     <!-- hoverintent finish -->
-    
     <!-- Google font for logo -->
-	 <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 	 <style>
 	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
 	   </style>
@@ -65,7 +76,6 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
 </head>
 
   <body>
-
     <!-- Fixed panel Navigation here -->
 <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -79,28 +89,32 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <li class="active"><a href="/"><span class="glyphicon glyphicon-home"></span></a></li>
+            <li><a href="/favorites"><span class="glyphicon glyphicon-star"></span></a></li>
+            <li><a href="/popular"><span class="glyphicon glyphicon-eye-open"></span></a></li>
+            <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span></a></li>
+            <li><a href="#about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+	    <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></li>
+<!--            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		<span class="glyphicon glyphicon-user"</span>
+		<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
+                <li><a href="#">Another action</a></li> 
                 <li class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li><a href="#">One more separated link</a></li> -->
               </ul>
             </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Default</a></li>
-            <li><a href="#">Option 1</a></li>
+<!--
+	    <li><a href="#">Option 1</a></li>
             <li><a href="#">Option 2</a></li>
-          </ul>
+-->    
+</ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
@@ -118,9 +132,9 @@ if (60 >= world_bbc_stories.length-1){
  var i = 60;
  var j = 60;
 }
-for (i; i > 0 ; i--) { 
+for (i; i >= 0 ; i--) { 
     // display stories currently in db %>
-	<div class="col-lg-1 col-md-1 col-sm-2 col-xs-3">
+        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	  </a>
@@ -133,7 +147,7 @@ for (i; i > 0 ; i--) {
     </div> <!-- /container -->
   <!-- Modal -->
 
-<% for (var j; j > 0 ; j--) { 
+<% for (var j; j >= 0 ; j--) { 
     // modals for stories currently in db %>
   <div class="modal fade" id="storyModal<%= j %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= j %>" aria-hidden="true">
     <div class="modal-dialog">                                                                                                                                                     
@@ -143,12 +157,14 @@ for (i; i > 0 ; i--) {
           <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>                                                                                           
         </div>                                                                                                                 
         <div class="modal-body">
-	      	    <img data-toggle="tooltip" src="<%= world_bbc_stories[j].thumbnail %>" title="<%= world_bbc_stories[j].title %>" class="tooltipnow" style="height: 81px; width: 144px;">
-       <%= world_bbc_stories[j].description %>                                                                                               
-	                
-        </div>                                                                                                                                                                     
-        <div class="modal-footer">                                                                                                                                                 
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>                                                                                        
+	  <div class="row">
+	    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+	      <img src="<%= world_bbc_stories[j].thumbnail %>">
+	    </div>
+	    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+	      <%= world_bbc_stories[j].description %> View the <a href="<%= world_bbc_stories[j].link %>" target="_blank">[full story]</a>.
+	    </div>
+	  </div>              
         </div>                                                                                                                                                                     
       </div><!-- /.modal-content -->                                                                                                                                               
     </div><!-- /.modal-dialog -->                                                                                                                                                  
