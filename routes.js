@@ -73,7 +73,7 @@ var dashboardfn = function(request, response) {
 
 var popularfn = function(req, res){
     var showMostPop = function(){
-	res.render("rmostpop");
+	res.render("rpopular");
     };
     ensureAuthenticated(req, res, showMostPop());
 };
