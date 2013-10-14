@@ -43,9 +43,7 @@ var build_errfn = function(errmsg, response) {
    the query to the database, and packaging it all up in a request.
 */
 var indexfn = function(req, res) {
-    console.log("index called");
     var showIndex = function(){ 
-	console.log("show index called");
 	res.render("rhomepage");
 	};
     ensureAuthenticated(req, res, showIndex());
