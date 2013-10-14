@@ -48,10 +48,13 @@ body {
     <!-- Lets get our fade on -->
     <script>
       $(document).ready(function() {
+        $('div.col-lg-1 a').children('.label-viewed').fadeTo('fast',0);
         $('div.col-lg-1 img').hoverIntent(function(){
             $(this).fadeTo('fast', 1);
+            $(this).parent().children('.label-viewed').fadeTo('fast',1);
         }, function(){
             $(this).fadeTo('fast', 0.5);
+            $(this).parent().children('.label-viewed').fadeTo('fast',0);
             if (!$(this).hasClass("indb")){
               var storyclass = $(this).parent().parent().attr('class').split(/\s/);
               $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
