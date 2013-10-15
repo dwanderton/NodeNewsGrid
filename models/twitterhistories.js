@@ -12,6 +12,13 @@ module.exports = function(sequelize, DataTypes) {
 	bbcpublished: {type: DataTypes.BIGINT, allowNull: false}
     }, {
 	classMethods: {
+	    storiesReadSince: function(dateSince, successcb, errcb){
+		console.log("date since: "+ dateSince);
+		this.findAll({ where:["'createdAt' > ?", dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+		    successcb(storiesRead);
+		}).error(errcb);
+	    },
+
 	    numPersonaStoriesRead: function() {
 		this.count().success(function(c) {
 		    console.log("There have been  %s stories read by Persona Users", c);});

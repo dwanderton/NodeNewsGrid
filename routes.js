@@ -179,6 +179,16 @@ var api_storyreadfn = function(req, res) {
         }
 };
 
+var api_popularfn = function(req, res) {
+    var successcb = function(storiesRead) {
+	var data = storiesRead;
+	res.json(data);
+    };
+    var errcb = build_errfn('error requesting stories viewed count',res);
+    var dateSince = "2013-10-06 08:15:24.613+00";
+    ensureAuthenticated(req, res, global.db.TwitterHistory.storiesReadSince(dateSince, successcb, errcb));
+};
+
 var refresh_orderfn = function(request, response) {
     var cb = function(err) {
 	if(err) {
@@ -231,6 +241,7 @@ var ROUTES = define_routes({
     '/orders': [undefined, orderfn],
     '/api/orders': [undefined, api_orderfn],
     '/api/storyread': [undefined, api_storyreadfn],
+    '/api/popular': [undefined, api_popularfn],
     '/refresh_orders': [undefined, refresh_orderfn]
 });
 
