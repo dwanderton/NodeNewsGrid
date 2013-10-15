@@ -20,6 +20,17 @@ body {
   /* padding added to support fixed navbar */
   padding-top: 70px;
 }
+.label-viewed {
+    visibility: hidden;
+    position:absolute;
+    bottom:10px;
+    right:10px;
+}
+/* prevent glyph from being cut off on the right hand side*/
+.glyphicon {
+    display:inline;
+}
+
 
 </style>
   <!-- lets get ac working -->
@@ -137,6 +148,9 @@ for (i; i >= 0 ; i--) {
         <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
+	     <span class="label-viewed">
+              <span class="label label-info"><span class="glyphicon glyphicon-star"></span></span>
+            </span>
 	  </a>
 	</div>
 <% } %>
