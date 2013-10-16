@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 	    storiesReadSince: function(dateSince, successcb, errcb){
 		console.log("date since: "+ dateSince);
-		this.findAll({ where:["'createdAt' > ?", dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+		this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
 		    successcb(storiesRead);
 		}).error(errcb);
 	    },
