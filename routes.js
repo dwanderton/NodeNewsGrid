@@ -185,7 +185,10 @@ var api_popularfn = function(req, res) {
 	res.json(data);
     };
     var errcb = build_errfn('error requesting stories viewed count',res);
-    var dateSince = "2013-10-06 08:15:24.613+00";
+    var today = new Date();
+    var dateOffset = (24*60*60*1000) * 30; //30 days
+    var myDate = new Date(today.getTime() - dateOffset);
+    var dateSince = myDate.toUTCString();
     ensureAuthenticated(req, res, global.db.TwitterHistory.storiesReadSince(dateSince, successcb, errcb));
 };
 
