@@ -18,6 +18,11 @@ module.exports = function(sequelize, DataTypes) {
 		    successcb(storiesRead);
 		}).error(errcb);
 	    },
+	    storiesReadSinceTest: function(dateSince){
+		console.log("Test date since: "+ dateSince);
+		this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+		    return storiesRead;});
+	    },
 
 	    numPersonaStoriesRead: function() {
 		this.count().success(function(c) {
