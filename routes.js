@@ -194,7 +194,27 @@ var api_popularfn = function(req, res) {
     var myDate = new Date(today.getTime() - dateOffset);
     var dateSince = myDate.toUTCString();
     // test db function return to console
-        console.log( global.db.TwitterHistory.storiesReadSinceTest(dateSince));
+    //    console.log( global.db.TwitterHistory.storiesReadSinceTest(dateSince));
+    
+    function async(arg, callback) {
+	console.log('do something with \''+arg+'\', return 1 sec later');
+	setTimeout(function() {  global.db.TwitterHistory.storiesReadSinceJSON(dateSince, callback); }, 1000);
+    }
+    function final() { console.log('Done', results); }
+
+    var items = [4, 5, 6 ];
+    var results = [];
+
+    items.forEach(function(item) {
+	async(item, function(result){
+	    results.push(result);
+	    if(results.length == items.length) {
+		final();
+	    }
+	})
+    });
+
+
 
     ensureAuthenticated(req, res, global.db.TwitterHistory.storiesReadSince(dateSince, successcb, errcb));
 };

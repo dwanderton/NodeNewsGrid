@@ -18,10 +18,11 @@ module.exports = function(sequelize, DataTypes) {
 		    successcb(storiesRead);
 		}).error(errcb);
 	    },
-	    storiesReadSinceTest: function(dateSince){
-		console.log("Test date since: "+ dateSince);
-		this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
-		    return storiesRead;});
+	    storiesReadSinceJSON: function(dateSince, cb){
+		console.log("Test date since: "+ dateSince + "cb " + cb); 
+		   this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+		    var stringData = JSON.stringify(storiesRead);
+		    cb(stringData);});
 	    },
 
 	    numPersonaStoriesRead: function() {
