@@ -193,8 +193,6 @@ var api_popularfn = function(req, res) {
     var dateOffset = (24*60*60*1000) * 30; //30 days
     var myDate = new Date(today.getTime() - dateOffset);
     var dateSince = myDate.toUTCString();
-    // test db function return to console
-    //    console.log( global.db.TwitterHistory.storiesReadSinceTest(dateSince));
     
     function async(arg, callback) {
 	console.log('Retrieve histories from \''+arg+'\', to create most popular page');
@@ -213,7 +211,18 @@ var api_popularfn = function(req, res) {
     function final() { 
 	console.log('Done', results.length); 
 	console.log(results[0][0]['bbcpublished']);
-	res.json(results);
+	// below sort inspired by  http://stackoverflow.com/questions/14299783/javascript-count-duplicate-json-values-and-sort-count-along-with-associative-k
+	var sortedPopular = {};
+	results.forEach(function(element, index, array){
+	    element.forEach(function(element,index,array){
+		var value = element['bbcpublished'];
+		var count = (sortedPopular[value] || 0) + 1;
+		sortedPopular[value] = count;
+	    });
+	});
+
+ 
+	res.json(sortedPopular);
     }
 
     var services = ['fb', 'tw', 'ps'];
