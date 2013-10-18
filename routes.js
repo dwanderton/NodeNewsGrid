@@ -197,18 +197,32 @@ var api_popularfn = function(req, res) {
     //    console.log( global.db.TwitterHistory.storiesReadSinceTest(dateSince));
     
     function async(arg, callback) {
-	console.log('do something with \''+arg+'\', return 1 sec later');
-	setTimeout(function() {  global.db.TwitterHistory.storiesReadSinceJSON(dateSince, callback); }, 1000);
+	console.log('Retrieve histories from \''+arg+'\', to create most popular page');
+	switch(arg){
+	    case 'fb':
+	        global.db.FacebookHistory.storiesReadSinceJSON(dateSince, callback);
+	        break;
+	    case 'tw':
+	        global.db.TwitterHistory.storiesReadSinceJSON(dateSince, callback);
+	        break;
+	    case 'ps':
+	        global.db.PersonaHistory.storiesReadSinceJSON(dateSince, callback);
+	        break;
+	    }
     }
-    function final() { console.log('Done', results); }
+    function final() { 
+	console.log('Done', results.length); 
+	console.log(results[0][0]['bbcpublished']);
+	res.json(results);
+    }
 
-    var items = [4, 5, 6 ];
+    var services = ['fb', 'tw', 'ps'];
     var results = [];
 
-    items.forEach(function(item) {
+    services.forEach(function(item) {
 	async(item, function(result){
-	    results.push(result);
-	    if(results.length == items.length) {
+	    results.push(JSON.parse(result));
+	    if(results.length == services.length) {
 		final();
 	    }
 	})
