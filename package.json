@@ -24,6 +24,7 @@
     "npm": "1.2.30"
   },
   "devDependencies": {
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.6.2"
   }
 }
