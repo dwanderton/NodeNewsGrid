@@ -212,18 +212,39 @@ var api_popularfn = function(req, res) {
 	console.log('Done', results.length); 
 	console.log(results[0][0]['bbcpublished']);
 	// below sort inspired by  http://stackoverflow.com/questions/14299783/javascript-count-duplicate-json-values-and-sort-count-along-with-associative-k
-	var sortedPopular = {};
+	var countedPopular = {};
 	results.forEach(function(element, index, array){
 	    element.forEach(function(element,index,array){
 		var value = element['bbcpublished'];
-		var count = (sortedPopular[value] || 0) + 1;
-		sortedPopular[value] = count;
+		var count = (countedPopular[value] || 0) + 1;
+		countedPopular[value] = count;
 	    });
 	});
+	var sortedPopular = [];
 
- 
-	res.json(sortedPopular);
-    }
+	//loop through all the keys in the sortedPopular object
+	for(var key in countedPopular) {
+
+	    //here we check that the results object *actually* has
+	    //the key. because of prototypal inheritance in javascript there's
+	    //a chance that someone has modified the Object class prototype
+	    //with some extra properties. We don't want to include them in the
+	    //ranking, so we check the object has it's *own* property.
+
+	    sortedPopular.push({value:key, count:countedPopular[key]}); 
+
+	}
+	var popular = 	sortedPopular.sort(function(a, b) { return b.count - a.count; });
+	var jsonReturnSorted = {};
+	popular.forEach(function(element, index, array){
+	    if(index < 60){
+		console.log(index);
+		jsonReturnSorted[element.value] = element.count;
+	    };
+	});
+	res.json(jsonReturnSorted);
+	    
+	}
 
     var services = ['fb', 'tw', 'ps'];
     var results = [];
