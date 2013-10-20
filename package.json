@@ -1,7 +1,7 @@
 {
-  "name": "bitstarter-leaderboard",
-  "version": "0.0.1",
-  "description": "Bitcoin crowdfunder template suitable for leaderboard",
+  "name": "Newsgrid",
+  "version": "0.3.0",
+  "description": "Changing the way the news is viewed today.",
   "main": "web.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,5 +22,8 @@
   "engines": {
     "node": "0.10.12",
     "npm": "1.2.30"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1"
   }
 }
