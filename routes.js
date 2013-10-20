@@ -4,7 +4,8 @@ var uu      = require('underscore')
   , util = require('util')
   , PersonaStrategy = require('passport-persona').Strategy
   , TwitterStrategy = require('passport-twitter').Strategy
-  , Constants = require('./constants');
+  , Constants = require('./constants')
+  , Functions = require('./functions');
 
 var build_errfn = function(errmsg, response) {
     return function errfn(err) {
@@ -180,87 +181,22 @@ var api_storyreadfn = function(req, res) {
 };
 
 var api_popularfn = function(req, res) {
-    var successcb = function(storiesRead) {
-	var data = storiesRead;
-	res.json(data);
-    };
-    //test function return to console log
-    var testFunction = function(x,y){ return x*y};
-    console.log(testFunction(5,5));
-
+    
     var errcb = build_errfn('error requesting stories viewed count',res);
     var today = new Date();
     var dateOffset = (24*60*60*1000) * 30; //30 days
     var myDate = new Date(today.getTime() - dateOffset);
     var dateSince = myDate.toUTCString();
-    
-    function async(arg, callback) {
-	console.log('Retrieve histories from \''+arg+'\', to create most popular page');
-	switch(arg){
-	    case 'fb':
-	        global.db.FacebookHistory.storiesReadSinceJSON(dateSince, callback);
-	        break;
-	    case 'tw':
-	        global.db.TwitterHistory.storiesReadSinceJSON(dateSince, callback);
-	        break;
-	    case 'ps':
-	        global.db.PersonaHistory.storiesReadSinceJSON(dateSince, callback);
-	        break;
-	    }
-    }
-    function final() { 
-	console.log('Done', results.length); 
-	console.log(results[0][0]['bbcpublished']);
-	// below sort inspired by  http://stackoverflow.com/questions/14299783/javascript-count-duplicate-json-values-and-sort-count-along-with-associative-k
-	var countedPopular = {};
-	results.forEach(function(element, index, array){
-	    element.forEach(function(element,index,array){
-		var value = element['bbcpublished'];
-		var count = (countedPopular[value] || 0) + 1;
-		countedPopular[value] = count;
-	    });
-	});
-	var sortedPopular = [];
-
-	//loop through all the keys in the sortedPopular object
-	for(var key in countedPopular) {
-
-	    //here we check that the results object *actually* has
-	    //the key. because of prototypal inheritance in javascript there's
-	    //a chance that someone has modified the Object class prototype
-	    //with some extra properties. We don't want to include them in the
-	    //ranking, so we check the object has it's *own* property.
-
-	    sortedPopular.push({value:key, count:countedPopular[key]}); 
-
-	}
-	var popular = 	sortedPopular.sort(function(a, b) { return b.count - a.count; });
-	var jsonReturnSorted = {};
-	popular.forEach(function(element, index, array){
-	    if(index < 60){
-		console.log(index);
-		jsonReturnSorted[element.value] = element.count;
-	    };
-	});
-	res.json(jsonReturnSorted);
-	    
-	}
-
-    var services = ['fb', 'tw', 'ps'];
-    var results = [];
-
-    services.forEach(function(item) {
-	async(item, function(result){
-	    results.push(JSON.parse(result));
-	    if(results.length == services.length) {
-		final();
-	    }
-	})
-    });
-
-
-
-    ensureAuthenticated(req, res, global.db.TwitterHistory.storiesReadSince(dateSince, successcb, errcb));
+    var successcb = function(){
+	console.log("Success cb called")
+	
+	var cb = function(data){
+	    res.json(data);
+	};
+	Functions.get_popular_list(dateSince, 60, cb);
+    };
+    console.log("Api popular called");
+    ensureAuthenticated(req, res, successcb());
 };
 
 var refresh_orderfn = function(request, response) {
