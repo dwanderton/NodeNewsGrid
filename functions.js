@@ -6,6 +6,7 @@
 var NewsGridFunction = {
 
     get_popular_list: function(date_since, num_return_values, cb){
+	// returns json list of most popular entries from today to date_since, optional var num_return_values specifys the number of values to return - without num_return_values all will be returned.
 	console.log("get pop list called");
 	function async(arg, callback) {
             console.log('Retrieve histories from \''+arg+'\', to create most popular page');
@@ -47,14 +48,20 @@ var NewsGridFunction = {
             }
             var popular =   sortedPopular.sort(function(a, b) { return b.count - a.count; });
             var jsonReturnSorted = {};
-            popular.forEach(function(element, index, array){
-		if(index < num_return_values){
+            if(num_return_values != undefined){
+		popular.forEach(function(element, index, array){
+		    if(index < num_return_values){
+			jsonReturnSorted[element.value] = element.count;
+		    } else { return }
+		});
+	    } else { 
+		popular.forEach(function(element, index, array){
                     jsonReturnSorted[element.value] = element.count;
-		};
-            });
-            cb(jsonReturnSorted);
+		});
+	    };
+	    cb(jsonReturnSorted);
 
-        }
+      }
 
 	var services = ['fb', 'tw', 'ps'];
 	var results = [];
