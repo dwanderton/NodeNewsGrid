@@ -179,7 +179,13 @@ for (i; i >= 0 ; i--) {
         </div>
         <div class="modal-footer">
 	  <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-	    <p class="text-center"><span class="glyphicon glyphicon-eye-open"></span> 123</p>
+	    <p class="text-center"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;
+	      <% if( popular_list[world_bbc_stories[j].published]){ %> 
+	        <%= popular_list[world_bbc_stories[j].published] %>
+	      <% } else { %> 
+	        0 
+	      <% }%>
+	    </p>
 	  </span>
 	  <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
 	    <p class="text-center"><span class="glyphicon glyphicon-star"></span></p>
