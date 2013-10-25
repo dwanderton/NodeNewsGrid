@@ -301,33 +301,56 @@ global.db.sequelize.sync().complete(function(err) {
 
 		// Start a daemon to auto construct the homepage grid to a static file
 		setInterval(function() {
-		    console.log("Construct Homepage at " + new Date());
-			var successcb = function(world_bbc_stories_json){
-		 	    app.render("homepage", {
-				world_bbc_stories: world_bbc_stories_json,
-				name: Constants.APP_NAME,
-				title:  Constants.APP_NAME,
-				test_news_image: Constants.TESTIMAGE,
-				product_name: Constants.PRODUCT_NAME,
-				twitter_username: Constants.TWITTER_USERNAME,
-				twitter_tweet: Constants.TWITTER_TWEET,
-				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-			    }, function(err,html) {
-				// handling of the rendered html output goes here
-				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
-				    if(err) {
-					console.log("Failed to render new homepage html")
-					console.log(err);
-				    } else {
-					console.log("The newly rendered homepage html was saved!");
-				    }
-				}); 				
+   		    console.log("Construct Popular at " + new Date()); 
+		    var successcb = function(world_bbc_stories_json){
+			 app.render("homepage", {
+			     world_bbc_stories: world_bbc_stories_json,
+			     name: Constants.APP_NAME,
+			     title:  Constants.APP_NAME,
+			     test_news_image: Constants.TESTIMAGE,
+			     product_name: Constants.PRODUCT_NAME,
+			     twitter_username: Constants.TWITTER_USERNAME,
+			     twitter_tweet: Constants.TWITTER_TWEET,
+			     product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+			     coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+			 }, function(err,html) {
+			     // handling of the rendered html output goes here
+			     fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
+				 if(err) {
+				     console.log("Failed to render new homepage html")
+				     console.log(err);
+				 } else {
+				     console.log("The newly rendered homepage html was saved!");
+				 }
+			     }); 				
+			 });
+		     };
+		     var errcb = build_errfn('unable to retrieve orders');
+
+		     // Async task (same in all examples in this chapter)
+		     function async(arg, callback) {
+			 console.log('do something with \''+arg+'\', return 1 sec later');
+			 setTimeout(function() { callback(arg * 2); }, 1000);
+		     }
+		    // Final task (same in all the examples)
+		    function final() { console.log('Done', results); global.db.Order.allToJSON(successcb, errcb); }
+
+		    // A simple async series:
+		    var items = [ 1, 2, 3, 4, 5, 6, 7 ];
+		    var results = [];
+		    function series(item) {
+			if(item) {
+			    async( item, function(result) {
+				results.push(result);
+				return series(items.shift());
 			    });
-			};
-			var errcb = build_errfn('unable to retrieve orders');
-		    global.db.Order.allToJSON(successcb, errcb);
-		    
+			} else {
+			    return final();
+			}
+		    }
+		    series(items.shift());
+
+
 		}, DB_REFRESH_INTERVAL_SECONDS*1000); 
 
 
@@ -337,7 +360,7 @@ global.db.sequelize.sync().complete(function(err) {
 		// start a daemon to auto construct most popular page:
 
 		setInterval(function() {
-		    console.log("Construct Homepage at " + new Date());
+		    console.log("Construct Popular at " + new Date());
 			var successcb = function(world_bbc_stories_json){
 		 	    app.render("popular", {
 				world_bbc_stories: world_bbc_stories_json,
@@ -353,7 +376,7 @@ global.db.sequelize.sync().complete(function(err) {
 				// handling of the rendered html output goes here
 				fs.writeFile(__dirname + "/views/rpopular.ejs", html, function(err) {
 				    if(err) {
-					console.log("Failed to render new homepage html")
+					console.log("Failed to render new popular html")
 					console.log(err);
 				    } else {
 					console.log("The newly rendered popular html was saved!");

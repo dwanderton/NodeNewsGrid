@@ -77,7 +77,10 @@ var NewsGridFunction = {
 
 
     }
-
+    get_popular_list_full: function(dateSince, cb){ 
+	// gets popular list with unlimited results
+	get_popular_list(dateSince,undefined,cb); 
+    };
 
 /* examples of how to puoulate:  
    TWITTER_TWEET: "This student crowdfunder looks interesting.",
