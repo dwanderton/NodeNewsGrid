@@ -14,7 +14,12 @@ var express = require('express')
   , Functions = require('./functions');
 
 
-var build_errfn = function(errmsg, response) {                                                                                                                                                                  return function errfn(err) {                                                                                                                                                                                    console.log(err);                                                                                                                                                                                           response.send(errmsg);                                                                                                                                                                                  };                                                                                                                                                                                                      };
+var build_errfn = function(errmsg, response) {
+    return function errfn(err) { 
+	console.log(err);
+	response.send(errmsg);
+    };
+};
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -303,11 +308,15 @@ global.db.sequelize.sync().complete(function(err) {
 		// Start a daemon to auto construct the homepage grid to a static file
 		setInterval(function() {
    		    console.log("Construct Popular at " + new Date()); 
-		     // Async task (same in all examples in this chapter)
+		    var today = new Date();
+		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
+		    var myDate = new Date(today.getTime() - dateOffset);
+		    var dateSince = myDate.toUTCString(); 
+		     // Async task
 		     function async(arg, callback) {
 			 switch(arg){
 			 case 'viewed':
-			     Functions.get_popular_list_full(undefined, callback);
+			     Functions.get_popular_list_full(dateSince, callback);
 			     break;
 			 }
 		     }
