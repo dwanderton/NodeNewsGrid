@@ -10,7 +10,8 @@ var express = require('express')
   , TwitterStrategy = require('passport-twitter').Strategy
   , FacebookStrategy = require('passport-facebook').Strategy
   , Constants = require('./constants')
-  , ROUTES  = require('./routes');
+  , ROUTES  = require('./routes')
+  , Functions = require('./functions');
 
 
 var build_errfn = function(errmsg, response) {                                                                                                                                                                  return function errfn(err) {                                                                                                                                                                                    console.log(err);                                                                                                                                                                                           response.send(errmsg);                                                                                                                                                                                  };                                                                                                                                                                                                      };
@@ -329,14 +330,17 @@ global.db.sequelize.sync().complete(function(err) {
 
 		     // Async task (same in all examples in this chapter)
 		     function async(arg, callback) {
-			 console.log('do something with \''+arg+'\', return 1 sec later');
-			 setTimeout(function() { callback(arg * 2); }, 1000);
+			 switch(arg){
+			 case 'viewed':
+			     Functions.get_popular_list_full(undefined, callback);
+			     break;
+			 }
 		     }
 		    // Final task (same in all the examples)
 		    function final() { console.log('Done', results); global.db.Order.allToJSON(successcb, errcb); }
 
 		    // A simple async series:
-		    var items = [ 1, 2, 3, 4, 5, 6, 7 ];
+		    var items = ['viewed'];
 		    var results = [];
 		    function series(item) {
 			if(item) {
