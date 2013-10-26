@@ -411,9 +411,9 @@ global.db.sequelize.sync().complete(function(err) {
 			    });
 			    function compare(a,b) {
 				if (a["viewedCount"] < b["viewedCount"])
-				    return 1;
-				if (a["viewedCount"] > b["viewedCount"])
 				    return -1;
+				if (a["viewedCount"] > b["viewedCount"])
+				    return 1;
 				return 0;
 			    }
 			    console.log(typeof(resultsArray));

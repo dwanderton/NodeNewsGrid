@@ -1,8 +1,207 @@
-[
-<% for(i=0, len=popular_list_stories.length; i<len;i++){ %>
-<% if(i!=len-1){ %>
-<%= popular_list_stories[i] %>,
-<% }else{ %>
-<%= popular_list_stories[i] %>
-<% };}; %>
-]
+<!DOCTYPE html>
+<html lang="en"><head>
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="David Anderton 2013">
+
+    <title><%= title %></title>
+
+    <!-- Bootstrap core CSS -->
+<!-- Latest compiled and minified CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/grid.css" rel="stylesheet">
+  <!-- attempt to get bg working -->
+<style type="text/css">
+body { 
+  /* padding added to support fixed navbar */
+  padding-top: 70px;
+}
+/* add label for viewed count */
+.label-viewed {
+    visibility: hidden;
+    position:absolute;
+    bottom:10px;
+    right:10px;
+}
+/* prevent glyph from being cut off on the right hand side*/                                                                                                                                               
+.glyphicon {                                                                                                                                                                                              
+    display:inline;                                                                                                                                                                                        
+}
+</style>
+  <!-- lets get ac working -->
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- end jQuery-->
+
+    <!-- time to get tooltip working -->
+
+    <script type="text/javascript">
+    $(function () {
+        $(".tooltipnow").tooltip();
+    });
+    </script>
+    <!-- end of tooltip -->
+
+    <!-- HoverIntent start-->
+    <script src="js/hoverIntent.min.js"></script>
+
+    <!-- Lets get our fade on -->
+    <script>
+      $(document).ready(function() {
+        $('div.col-lg-1 a').children('.label-viewed').fadeTo('fast',0);
+        $('div.col-lg-1 img').hoverIntent(function(){
+            $(this).fadeTo('fast', 1);
+            $(this).parent().children('.label-viewed').css({"visibility": "visible"}).fadeTo('fast',1);
+        }, function(){
+            $(this).fadeTo('fast', 0.5);
+            $(this).parent().children('.label-viewed').fadeTo('fast',0);
+            if (!$(this).hasClass("indb")){
+              var storyclass = $(this).parent().parent().attr('class').split(/\s/);
+              $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
+              $(this).addClass("indb");
+            };
+      });
+      
+    $.getJSON("/api/storyread", function( data ){
+      $.each(data, function(dataElement, dataValue){
+      var fadeMe = "div.";
+      fadeMe += dataValue.bbcpublished; 
+      fadeMe += " img";
+      $(fadeMe).fadeTo('fast', 0.5);
+      $(fadeMe).addClass("indb");
+      });
+			
+    });
+      });
+    </script>
+    <!-- hoverintent finish -->
+    <!-- Google font for logo -->
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+	 <style>
+	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
+	   </style>
+    <!-- end google font for logo -->
+</head>
+
+  <body>
+    <!-- Fixed panel Navigation here -->
+<div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">&nbsp;NewsGrid&nbsp;</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/"><span class="glyphicon glyphicon-home"></span></a></li>
+            <li><a href="/favorites"><span class="glyphicon glyphicon-star"></span></a></li>
+            <li class="active"><a href="/popular"><span class="glyphicon glyphicon-eye-open"></span></a></li>
+            <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span></a></li>
+            <li><a href="#about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+	    <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></li>
+<!--            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		<span class="glyphicon glyphicon-user"</span>
+		<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li> 
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li> -->
+              </ul>
+            </li>
+<!--
+	    <li><a href="#">Option 1</a></li>
+            <li><a href="#">Option 2</a></li>
+-->    
+</ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+    <!-- Grid Container below -->
+    <div class="grid-container">
+      
+      <div class="row">
+ <% 
+if (60 >= popular_list_stories.length-1){
+ var i = popular_list_stories.length-1;
+ var j = popular_list_stories.length-1;
+} else {
+ var i = 60;
+ var j = 60;
+}
+for (i; i >= 0 ; i--) { 
+    // display stories currently in db %>
+        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= popular_list_stories[i].published %>">
+	  <a data-toggle="modal" href="#storyModal<%= i %>">  
+	    <img data-toggle="tooltip" src="<%= popular_list_stories[i].thumbnail %>" title="<%= popular_list_stories[i].title %>" class="tooltipnow" />
+	    <span class="label-viewed">
+	      <span class="label label-success"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;<%= popular_list_stories[i].viewedCount %></span>
+	    </span>
+	  </a>
+	</div>
+<% } %>
+
+      </div>
+
+
+    </div> <!-- /container -->
+  <!-- Modal -->
+
+<% for (var j; j >= 0 ; j--) { 
+    // modals for stories currently in db %>
+  <div class="modal fade" id="storyModal<%= j %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= j %>" aria-hidden="true">
+    <div class="modal-dialog">                                                                                                                                                     
+      <div class="modal-content">                                                                                                                                                  
+        <div class="modal-header">                                                                                                                                                 
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
+          <h4 class="modal-title"><%= popular_list_stories[j].title %></h4>                                                                                           
+        </div>                                                                                                                 
+        <div class="modal-body">
+	  <div class="media">
+	    <div class="pull-left">
+	      <img class="thumbnail media-object" src="<%= popular_list_stories[j].thumbnail %>">
+	    </div>
+	    <div class="media-body">
+	      <%= popular_list_stories[j].description %> View the <a href="<%= popular_list_stories[j].link %>" target="_blank">[full story]</a>.
+	    </div>
+	  </div>              
+        </div>
+        <div class="modal-footer">
+          <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <p class="text-center"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;<%= popular_list_stories[j].viewedCount %></p>
+          </span>
+          <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <p class="text-center"><span class="glyphicon glyphicon-star"></span></p>
+          </span>
+          <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <p class="text-center"><span class="glyphicon glyphicon-share"></span></p>
+          </span>
+        </div>        
+      </div><!-- /.modal-content -->                                                                                                                                               
+    </div><!-- /.modal-dialog -->                                                                                                                                                  
+  </div><!-- /.modal -->                                                                                                                                                           
+ <% } %>
+                              
+
+
+
+</body>
+
+<!--Davidanderton2013--></html>
+
