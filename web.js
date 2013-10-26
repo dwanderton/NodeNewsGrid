@@ -307,7 +307,7 @@ global.db.sequelize.sync().complete(function(err) {
 
 		// Start a daemon to auto construct the homepage grid to a static file
 		setInterval(function() {
-   		    console.log("Construct Popular at " + new Date()); 
+   		    console.log("Construct Homepage at " + new Date()); 
 		    var today = new Date();
 		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
 		    var myDate = new Date(today.getTime() - dateOffset);
@@ -375,7 +375,98 @@ global.db.sequelize.sync().complete(function(err) {
 
 		// start a daemon to auto construct most popular page:
 
-		setInterval(function() {
+		setInterval(function() { 
+   		    console.log("Construct Popular at " + new Date()); 
+		    var today = new Date();
+		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
+		    var myDate = new Date(today.getTime() - dateOffset);
+		    var dateSince = myDate.toUTCString(); 
+		     // Async task
+		     function async(arg, callback) {
+			 switch(arg){
+			 case 'get popular':
+			     Functions.get_popular_list(dateSince, 60, callback);
+			     break;
+			 }
+		     }
+		    // Async retrieve stories from db
+		    function retrieveStories() { 
+			function async(arg, callback) {
+			    
+			    console.log('do something with \''+arg+'\', return 1 sec later');
+			    setTimeout(function() { callback(arg); }, 1000);
+			}
+			function final() { 
+
+			    console.log('Done', results); console.log("results len: " + results[0].length +  "popularList len: " + popularList[0].length); }
+			
+			popularList.forEach(function(item) {
+			    async(item, function(result){
+				results.push(result);
+				if(results.length == popularList.length) {
+				    final();
+				}
+			    })
+			});		    
+
+
+		    };
+		    
+		    // A simple async series:
+		    var items = ['get popular'];
+		    var popularList = [];
+		    var results = [];
+		    function series(item) {
+			if(item) {
+			    async( item, function(result) {
+				popularList.push(result);
+				return series(items.shift());
+			    });
+			} else {
+			    return retrieveStories();
+			}
+		    }
+		    series(items.shift());
+
+/*
+//final wrapper
+
+			var successcb = function(world_bbc_stories_json){
+
+			};
+			var errcb = build_errfn('unable to retrieve orders');
+
+			global.db.Order.allToJSON(successcb, errcb); 
+
+
+//final success err cb
+
+			    app.render("homepage", {
+				popular_list: results[0],
+				world_bbc_stories: world_bbc_stories_json,
+				name: Constants.APP_NAME,
+				title:  Constants.APP_NAME,
+				test_news_image: Constants.TESTIMAGE,
+				product_name: Constants.PRODUCT_NAME,
+				twitter_username: Constants.TWITTER_USERNAME,
+				twitter_tweet: Constants.TWITTER_TWEET,
+				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+			    }, function(err,html) {
+				// handling of the rendered html output goes here
+				fs.writeFile(__dirname + "/views/rpopular.ejs", html, function(err) {
+				    if(err) {
+					console.log("Failed to render new popular html")
+					console.log(err);
+				    } else {
+					Console.log("The newly rendered popular html was saved!");
+				    }
+				}); 				
+			    });
+
+
+
+//old
 		    console.log("Construct Popular at " + new Date());
 			var successcb = function(world_bbc_stories_json){
 		 	    app.render("popular", {
@@ -402,7 +493,7 @@ global.db.sequelize.sync().complete(function(err) {
 			};
 			var errcb = build_errfn('unable to retrieve orders');
 		    global.db.Order.allToJSON(successcb, errcb);
-		    
+*/		    
 		}, DB_REFRESH_INTERVAL_SECONDS*1000); 
 
 

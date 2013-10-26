@@ -73,16 +73,21 @@ var ncoinbase_page2coinbase_json = function(npage, cb) {
 
 var bbc_api_url2world_news_json = function(cb) {
    request.get(bbc_api_url(), function(err,resp,body){
-       var world_news_json = JSON.parse(body);
-       console.log("Finished API request for BBC World News Stories"); 
-       if(world_news_json === null || world_news_json === undefined){       
-	   console.log("Error parsing BBC World stories api");
-	   cb(1, undefined);
+       if(body != undefined){
+	   var world_news_json = JSON.parse(body);
+	   console.log("Finished API request for BBC World News Stories"); 
+	   if(world_news_json === null || world_news_json === undefined){       
+	       console.log("Error parsing BBC World stories world_news_json");
+	       cb(1, undefined);
 	   } else {
 	       console.log("BBC World stories api var not null - probable success");
       	       cb(null, world_news_json.stories);
+	   };
+	   } else {
+	       console.log("Error accessing BBC Stories API");
+	       cb(1, undefined);
 	       };
-   });
+    });
 };
 
 var get_bbc_world_news_json = bbc_api_url2world_news_json;
