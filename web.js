@@ -416,10 +416,7 @@ global.db.sequelize.sync().complete(function(err) {
 				    return 1;
 				return 0;
 			    }
-			    console.log(typeof(resultsArray));
  			    var sortedArray = resultsArray.sort(compare);
-			    console.log(sortedArray);
-			    console.log("time to render");
 			    
 			    //finally write results to popular html
 			    app.render("popular", {
