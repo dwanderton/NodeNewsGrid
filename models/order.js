@@ -23,6 +23,11 @@ module.exports = function(sequelize, DataTypes) {
 	description: {type: DataTypes.STRING(600), allowNull: false}
     }, {
 	classMethods: {
+	    findFromPublished: function(publishedID, cb){
+		this.find({where: {published: publishedID}}).success(function(storyFound) {
+                    cb(storyFound); 
+		});
+	    },
 	    numOrders: function() {
 		this.count().success(function(c) {
 		    console.log("There are %s Orders", c);});

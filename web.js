@@ -392,22 +392,51 @@ global.db.sequelize.sync().complete(function(err) {
 		    // Async retrieve stories from db
 		    function retrieveStories() { 
 			function async(arg, callback) {
-			    
 			    console.log('do something with \''+arg+'\', return 1 sec later');
-			    setTimeout(function() { callback(arg); }, 1000);
+			    global.db.Order.findFromPublished(arg, callback);
 			}
-			function final() { 
 
-			    console.log('Done', results); console.log("results len: " + results[0].length +  "popularList len: " + popularList[0].length); }
+			function final() { 
+			    console.log('Done', results.length);
+			    results.forEach(function(obj){
+				obj.viewedCount = popularList[0][obj.published];
+			    });
+			    function compare(a,b) {
+				if (a.viewedCount < b.viewedCount)
+				    return 1;
+				if (a.viewedCount > b.viewedCount)
+				    return -1;
+				return 0;
+			    }
+
+			    results.sort(compare);
+			    results.forEach(function(obj){ console.log(obj.viewedCount);});
+			}
+
+			//get number of objects
+			var objnum = 0; 
+			for(key in popularList[0]){objnum++};
 			
-			popularList.forEach(function(item) {
-			    async(item, function(result){
-				results.push(result);
-				if(results.length == popularList.length) {
-				    final();
-				}
-			    })
-			});		    
+
+			// add in null count incase some queries dont return
+			var nullcount = 0;
+			
+			// begin async queries and construct a array of
+			for(key in popularList[0]){
+			    var storyKey = key;
+			    var storyValue = popularList[0][storyKey];
+			    async(storyKey, function(result){
+				if(result === null){
+				    nullcount++;
+ 				} else { 
+				    results.push(result);
+				    if(results.length + nullcount == objnum) {
+					console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
+					final();
+				    }
+				};
+			    });
+			};		    
 
 
 		    };
@@ -494,7 +523,7 @@ global.db.sequelize.sync().complete(function(err) {
 			var errcb = build_errfn('unable to retrieve orders');
 		    global.db.Order.allToJSON(successcb, errcb);
 */		    
-		}, DB_REFRESH_INTERVAL_SECONDS*1000); 
+		}, (DB_REFRESH_INTERVAL_SECONDS/3)*1000); 
 
 
 		// Start a simple daemon to refresh Coinbase orders periodically
