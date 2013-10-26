@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 	    findFromPublished: function(publishedID, cb){
 		this.find({where: {published: publishedID}}).success(function(storyFound) {
-                    cb(storyFound); 
+                    cb(JSON.stringify(storyFound)); 
 		});
 	    },
 	    numOrders: function() {

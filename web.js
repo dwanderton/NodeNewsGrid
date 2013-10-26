@@ -381,125 +381,49 @@ global.db.sequelize.sync().complete(function(err) {
 		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
 		    var myDate = new Date(today.getTime() - dateOffset);
 		    var dateSince = myDate.toUTCString(); 
-		     // Async task
-		     function async(arg, callback) {
-			 switch(arg){
-			 case 'get popular':
-			     Functions.get_popular_list(dateSince, 60, callback);
-			     break;
-			 }
-		     }
+		    // Async task
+		    function async(arg, callback) {
+			switch(arg){
+			case 'get popular':
+			    Functions.get_popular_list(dateSince, 60, callback);
+			    break;
+			}
+		    }
 		    // Async retrieve stories from db
 		    function retrieveStories() { 
 			function async(arg, callback) {
-			    console.log('do something with \''+arg+'\', return 1 sec later');
 			    global.db.Order.findFromPublished(arg, callback);
 			}
 
 			function final() { 
 			    console.log('Done', results.length);
+			    var resultsArray = [];
 			    results.forEach(function(obj){
-				obj.viewedCount = popularList[0][obj.published];
+				try {
+				    obj = JSON.parse(obj);
+				    obj.viewedCount = popularList[0][obj.published];
+				    resultsArray.push(obj);			
+				    
+				} catch(e){
+				    console.error("Parsing error:", e); 
+				}
+				
 			    });
 			    function compare(a,b) {
-				if (a.viewedCount < b.viewedCount)
+				if (a["viewedCount"] < b["viewedCount"])
 				    return 1;
-				if (a.viewedCount > b.viewedCount)
+				if (a["viewedCount"] > b["viewedCount"])
 				    return -1;
 				return 0;
 			    }
-
-			    results.sort(compare);
-			    results.forEach(function(obj){ console.log(obj.viewedCount);});
-			}
-
-			//get number of objects
-			var objnum = 0; 
-			for(key in popularList[0]){objnum++};
-			
-
-			// add in null count incase some queries dont return
-			var nullcount = 0;
-			
-			// begin async queries and construct a array of
-			for(key in popularList[0]){
-			    var storyKey = key;
-			    var storyValue = popularList[0][storyKey];
-			    async(storyKey, function(result){
-				if(result === null){
-				    nullcount++;
- 				} else { 
-				    results.push(result);
-				    if(results.length + nullcount == objnum) {
-					console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
-					final();
-				    }
-				};
-			    });
-			};		    
-
-
-		    };
-		    
-		    // A simple async series:
-		    var items = ['get popular'];
-		    var popularList = [];
-		    var results = [];
-		    function series(item) {
-			if(item) {
-			    async( item, function(result) {
-				popularList.push(result);
-				return series(items.shift());
-			    });
-			} else {
-			    return retrieveStories();
-			}
-		    }
-		    series(items.shift());
-
-/*
-//final wrapper
-
-			var successcb = function(world_bbc_stories_json){
-
-			};
-			var errcb = build_errfn('unable to retrieve orders');
-
-			global.db.Order.allToJSON(successcb, errcb); 
-
-
-//final success err cb
-
-			    app.render("homepage", {
-				popular_list: results[0],
-				world_bbc_stories: world_bbc_stories_json,
-				name: Constants.APP_NAME,
-				title:  Constants.APP_NAME,
-				test_news_image: Constants.TESTIMAGE,
-				product_name: Constants.PRODUCT_NAME,
-				twitter_username: Constants.TWITTER_USERNAME,
-				twitter_tweet: Constants.TWITTER_TWEET,
-				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-			    }, function(err,html) {
-				// handling of the rendered html output goes here
-				fs.writeFile(__dirname + "/views/rpopular.ejs", html, function(err) {
-				    if(err) {
-					console.log("Failed to render new popular html")
-					console.log(err);
-				    } else {
-					Console.log("The newly rendered popular html was saved!");
-				    }
-				}); 				
-			    });
-
-
-
-//old
-		    console.log("Construct Popular at " + new Date());
-			var successcb = function(world_bbc_stories_json){
-		 	    app.render("popular", {
-				world_bbc_stories: world_bbc_stories_json,
+			    console.log(typeof(resultsArray));
+ 			    var sortedArray = resultsArray.sort(compare);
+			    console.log(sortedArray);
+			    console.log("time to render");
+			    
+			    //finally write results to popular html
+			    app.render("popular", {
+				popular_list_stories: resultsArray,
 				name: Constants.APP_NAME,
 				title:  Constants.APP_NAME,
 				test_news_image: Constants.TESTIMAGE,
@@ -519,11 +443,58 @@ global.db.sequelize.sync().complete(function(err) {
 				    }
 				}); 				
 			    });
-			};
-			var errcb = build_errfn('unable to retrieve orders');
-		    global.db.Order.allToJSON(successcb, errcb);
-*/		    
-		}, (DB_REFRESH_INTERVAL_SECONDS/3)*1000); 
+			    
+			
+			    
+			}
+
+			    
+
+			    //get number of objects
+			    var objnum = 0; 
+			    for(key in popularList[0]){objnum++};
+			    
+
+			    // add in null count incase some queries dont return
+			    var nullcount = 0;
+			    
+			    // begin async queries and construct a array of
+			    for(key in popularList[0]){
+				var storyKey = key;
+				var storyValue = popularList[0][storyKey];
+				async(storyKey, function(result){
+				    if(result === null){
+					nullcount++;
+ 				    } else { 
+					results.push(result);
+					if(results.length + nullcount == objnum) {
+					    console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
+					    final();
+					}
+				    };
+				});
+			    };		    
+			 }
+
+			    
+			    
+			    // A simple async series:
+			    var items = ['get popular'];
+			    var popularList = [];
+			    var results = [];
+			    function series(item) {
+				if(item) {
+				    async( item, function(result) {
+					popularList.push(result);
+					return series(items.shift());
+				    });
+				} else {
+				    return retrieveStories();
+				}
+			    }
+			    series(items.shift());
+			
+		    }, (DB_REFRESH_INTERVAL_SECONDS/3)*1000); 
 
 
 		// Start a simple daemon to refresh Coinbase orders periodically
