@@ -161,11 +161,11 @@ for (i; i >= 0 ; i--) {
 <% for (var j; j >= 0 ; j--) { 
     // modals for stories currently in db %>
   <div class="modal fade" id="storyModal<%= j %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= j %>" aria-hidden="true">
-    <div class="modal-dialog">                                                                                                                                                     
-      <div class="modal-content">                                                                                                                                                  
-        <div class="modal-header">                                                                                                                                                 
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
-          <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>                                                                                           
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>
         </div>                                                                                                                 
         <div class="modal-body">
 	  <div class="media">
@@ -174,6 +174,7 @@ for (i; i >= 0 ; i--) {
 	    </div>
 	    <div class="media-body">
 	      <%= world_bbc_stories[j].description %> View the <a href="<%= world_bbc_stories[j].link %>" target="_blank">[full story]</a>.
+	      <a data-toggle="modal" href="<%= world_bbc_stories[j].link %>" data-target="#fullStoryModal">Click me</a>
 	    </div>
 	  </div>              
         </div>
@@ -199,7 +200,20 @@ for (i; i >= 0 ; i--) {
   </div><!-- /.modal -->                                                                                                                                                           
  <% } %>
                               
+<!-- fullStoryModal -->
 
+  <div class="modal fade" id="fullStoryModal" tabindex="-1" role="dialog" aria-labelledby="fullStoryModal" aria-hidden="true">
+    <div class="modal-dialog">                                                                                                                                                     
+      <div class="modal-content">
+        <div class="modal-header">
+        </div>                                                                                                                 
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+	</div>
+      </div><!-- /.modal-content -->                                                                                                                                               
+    </div><!-- /.modal-dialog -->                                                                                                                                                  
+  </div><!-- /.modal -->                                                                                                                               
 
 
 </body>

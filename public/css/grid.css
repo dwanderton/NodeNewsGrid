@@ -7,7 +7,7 @@ suspect the container css is messing up the grid layout. Overwrite the max-width
   max-width: 10000px;
 }
 
-img { width:100%;}
+.grid-container img { width:100%;}
 
 
 /* no add this currently
