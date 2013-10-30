@@ -156,16 +156,17 @@ module.exports = function(sequelize, DataTypes) {
 		var stories = bbc_story_obj; // story json from bbc api
 		var _Stories = this;
 		for (var i = 0, len = stories.length; i < len; i++){
-		    console.log(i +" out of " + len + ", and has type: " + typeof(storiesii)); 
+
 		    !function outer(ii){
-		    _Stories.find({where: {title: stories[ii].title}}).success(function(story_instance) {
+			stories[ii].published = stories[ii]['guid'][0]['_'].match(/\d*$(?!-)/)[0];
+		    _Stories.find({where: {title: stories[ii].title[0]}}).success(function(story_instance) {
 			if (story_instance) {
 			    // story already exists, do nothing
 			    console.log("story exists - updating current story!");
 			    story_instance.updateAttributes({
 				published: stories[ii].published,
-				thumbnail: stories[ii]['media:thumbnail'][1],
-				link: stories[ii][0]['guid'][0]['_'], //link element
+				thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+				link: stories[ii]['guid'][0]['_'], //link element
 				description: stories[ii].description[0]
 			    }).success(function() {
 				cb();
@@ -174,13 +175,13 @@ module.exports = function(sequelize, DataTypes) {
 			    });
 			} else {
 			    /* check if the image url is already referenced in the database - may overwrite story details */
-			     _Stories.find({where: {thumbnail: stories[ii]['media:thumbnail'][1]}}).success(function(story_instance2) {
+			     _Stories.find({where: {thumbnail: stories[ii]['media:thumbnail'][1]['$']['url']}}).success(function(story_instance2) {
 				 if (story_instance) {
 				     console.log("thumbnail exists - updating current story!");
 				     story_instance2.updateAttributes({
 					 published: stories[ii].published,
-					 title: stories[ii].title,
-					 link: stories[ii][0]['guid'][0]['_'], //link element
+					 title: stories[ii].title[0],
+					 link: stories[ii]['guid'][0]['_'], //link element
 					 description: stories[ii].description[0]
 				     }).success(function() {
 					 cb();
@@ -188,15 +189,15 @@ module.exports = function(sequelize, DataTypes) {
 					 cb(err);
 				     });
 				 } else {
-				     if (stories[ii].link.match(/^.*sport.*$/)){
+				     if (stories[ii]['guid'][0]['_'].match(/^.*sport.*$/)){
 					 console.log("sport - no thanks");
 					 } else {
 				     console.log("story doesn't exist - creating...");
 				     var new_story_instance = _Stories.build({
-					 title: stories[ii].title,
+					 title: stories[ii].title[0],
 					 published: stories[ii].published,
-					 thumbnail: stories[ii]['media:thumbnail'][1],
-					 link: stories[ii][0]['guid'][0]['_'], // link element
+					 thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+					 link: stories[ii]['guid'][0]['_'], // link element
 					 description: stories[ii].description[0]
 				     });
 				     new_story_instance.save().success(function() {
