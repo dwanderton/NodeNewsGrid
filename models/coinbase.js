@@ -110,7 +110,7 @@ var bbc_rss_url2world_news_json = function(cb) {
 	       };
 	   
 	   world_news_xml2js(function(storyList){
-	       world_news_json = JSON.stringify(storyList);
+	       world_news_json = storyList;
 	   });
        } catch (e) {
 	   console.log("Error parsing BBC API data: " + e);    
@@ -121,7 +121,7 @@ var bbc_rss_url2world_news_json = function(cb) {
 	   cb(1, undefined);
        } else {
 	   console.log("BBC World stories api var not null - probable success");
-      	   cb(null, world_news_json.stories);
+      	   cb(null, world_news_json);
        };
    });
 };
