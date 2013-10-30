@@ -163,7 +163,7 @@ module.exports = function(sequelize, DataTypes) {
 			    console.log("story exists - updating current story!");
 			    story_instance.updateAttributes({
 				published: stories[ii].published,
-				thumbnail: stories[ii].[media:thumbnail][1],
+				thumbnail: stories[ii]['media:thumbnail'][1],
 				link: stories[ii][0]['guid'][0]['_'], //link element
 				description: stories[ii].description[0]
 			    }).success(function() {
@@ -173,7 +173,7 @@ module.exports = function(sequelize, DataTypes) {
 			    });
 			} else {
 			    /* check if the image url is already referenced in the database - may overwrite story details */
-			     _Stories.find({where: {thumbnail: stories[ii][media:thumbnail][1]}}).success(function(story_instance2) {
+			     _Stories.find({where: {thumbnail: stories[ii]['media:thumbnail'][1]}}).success(function(story_instance2) {
 				 if (story_instance) {
 				     console.log("thumbnail exists - updating current story!");
 				     story_instance2.updateAttributes({
@@ -194,7 +194,7 @@ module.exports = function(sequelize, DataTypes) {
 				     var new_story_instance = _Stories.build({
 					 title: stories[ii].title,
 					 published: stories[ii].published,
-					 thumbnail: stories[ii][media:thumbnail][1],
+					 thumbnail: stories[ii]['media:thumbnail'][1],
 					 link: stories[ii][0]['guid'][0]['_'], // link element
 					 description: stories[ii].description[0]
 				     });
