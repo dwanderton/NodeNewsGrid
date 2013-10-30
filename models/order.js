@@ -156,6 +156,7 @@ module.exports = function(sequelize, DataTypes) {
 		var stories = bbc_story_obj; // story json from bbc api
 		var _Stories = this;
 		for (var i = 0, len = stories.length; i < len; i++){
+		    console.log(i +" out of " + len + ", and has type: " + typeof(storiesii)); 
 		    !function outer(ii){
 		    _Stories.find({where: {title: stories[ii].title}}).success(function(story_instance) {
 			if (story_instance) {
