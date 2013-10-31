@@ -259,54 +259,9 @@ for(var ii in ROUTES) {
 	}
 }
 
-global.db.sequelize.sync().complete(function(err) {
-    if (err) {
-	throw err;
-    } else {
-	var DB_REFRESH_INTERVAL_SECONDS = 30; //Change for production to 100 or 200
-	async.series([
-	    function(cb) {
-		// Mirror the orders before booting up the server
-		console.log("Initial pull from BBC News api at " + new Date());
-		global.db.Order.refreshFromCoinbase(cb);
-		
-		    console.log("Initial construct Homepage at " + new Date());
-			var successcb = function(world_bbc_stories_json){
-		 	    app.render("homepage", {
-				world_bbc_stories: world_bbc_stories_json,
-				name: Constants.APP_NAME,
-				title:  Constants.APP_NAME,
-				test_news_image: Constants.TESTIMAGE,
-				product_name: Constants.PRODUCT_NAME,
-				twitter_username: Constants.TWITTER_USERNAME,
-				twitter_tweet: Constants.TWITTER_TWEET,
-				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-			    }, function(err,html) {
-				// handling of the rendered html output goes here
-				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
-				    if(err) {
-					console.log("Failed to render new homepage html")
-					console.log(err);
-				    } else {
-					console.log("The newly rendered homepage html was saved!");
-				    }
-				}); 				
-			    });
-			};
-			var errcb = build_errfn('unable to retrieve orders');
-		    global.db.Order.allToJSON(successcb, errcb);
 
-
-	    }, 
-	    function(cb) {
-		// Begin listening for HTTP requests to Express app
-		http.createServer(app).listen(app.get('port'), function() {
-		    console.log("Listening on " + app.get('port'));
-		});
-
-		// Start a daemon to auto construct the homepage grid to a static file
-		setInterval(function() {
+// constructHomepage Function
+var constructHomepage = function() {
    		    console.log("Construct Homepage at " + new Date()); 
 		    var today = new Date();
 		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
@@ -367,7 +322,32 @@ global.db.sequelize.sync().complete(function(err) {
 		    series(items.shift());
 
 
-		}, DB_REFRESH_INTERVAL_SECONDS*1000); 
+		};
+
+
+
+global.db.sequelize.sync().complete(function(err) {
+    if (err) {
+	throw err;
+    } else {
+	var DB_REFRESH_INTERVAL_SECONDS = 200; //Change for production to 100 or 200  -  use 50 for dev
+	async.series([
+	    function(cb) {
+		// Mirror the orders before booting up the server
+		console.log("Initial pull from BBC News api at " + new Date());
+		global.db.Order.refreshFromCoinbase(cb);
+		console.log("Initial construct Homepage at " + new Date());
+		constructHomepage();
+
+	    }, 
+	    function(cb) {
+		// Begin listening for HTTP requests to Express app
+		http.createServer(app).listen(app.get('port'), function() {
+		    console.log("Listening on " + app.get('port'));
+		});
+
+		// Start a daemon to auto construct the homepage grid to a static file
+		setInterval(constructHomepage , DB_REFRESH_INTERVAL_SECONDS*1000); 
 
 
 
