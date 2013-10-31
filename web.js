@@ -256,73 +256,187 @@ for(var ii in ROUTES) {
 	app.get(ROUTES[ii].path, ROUTES[ii].fn);
     } else {
 	app.get(ROUTES[ii].path, ROUTES[ii].middleware, ROUTES[ii].fn);
-	}
+    }
 }
 
 
 // constructHomepage Function
 var constructHomepage = function() {
-   		    console.log("Construct Homepage at " + new Date()); 
-		    var today = new Date();
-		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
-		    var myDate = new Date(today.getTime() - dateOffset);
-		    var dateSince = myDate.toUTCString(); 
-		     // Async task
-		     function async(arg, callback) {
-			 switch(arg){
-			 case 'viewed':
-			     Functions.get_popular_list_full(dateSince, callback);
-			     break;
-			 }
-		     }
-		    // Final task (same in all the examples)
-		    function final() { 
-			var successcb = function(world_bbc_stories_json){
-			    app.render("homepage", {
-				popular_list: results[0],
-				world_bbc_stories: world_bbc_stories_json,
-				name: Constants.APP_NAME,
-				title:  Constants.APP_NAME,
-				test_news_image: Constants.TESTIMAGE,
-				product_name: Constants.PRODUCT_NAME,
-				twitter_username: Constants.TWITTER_USERNAME,
-				twitter_tweet: Constants.TWITTER_TWEET,
-				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-			    }, function(err,html) {
-				// handling of the rendered html output goes here
-				fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
-				    if(err) {
-					console.log("Failed to render new homepage html")
-					console.log(err);
-				    } else {
-					console.log("The newly rendered homepage html was saved!");
-				    }
-				}); 				
-			    });
-			};
-		     var errcb = build_errfn('unable to retrieve orders');
-
-			global.db.Order.allToJSON(successcb, errcb); 
-		    };
-		    
-		    // A simple async series:
-		    var items = ['viewed'];
-		    var results = [];
-		    function series(item) {
-			if(item) {
-			    async( item, function(result) {
-				results.push(result);
-				return series(items.shift());
-			    });
-			} else {
-			    return final();
-			}
+    console.log("Construct Homepage at " + new Date()); 
+    var today = new Date();
+    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
+    var myDate = new Date(today.getTime() - dateOffset);
+    var dateSince = myDate.toUTCString(); 
+    // Async task
+    function async(arg, callback) {
+	switch(arg){
+	case 'viewed':
+	    Functions.get_popular_list_full(dateSince, callback);
+	    break;
+	}
+    }
+    // Final task (same in all the examples)
+    function final() { 
+	var successcb = function(world_bbc_stories_json){
+	    app.render("homepage", {
+		popular_list: results[0],
+		world_bbc_stories: world_bbc_stories_json,
+		name: Constants.APP_NAME,
+		title:  Constants.APP_NAME,
+		test_news_image: Constants.TESTIMAGE,
+		product_name: Constants.PRODUCT_NAME,
+		twitter_username: Constants.TWITTER_USERNAME,
+		twitter_tweet: Constants.TWITTER_TWEET,
+		product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+		coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+	    }, function(err,html) {
+		// handling of the rendered html output goes here
+		fs.writeFile(__dirname + "/views/rhomepage.ejs", html, function(err) {
+		    if(err) {
+			console.log("Failed to render new homepage html")
+			console.log(err);
+		    } else {
+			console.log("The newly rendered homepage html was saved!");
 		    }
-		    series(items.shift());
+		}); 				
+	    });
+	};
+	var errcb = build_errfn('unable to retrieve orders');
+
+	global.db.Order.allToJSON(successcb, errcb); 
+    };
+    
+    // A simple async series:
+    var items = ['viewed'];
+    var results = [];
+    function series(item) {
+	if(item) {
+	    async( item, function(result) {
+		results.push(result);
+		return series(items.shift());
+	    });
+	} else {
+	    return final();
+	}
+    }
+    series(items.shift());
 
 
+};
+
+
+
+// construct popular page function constructPopular
+var constructPopular = function() { 
+    console.log("Construct Popular at " + new Date()); 
+    var today = new Date();
+    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
+    var myDate = new Date(today.getTime() - dateOffset);
+    var dateSince = myDate.toUTCString(); 
+    // Async task
+    function async(arg, callback) {
+	switch(arg){
+	case 'get popular':
+	    Functions.get_popular_list(dateSince, 60, callback);
+	    break;
+	}
+    }
+    // Async retrieve stories from db
+    function retrieveStories() { 
+	function async(arg, callback) {
+	    global.db.Order.findFromPublished(arg, callback);
+	}
+
+	function final() { 
+	    console.log('Done', results.length);
+	    var resultsArray = [];
+	    results.forEach(function(obj){
+		try {
+		    obj = JSON.parse(obj);
+		    obj.viewedCount = popularList[0][obj.published];
+		    resultsArray.push(obj);			
+		    
+		} catch(e){
+		    console.error("Parsing error:", e); 
+		}
+		
+	    });
+	    function compare(a,b) {
+		if (a["viewedCount"] < b["viewedCount"])
+		    return -1;
+		if (a["viewedCount"] > b["viewedCount"])
+		    return 1;
+		return 0;
+	    }
+ 	    var sortedArray = resultsArray.sort(compare);
+	    
+	    //finally write results to popular html
+	    app.render("popular", {
+		popular_list_stories: resultsArray,
+		name: Constants.APP_NAME,
+		title:  Constants.APP_NAME,
+		test_news_image: Constants.TESTIMAGE,
+		product_name: Constants.PRODUCT_NAME,
+		twitter_username: Constants.TWITTER_USERNAME,
+		twitter_tweet: Constants.TWITTER_TWEET,
+		product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+		coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+	    }, function(err,html) {
+		// handling of the rendered html output goes here
+		fs.writeFile(__dirname + "/views/rpopular.ejs", html, function(err) {
+		    if(err) {
+			console.log("Failed to render new popular html")
+			console.log(err);
+		    } else {
+			console.log("The newly rendered popular html was saved!");
+		    }
+		}); 				
+	    });	    
+	}
+
+	//get number of objects
+	var objnum = 0; 
+	for(key in popularList[0]){objnum++};
+	
+
+	// add in null count incase some queries dont return
+	var nullcount = 0;
+	
+	// begin async queries and construct a array of
+	for(key in popularList[0]){
+	    var storyKey = key;
+	    var storyValue = popularList[0][storyKey];
+	    async(storyKey, function(result){
+		if(result === null){
+		    nullcount++;
+ 		} else { 
+		    results.push(result);
+		    if(results.length + nullcount == objnum) {
+			console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
+			final();
+		    }
 		};
+	    });
+	};		    
+    }
+    
+    // A simple async series:
+    var items = ['get popular'];
+    var popularList = [];
+    var results = [];
+    function series(item) {
+	if(item) {
+	    async( item, function(result) {
+		popularList.push(result);
+		return series(items.shift());
+	    });
+	} else {
+	    return retrieveStories();
+	}
+    }
+    series(items.shift());
+    
+};
 
 
 
@@ -338,6 +452,8 @@ global.db.sequelize.sync().complete(function(err) {
 		global.db.Order.refreshFromCoinbase(cb);
 		console.log("Initial construct Homepage at " + new Date());
 		constructHomepage();
+		console.log("Initial construct Popular at " + new Date());
+		constructPopular();
 
 	    }, 
 	    function(cb) {
@@ -347,131 +463,10 @@ global.db.sequelize.sync().complete(function(err) {
 		});
 
 		// Start a daemon to auto construct the homepage grid to a static file
-		setInterval(constructHomepage , DB_REFRESH_INTERVAL_SECONDS*1000); 
-
-
-
-
+		setInterval(constructHomepage, DB_REFRESH_INTERVAL_SECONDS*1000); 
 
 		// start a daemon to auto construct most popular page:
-
-		setInterval(function() { 
-   		    console.log("Construct Popular at " + new Date()); 
-		    var today = new Date();
-		    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
-		    var myDate = new Date(today.getTime() - dateOffset);
-		    var dateSince = myDate.toUTCString(); 
-		    // Async task
-		    function async(arg, callback) {
-			switch(arg){
-			case 'get popular':
-			    Functions.get_popular_list(dateSince, 60, callback);
-			    break;
-			}
-		    }
-		    // Async retrieve stories from db
-		    function retrieveStories() { 
-			function async(arg, callback) {
-			    global.db.Order.findFromPublished(arg, callback);
-			}
-
-			function final() { 
-			    console.log('Done', results.length);
-			    var resultsArray = [];
-			    results.forEach(function(obj){
-				try {
-				    obj = JSON.parse(obj);
-				    obj.viewedCount = popularList[0][obj.published];
-				    resultsArray.push(obj);			
-				    
-				} catch(e){
-				    console.error("Parsing error:", e); 
-				}
-				
-			    });
-			    function compare(a,b) {
-				if (a["viewedCount"] < b["viewedCount"])
-				    return -1;
-				if (a["viewedCount"] > b["viewedCount"])
-				    return 1;
-				return 0;
-			    }
- 			    var sortedArray = resultsArray.sort(compare);
-			    
-			    //finally write results to popular html
-			    app.render("popular", {
-				popular_list_stories: resultsArray,
-				name: Constants.APP_NAME,
-				title:  Constants.APP_NAME,
-				test_news_image: Constants.TESTIMAGE,
-				product_name: Constants.PRODUCT_NAME,
-				twitter_username: Constants.TWITTER_USERNAME,
-				twitter_tweet: Constants.TWITTER_TWEET,
-				product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-				coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-			    }, function(err,html) {
-				// handling of the rendered html output goes here
-				fs.writeFile(__dirname + "/views/rpopular.ejs", html, function(err) {
-				    if(err) {
-					console.log("Failed to render new popular html")
-					console.log(err);
-				    } else {
-					console.log("The newly rendered popular html was saved!");
-				    }
-				}); 				
-			    });
-			    
-			
-			    
-			}
-
-			    
-
-			    //get number of objects
-			    var objnum = 0; 
-			    for(key in popularList[0]){objnum++};
-			    
-
-			    // add in null count incase some queries dont return
-			    var nullcount = 0;
-			    
-			    // begin async queries and construct a array of
-			    for(key in popularList[0]){
-				var storyKey = key;
-				var storyValue = popularList[0][storyKey];
-				async(storyKey, function(result){
-				    if(result === null){
-					nullcount++;
- 				    } else { 
-					results.push(result);
-					if(results.length + nullcount == objnum) {
-					    console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
-					    final();
-					}
-				    };
-				});
-			    };		    
-			 }
-
-			    
-			    
-			    // A simple async series:
-			    var items = ['get popular'];
-			    var popularList = [];
-			    var results = [];
-			    function series(item) {
-				if(item) {
-				    async( item, function(result) {
-					popularList.push(result);
-					return series(items.shift());
-				    });
-				} else {
-				    return retrieveStories();
-				}
-			    }
-			    series(items.shift());
-			
-		    }, (DB_REFRESH_INTERVAL_SECONDS/3)*1000); 
+		setInterval(constructPopular, (DB_REFRESH_INTERVAL_SECONDS*2)*1000); 
 
 
 		// Start a simple daemon to refresh Coinbase orders periodically
