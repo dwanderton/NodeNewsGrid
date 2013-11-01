@@ -18,7 +18,8 @@
     "passport-persona": "~0.1.7",
     "passport-facebook": "~1.0.1",
     "passport-twitter": "~1.0.2",
-    "xml2js": "~0.2.8"
+    "xml2js": "~0.2.8",
+    "bufferlist" : "~0.0.0"
   },
   "engines": {
     "node": "0.10.12",
