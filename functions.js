@@ -5,6 +5,32 @@
 */
 var NewsGridFunction = {
 
+    base64_from_url:   function(url, cb){
+	if(url) {
+            var url = unescape(url);
+            var bl = new BufferList();
+            request({uri:url, responseBodyStream: bl, encoding:null}, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+                    console.log("no issues with the request");
+                    var resBody2imageBase64  = function(resBody, cb){
+			var data_uri_prefix = "data:" + response.headers["content-type"] + ";base64,";
+			var image = new Buffer(body).toString('base64');
+			image = data_uri_prefix + image;
+			cb(image);
+                    };
+                    resBody2imageBase64(body, function(data){cb(data);});
+
+		}
+		else { console.log("error obtaining image from url"); cb()};
+	    });
+	};
+    },
+
+
+
+
+
+
     get_popular_list: function(date_since, num_return_values, cb){
 	// returns json list of most popular entries from today to date_since, optional var num_return_values specifys the number of values to return - without num_return_values all will be returned.
 	console.log("get pop list called");
