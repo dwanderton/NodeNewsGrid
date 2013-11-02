@@ -164,7 +164,7 @@ for (i; i >= 0 ; i--) {
     // display stories currently in db %>
         <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= popular_list_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
-	    <img data-toggle="tooltip" src="<%= popular_list_stories[i].thumbnail %>" title="<%= popular_list_stories[i].title %>" class="tooltipnow" />
+	    <img data-toggle="tooltip" src="<%= popular_list_stories[i].thumbnailbase64 %>" title="<%= popular_list_stories[i].title %>" class="tooltipnow" />
 	    <span class="label-viewed">
 	      <span class="label label-success"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;<%= popular_list_stories[i].viewedCount %></span>
 	    </span>
@@ -190,7 +190,7 @@ for (i; i >= 0 ; i--) {
         <div class="modal-body">
 	  <div class="media">
 	    <div class="pull-left">
-	      <img class="thumbnail media-object" src="<%= popular_list_stories[j].thumbnail %>">
+	      <img class="thumbnail media-object" src="<%= popular_list_stories[j].thumbnailbase64 %>">
 	    </div>
 	    <div class="media-body">
 	      <%= popular_list_stories[j].description %> View the <a href="<%= popular_list_stories[j].link %>" target="_blank">[full story]</a>.

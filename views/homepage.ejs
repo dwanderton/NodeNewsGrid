@@ -165,7 +165,7 @@ for (i; i >= 0 ; i--) {
     // display stories currently in db %>
         <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
-	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
+	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	     <span class="label-viewed">
               <span class="label label-info"><span class="glyphicon glyphicon-star"></span></span>
             </span>
@@ -191,7 +191,7 @@ for (i; i >= 0 ; i--) {
         <div class="modal-body">
 	  <div class="media">
 	    <div class="pull-left">
-	      <img class="thumbnail media-object" src="<%= world_bbc_stories[j].thumbnail %>">
+	      <img class="thumbnail media-object" src="<%= world_bbc_stories[j].thumbnailbase64 %>">
 	    </div>
 	    <div class="media-body">
 	      <%= world_bbc_stories[j].description %> View the <a href="<%= world_bbc_stories[j].link %>" target="_blank">[full story]</a>.

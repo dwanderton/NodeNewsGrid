@@ -3,6 +3,10 @@
   This is the NewsGrid Central Function Repository
 
 */
+
+var BufferList = require('bufferlist').BufferList
+  , request = require('request');
+
 var NewsGridFunction = {
 
     base64_from_url:   function(url, cb){
