@@ -7,9 +7,6 @@ module.exports = function(grunt) {
 	'public/css/grid.css'
     ];
     var jsFiles = [
-	'public/js/bootstrap.min.js',
-	'public/js/hoverIntent.min.js',
-	'public/js/jquery.min.js'
     ];
     
     // this is where all the grunt configs will go
