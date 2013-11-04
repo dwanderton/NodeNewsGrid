@@ -223,7 +223,7 @@ module.exports = function(sequelize, DataTypes) {
 				}
 			    });
 			};
-			var errcb = function(err) { console.log("Error: Likely image 404 from " + err);}
+			var errcb = function(err) { console.log("Error: Likely image 404 from " + err);};
 			Functions.base64_from_url(stories[ii]['media:thumbnail'][1]['$']['url'], successcb, errcb);
 
 			
