@@ -163,6 +163,14 @@ module.exports = function(sequelize, DataTypes) {
 		    !function outer(ii){
 			if(stories[ii]['media:thumbnail'] == undefined){cb();};
 			var successcb = function(base64img) {
+			    if(stories[ii].title[0]== "VIDEO: One-minute World News"){
+				console.log("one-min world news - no thanks");
+				cb();
+			    };
+			    if (stories[ii]['guid'][0]['_'].match(/^.*sport.*$/)){
+				console.log("sport - no thanks");
+				cb();
+			    };
 			    stories[ii].published = stories[ii]['guid'][0]['_'].match(/\d*$(?!-)/)[0];
 			    _Stories.find({where: {title: stories[ii].title[0]}}).success(function(story_instance) {
 				if (story_instance) {
@@ -196,9 +204,6 @@ module.exports = function(sequelize, DataTypes) {
 						cb(err);
 					    });
 					} else {
-					    if (stories[ii]['guid'][0]['_'].match(/^.*sport.*$/)){
-						console.log("sport - no thanks");
-					    } else {
 						console.log("story doesn't exist - creating...");
 						var new_story_instance = _Stories.build({
 						    title: stories[ii].title[0],
@@ -213,7 +218,6 @@ module.exports = function(sequelize, DataTypes) {
 						}).error(function(err) {
 						    cb(err);
 						});
-					    };
 					};
 				    });
 				}
