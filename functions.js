@@ -9,7 +9,7 @@ var BufferList = require('bufferlist').BufferList
 
 var NewsGridFunction = {
 
-    base64_from_url:   function(url, cb){
+    base64_from_url:   function(url, cb, errcb){
 	if(url) {
             var url = unescape(url);
             var bl = new BufferList();
@@ -25,7 +25,7 @@ var NewsGridFunction = {
                     resBody2imageBase64(body, function(data){cb(data);});
 
 		}
-		else { console.log("error obtaining image from url"); cb()};
+		else { console.log("error obtaining image from url"); errcb(url)};
 	    });
 	};
     },
