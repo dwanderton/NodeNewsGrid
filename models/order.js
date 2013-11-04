@@ -27,6 +27,7 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 	    findFromPublished: function(publishedID, cb){
 		this.find({where: {published: publishedID}}).success(function(storyFound) {
+		    storyFound.thumbnailbase64 = storyFound.thumbnailbase64.toString('utf-8');
 		    cb(JSON.stringify(storyFound)); 
 		});
 	    },
