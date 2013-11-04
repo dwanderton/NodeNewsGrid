@@ -6,6 +6,11 @@ module.exports = function(grunt) {
 	'public/css/bootstrap.min.css',
 	'public/css/grid.css'
     ];
+    var jsFiles = [
+	'public/js/bootstrap.min.js',
+	'public/js/hoverIntent.min.js',
+	'public/js/jquery.min.js'
+    ];
     
     // this is where all the grunt configs will go
     grunt.initConfig({
@@ -48,9 +53,12 @@ module.exports = function(grunt) {
 	},
 
 	uglify: {
+	    options: {
+	    banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+	    },
 	    my_target: {
 		files: {
-		   // 'dest/output.min.js': ['src/input1.js', 'src/input2.js']
+		    'public/js/<%= pkg.name %>.min.css': jsFiles
 		}
 	    }
 	}
