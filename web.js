@@ -274,6 +274,44 @@ app.post('/api/addstoryfavorited', function(req, res) {
     }
 
 });
+
+
+// api for jQuery posting of stories UNfavorited
+app.post('/api/removestoryfavorited', function(req, res) {
+    var build_errfn = function(errmsg, response) {                                                                                                                                                        
+    return function errfn(err) {
+        console.log(err);                                                                                                                                                                                  
+        response.send(errmsg);
+    };                                                                                                                                                                                                     
+    };
+
+    if(req.user.provider == "twitter"){
+	var successcb = function(){
+	    res.writeHead(200, {'Content-Type': 'text/plain'});
+	    res.end();
+	    console.log("Remove favorite api posted to by twitter id: " + req.user.id + " Story favorited: " + req.body.storyFavorited)
+	};
+	var errcb = build_errfn('error posting to stories favourited', res);
+	global.db.TwitterFavorites.removeFromStoriesFavorited(req.user.id, req.body.storyFavorited, successcb, errcb);
+    }else if (req.user.provider == "facebook"){
+	var successcb = function(){
+	    res.writeHead(200, {'Content-Type': 'text/plain'});
+	    res.end();
+	    console.log("Remove favorite api posted to by facebook id: " + req.user.id + " Story favorited: " + req.body.storyFavorited)
+	};
+	var errcb = build_errfn('error posting to stories favorited', res);
+	global.db.FacebookFavorites.removeFromStoriesFavorited(req.user.id, req.body.storyFavorited, successcb, errcb);
+    } else{
+	var successcb = function(){
+	    res.writeHead(200, {'Content-Type': 'text/plain'});
+	    res.end();
+	    console.log("Remove favorite api posted to by persona email: " + req.user.email + " Story favorited: " + req.body.storyFavorited)
+	};
+	var errcb = build_errfn('error posting to stories read', res);
+	global.db.PersonaFavorites.removeFromStoriesFavorited(req.user.email, req.body.storyFavorited, successcb, errcb);
+    }
+
+});
                                                
 
 //add in middleware function here as this is where the app.get construct is made
