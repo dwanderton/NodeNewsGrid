@@ -32,7 +32,10 @@ body {
 .glyphicon {
     display:inline;
 }
-
+/* color for favorite glyph */
+span.favorite {
+    color: gold;
+}
 
 </style>
   <!-- lets get ac working -->
@@ -72,7 +75,20 @@ body {
       $(".fullStoryModalBody").html('<iframe width="100%" height="100%" frameborder="0" scrolling="yes" allowtransparency="true" src="'+url+'"></iframe>');
       });
 
- 
+      
+      //add and remove favorites          
+      $('span.glyphicon-star').on('click',function(){ 
+        if(!$(this).hasClass("favorite")){
+          var storyclass = $(this).attr('class').split(/\s/);
+          $.post( "api/addstoryfavorited", { "storyFavorited": storyclass[storyclass.length -1]}, function() {});
+          $(this).addClass("favorite");
+        } else {
+          var storyclass = $(this).attr('class').split(/\s/);
+          $.post( "api/removestoryfavorited", { "storyFavorited": storyclass[storyclass.length -2]}, function() {});
+          $(this).removeClass("favorite");  
+        };
+      });
+
      $.getJSON("/api/storyread", function( data ){
       $.each(data, function(dataElement, dataValue){
       var fadeMe = "div.";
@@ -80,8 +96,7 @@ body {
       fadeMe += " img";
       $(fadeMe).fadeTo('fast', 0.5);
       $(fadeMe).addClass("indb");
-      });
-			
+      });	
     });
       });
     </script>
@@ -210,10 +225,10 @@ for (i; i >= 0 ; i--) {
 	    </p>
 	  </span>
 	  <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-	    <p class="text-center"><span class="glyphicon glyphicon-star"></span></p>
+	    <p class="text-center"><span class="glyphicon glyphicon-star <%= world_bbc_stories[j].published %>"></span></p>
 	  </span>
 	  <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-	    <p class="text-center"><span class="glyphicon glyphicon-share"></span></p>
+	    <p class="text-center"><span class="glyphicon glyphicon-share <%= world_bbc_stories[j].published %>"></span></p>
 	  </span>
 	</div>
       </div><!-- /.modal-content -->                                                                                                                                               
