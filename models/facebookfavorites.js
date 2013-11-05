@@ -37,13 +37,13 @@ module.exports = function(sequelize, DataTypes) {
             },
 
 	    addToStoriesFavorited: function(userID, story_id, successcb, errcb) {
-		/* Posted to from /api/addstoryread, as a persona user has viewed the story the request is redirected to 
-		 here and the story id and user email will be added to the personahistories db*/
+		/* Posted to from /api/addstoryfavorited, as a facebook user has favorited the story the request is redirected to 
+		 here and the story id and user id will be added to the facebookfavorites db*/
 		
 		var facebookID = userID;
 		var readStoryID = story_id;
 		    var _StoryRead = this;
-		    _StoryRead.find({where: {facebookid: facebookID, bbcpublished: story_id}}).success(function(story_instance) {
+		    _StoryRead.find({where: {facebookid: facebookID, bbcpublished: readStoryID}}).success(function(story_instance) {
 			if (story_instance) {
 			    // story read already exists, do nothing
 			    successcb();
@@ -68,6 +68,30 @@ module.exports = function(sequelize, DataTypes) {
 		    });
 		
 	    },
+	    
+	    removeFromStoriesFavorited: function(userID, story_id, successcb, errcb){
+                /* Posted to from /api/removestoryfavorited, as a facebook user has unfavorited the story the request is redirected to here and the story id and userID will be removed from the facebookfavorites db*/
+                
+                var facebookID = userID;
+                var readStoryID = story_id;
+                    var _StoryRead = this;
+                    _StoryRead.find({where: {facebookID: userID, bbcpublished: readStoryID}}).success(function(story_instance) {
+                        if (story_instance) {
+                            // time to delete story from favorites
+                            story_instance.destroy().success(function(){
+                                successcb();
+                            }).error(function(err) {
+                                errcb(err);
+                            });
+                            
+                        } else {
+                            //story_instance doesn't exist in favorites anyway
+                            successcb();
+                        }
+                    });
+                
+            },
+
 	    allToJSON: function(successcb, errcb) {
 		this.findAll()
 		    .success(function(orders) {

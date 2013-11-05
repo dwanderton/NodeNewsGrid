@@ -35,8 +35,8 @@ module.exports = function(sequelize, DataTypes) {
             },
 
 	    addToStoriesFavorited: function(userEmail, story_id, successcb, errcb) {
-		/* Posted to from /api/addstoryread, as a persona user has viewed the story the request is redirected to 
-		 here and the story id and user email will be added to the personahistories db*/
+		/* Posted to from /api/addstoryrfavorited, as a persona user has favorited the story the request is redirected to 
+		 here and the story id and user email will be added to the personafavorites db*/
 		
 		var personaEmail = userEmail;
 		var readStoryID = story_id;
@@ -66,6 +66,28 @@ module.exports = function(sequelize, DataTypes) {
 		    });
 		
 	    },
+            removeFromStoriesFavorited: function(userEmail, story_id, successcb, errcb){
+                /* Posted to from /api/removestoryfavorited, as a persona user has unfavorited the story the request is redirected to here and the story id and user email will be removed from the personafavorites db*/
+                
+                var personaEmail = userEmail;
+                var readStoryID = story_id;
+                    var _StoryRead = this;
+                    _StoryRead.find({where: {email: PersonaEmail, bbcpublished: readStoryID}}).success(function(story_instance) {
+                        if (story_instance) {
+                            // time to delete story from favorites
+                            story_instance.destroy().success(function(){
+                                successcb();
+                            }).error(function(err) {
+                                errcb(err);
+                            });
+                            
+                        } else {
+                            //story_instance doesn't exist in favorites anyway
+                            successcb();
+                        }
+                    });
+                
+            },
 	    allToJSON: function(successcb, errcb) {
 		this.findAll()
 		    .success(function(orders) {
