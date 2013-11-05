@@ -230,21 +230,47 @@ app.post('/api/addstoryread', function(req, res) {
 	    console.log("Add story api posted to by persona email: " + req.user.email + " Story viewed: " + req.body.storyViewed)
 	};
 	var errcb = build_errfn('error posting to stories read', res);
-	function getMethods(obj) {
-	    var result = [];
-	    for (var id in obj) {
-		try {
-		    if (typeof(obj[id]) == "function") {
-			result.push(id + ": " + obj[id].toString());
-		    }
-		} catch (err) {
-		    result.push(id + ": inaccessible");
-		}
-	    }
-	    return result;
-	}
-	global.db.PersonaUser.findPersonaUser(req.user.email, this.setHistories(req.body.storyViewed));
 	global.db.PersonaHistory.addToStoriesRead(req.user.email, req.body.storyViewed, successcb, errcb);
+    }
+
+});
+
+
+
+
+// api for jQuery posting of stories favorited
+app.post('/api/addstoryfavorited', function(req, res) {
+    var build_errfn = function(errmsg, response) {                                                                                                                                                        
+    return function errfn(err) {
+        console.log(err);                                                                                                                                                                                  
+        response.send(errmsg);
+    };                                                                                                                                                                                                     
+    };
+
+    if(req.user.provider == "twitter"){
+	var successcb = function(){
+	    res.writeHead(200, {'Content-Type': 'text/plain'});
+	    res.end();
+	    console.log("Add favorite api posted to by twitter id: " + req.user.id + " Story favorited: " + req.body.storyFavorited)
+	};
+	var errcb = build_errfn('error posting to stories favourited', res);
+	global.db.TwitterFavorites.addToStoriesFavorited(req.user.id, req.body.storyFavorited, successcb, errcb);
+    }else if (req.user.provider == "facebook"){
+	var successcb = function(){
+	    res.writeHead(200, {'Content-Type': 'text/plain'});
+	    res.end();
+	    console.log("Add favorite api posted to by facebook id: " + req.user.id + " Story favorited: " + req.body.storyFavorited)
+	};
+	var errcb = build_errfn('error posting to stories favorited', res);
+	global.db.FacebookFavorites.addToStoriesFavorited(req.user.id, req.body.storyFavorited, successcb, errcb);
+    } else{
+	var successcb = function(){
+	    res.writeHead(200, {'Content-Type': 'text/plain'});
+	    res.end();
+	    console.log("Add favorite api posted to by persona email: " + req.user.email + " Story favorited: " + req.body.storyFavorited)
+	};
+	var errcb = build_errfn('error posting to stories read', res);
+	global.db.PersonaFavorites.addToStoriesFavorited(req.user.email, req.body.storyFavorited, successcb, errcb);
     }
 
 });
