@@ -92,7 +92,7 @@ span.favorite {
           $.post( "api/removestoryfavorited", { "storyFavorited": storyclass[storyclass.length -2]}, function() {});
           $(this).removeClass("favorite");  
           var faveStar = "div.";
-          faveStar += storyclass[storyclass.length -1];
+          faveStar += storyclass[storyclass.length -2];
           faveStar += " span";
           $(faveStar).hide();
         };
