@@ -23,7 +23,7 @@ body {
   padding-top: 70px;
 }
 .label-viewed {
-    visibility: hidden;
+    display: none;
     position:absolute;
     bottom:10px;
     right:10px;
@@ -78,27 +78,51 @@ span.favorite {
       
       //add and remove favorites          
       $('span.glyphicon-star').on('click',function(){ 
+        var storyclass = $(this).attr('class').split(/\s/);
+        
         if(!$(this).hasClass("favorite")){
-          var storyclass = $(this).attr('class').split(/\s/);
           $.post( "api/addstoryfavorited", { "storyFavorited": storyclass[storyclass.length -1]}, function() {});
           $(this).addClass("favorite");
+          var faveStar = "div.";
+          faveStar += storyclass[storyclass.length -1];
+          faveStar += " span";
+          $(faveStar).show();
+        
         } else {
-          var storyclass = $(this).attr('class').split(/\s/);
           $.post( "api/removestoryfavorited", { "storyFavorited": storyclass[storyclass.length -2]}, function() {});
           $(this).removeClass("favorite");  
+          var faveStar = "div.";
+          faveStar += storyclass[storyclass.length -1];
+          faveStar += " span";
+          $(faveStar).hide();
         };
       });
 
-     $.getJSON("/api/storyread", function( data ){
-      $.each(data, function(dataElement, dataValue){
-      var fadeMe = "div.";
-      fadeMe += dataValue.bbcpublished; 
-      fadeMe += " img";
-      $(fadeMe).fadeTo('fast', 0.5);
-      $(fadeMe).addClass("indb");
-      });	
-    });
+      //get story read list and fade
+      $.getJSON("/api/storyread", function( data ){
+       $.each(data, function(dataElement, dataValue){
+         var fadeMe = "div.";
+         fadeMe += dataValue.bbcpublished; 
+         fadeMe += " img";
+         $(fadeMe).fadeTo('fast', 0.5);
+         $(fadeMe).addClass("indb");
+       });	
       });
+      
+      //get favorite list and show stars
+      $.getJSON("/api/storyfavorited", function( data ){
+       $.each(data, function(dataElement, dataValue){
+         var faveMe = "span.glyphicon-star.";
+         faveMe += dataValue.bbcpublished;
+         var showStar = "div."
+         showStar += dataValue.bbcpublished;
+         showStar += " span";
+         $(showStar).show(400);
+         $(faveMe).addClass("favorite");
+       });	
+      });
+      
+     });
     </script>
     <!-- hoverintent finish -->
 

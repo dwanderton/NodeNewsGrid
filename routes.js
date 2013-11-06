@@ -180,6 +180,21 @@ var api_storyreadfn = function(req, res) {
         }
 };
 
+var api_storyfavoritedfn = function(req, res) {
+    var successcb = function(storiesRead) {
+	var data = storiesRead;
+	res.json(data);
+    };
+    var errcb = build_errfn('error posting to stories read', res);
+    if(req.user.provider == "twitter"){
+	        ensureAuthenticated(req, res, global.db.TwitterFavorites.listOfStoriesFavorited(req.user.id, successcb, errcb)); 
+    } else if (req.user.provider == "facebook"){
+	ensureAuthenticated(req, res, global.db.FacebookFavorites.listOfStoriesFavorited(req.user.id, successcb, errcb));
+        } else{
+	    ensureAuthenticated(req, res, global.db.PersonaFavorites.listOfStoriesFavorited(req.user.email, successcb, errcb));
+        }
+};
+
 var api_popularfn = function(req, res) {
     
     var errcb = build_errfn('error requesting stories viewed count',res);
@@ -251,6 +266,7 @@ var ROUTES = define_routes({
     '/orders': [undefined, orderfn],
     '/api/orders': [undefined, api_orderfn],
     '/api/storyread': [undefined, api_storyreadfn],
+    '/api/storyfavorited': [undefined, api_storyfavoritedfn],
     '/api/popular': [undefined, api_popularfn],
     '/refresh_orders': [undefined, refresh_orderfn]
 });
