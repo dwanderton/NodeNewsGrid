@@ -548,5 +548,6 @@ global.db.sequelize.sync().complete(function(err) {
 
 // 404 error handling must go last see: http://expressjs.com/faq.html how do you handle 404s? 
 app.use(function(req, res, next){
-  res.render('404');
+  res.status(404);
+    res.render('404');
 });
