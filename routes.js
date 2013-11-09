@@ -79,6 +79,13 @@ var popularfn = function(req, res){
     ensureAuthenticated(req, res, showMostPop());
 };
 
+
+var favoritefn = function(req, res){
+    res.send("hello favorite!");
+
+};
+
+
 // POST /auth/browserid
 //  in web.js
 
@@ -257,6 +264,7 @@ var ROUTES = define_routes({
     '/login': [undefined, loginfn],
     '/logout': [ undefined, logoutfn],
     '/popular': [ undefined, popularfn],
+    '/favorites':[ undefined, favoritefn],
     // Now is in web.js as post not get request (this list is converted to gets )   '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
     '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
     '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
