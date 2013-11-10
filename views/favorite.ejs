@@ -47,36 +47,10 @@ body {
     </script>
     <!-- end of tooltip -->
 
-    <!-- HoverIntent start-->
-    <script src="js/hoverIntent.min.js"></script>
-
-    <!-- Lets get our fade on -->
+    <!-- HoverIntent no start or fade on because we know all are read -->
     <script>
       $(document).ready(function() {
-        $('div.col-lg-1 a').children('.label-viewed').fadeTo('fast',0);
-        $('div.col-lg-1 img').hoverIntent(function(){
-            $(this).fadeTo('fast', 1);
-            $(this).parent().children('.label-viewed').css({"visibility": "visible"}).fadeTo('fast',1);
-        }, function(){
-            $(this).fadeTo('fast', 0.5);
-            $(this).parent().children('.label-viewed').fadeTo('fast',0);
-            if (!$(this).hasClass("indb")){
-              var storyclass = $(this).parent().parent().attr('class').split(/\s/);
-              $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
-              $(this).addClass("indb");
-            };
-      });
-      
-    $.getJSON("/api/storyread", function( data ){
-      $.each(data, function(dataElement, dataValue){
-      var fadeMe = "div.";
-      fadeMe += dataValue.bbcpublished; 
-      fadeMe += " img";
-      $(fadeMe).fadeTo('fast', 0.5);
-      $(fadeMe).addClass("indb");
-      });
-			
-    });
+       
       });
     </script>
     <!-- hoverintent finish -->
@@ -118,8 +92,8 @@ body {
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="/"><span class="glyphicon glyphicon-home"></span></a></li>
-            <li><a href="/favorites"><span class="glyphicon glyphicon-star"></span></a></li>
-            <li class="active"><a href="/popular"><span class="glyphicon glyphicon-eye-open"></span></a></li>
+            <li class="active"><a href="/favorites"><span class="glyphicon glyphicon-star"></span></a></li>
+            <li><a href="/popular"><span class="glyphicon glyphicon-eye-open"></span></a></li>
             <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span></a></li>
             <li><a href="#about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
           </ul>
@@ -152,22 +126,21 @@ body {
     <div class="grid-container">
       
       <div class="row">
+
  <% 
-if (60 >= popular_list_stories.length-1){
- var i = popular_list_stories.length-1;
- var j = popular_list_stories.length-1;
+if (60 >= list_stories.length-1){
+ var i = list_stories.length-1;
+ var j = list_stories.length-1;
 } else {
  var i = 60;
  var j = 60;
 }
 for (i; i >= 0 ; i--) { 
     // display stories currently in db %>
-        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= popular_list_stories[i].published %>">
+        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= list_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
-	    <img data-toggle="tooltip" src="<%= popular_list_stories[i].thumbnailbase64 %>" title="<%= popular_list_stories[i].title %>" class="tooltipnow" />
-	    <span class="label-viewed">
-	      <span class="label label-success"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;<%= popular_list_stories[i].viewedCount %></span>
-	    </span>
+	    <img data-toggle="tooltip" src="<%= list_stories[i].thumbnailbase64 %>" title="<%= list_stories[i].title %>" class="tooltipnow" />
+	    
 	  </a>
 	</div>
 <% } %>
@@ -185,26 +158,23 @@ for (i; i >= 0 ; i--) {
       <div class="modal-content">                                                                                                                                                  
         <div class="modal-header">                                                                                                                                                 
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
-          <h4 class="modal-title"><%= popular_list_stories[j].title %></h4>                                                                                           
+          <h4 class="modal-title"><%= list_stories[j].title %></h4>                                                                                           
         </div>                                                                                                                 
         <div class="modal-body">
 	  <div class="media">
 	    <div class="pull-left">
-	      <img class="thumbnail media-object" src="<%= popular_list_stories[j].thumbnailbase64 %>">
+	      <img class="thumbnail media-object" src="<%= list_stories[j].thumbnailbase64 %>">
 	    </div>
 	    <div class="media-body">
-	      <%= popular_list_stories[j].description %> View the <a href="<%= popular_list_stories[j].link %>" target="_blank">[full story]</a>.
+	      <%= list_stories[j].description %> View the <a href="<%= list_stories[j].link %>" target="_blank">[full story]</a>.
 	    </div>
 	  </div>              
         </div>
         <div class="modal-footer">
-          <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-            <p class="text-center"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;<%= popular_list_stories[j].viewedCount %></p>
-          </span>
-          <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+          <span class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <p class="text-center"><span class="glyphicon glyphicon-star"></span></p>
           </span>
-          <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+          <span class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <p class="text-center"><span class="glyphicon glyphicon-share"></span></p>
           </span>
         </div>        

@@ -27,8 +27,13 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 	    findFromPublished: function(publishedID, cb){
 		this.find({where: {published: publishedID}}).success(function(storyFound) {
-		    storyFound.thumbnailbase64 = storyFound.thumbnailbase64.toString('utf-8');
-		    cb(JSON.stringify(storyFound)); 
+		    if(storyFound){
+			storyFound.thumbnailbase64 = storyFound.thumbnailbase64.toString('utf-8');
+			cb(JSON.stringify(storyFound)); 
+		    } else {
+			console.log("no result or base64 image");
+			cb();
+		    };
 		});
 	    },
 	    numOrders: function() {

@@ -30,6 +30,18 @@ module.exports = function(sequelize, DataTypes) {
 			   cb(stringData);});
 		       };
 	    },
+	    userStoriesFavoritedSinceJSON: function(dateSince, userID, cb){
+		console.log("User storiesTest date since: "+ dateSince + "cb " + cb); 
+		   if(dateSince){
+		       this.findAll({ where:['twitterid = ?', userID], attributes: ['bbcpublished']} ).success(function(storiesRead){                  if(!storiesRead){console.log("no stories read");};
+			   var stringData = JSON.stringify(storiesRead);
+			   cb(stringData);});
+		   } else {
+		       this.findAll({attributes:['bbcpublished']}).success(function(storiesRead){
+			   var stringData = JSON.stringify(storiesRead);
+			   cb(stringData);});
+		       };
+	    },
 
 	    numTwitterStoriesFavorited: function() {
 		this.count().success(function(c) {

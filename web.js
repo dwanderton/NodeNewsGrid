@@ -452,93 +452,46 @@ var constructPopular = function() {
 		}); 				
 	    });	    
 	}
-
-
-var constructFavorite = function() { 
-    console.log("Construct Popular at " + new Date()); 
-    var today = new Date();
-    var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
-    var myDate = new Date(today.getTime() - dateOffset);
-    var dateSince = myDate.toUTCString(); 
-    // Async task
-    function async(arg, callback) {
-	switch(arg){
-	case 'favorite':
-	    Functions.get_favorite_list(dateSince, 60, req.user.provider, callback);
-	    break;
-	}
-    }
-    // Async retrieve stories from db
-    function retrieveStories() { 
-	function async(arg, callback) {
-	    global.db.Order.findFromPublished(arg, callback);
-	}
-
-	function final() { 
-	    console.log('Done', results.length);
-	    var resultsArray = [];
-	    results.forEach(function(obj){
-		try {
-		    obj = JSON.parse(obj);
-		    resultsArray.push(obj);			
-		} catch(e){
-		    console.error("Parsing error:", e); 
-		}
-		
-	    });
-	    
-	    response.render("favorite", {
-		favorite_list_stories: resultsArray,
-		name: Constants.APP_NAME,
-		title:  Constants.APP_NAME,
-		test_news_image: Constants.TESTIMAGE,
-		product_name: Constants.PRODUCT_NAME,
-		twitter_username: Constants.TWITTER_USERNAME,
-		twitter_tweet: Constants.TWITTER_TWEET,
-		product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-		coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-	    });	    
-	}
-
-	//get number of objects
-	var objnum = 0; 
-	for(key in favoriteList[0]){objnum++};
 	
+        //get number of objects
+        var objnum = 0; 
+        for(key in popularList[0]){objnum++};
+        
 
-	// add in null count incase some queries dont return
-	var nullcount = 0;
-	
-	// begin async queries and construct a array of
-	for(key in favoriteList[0]){
-	    var storyKey = key;
-	    var storyValue = favoriteList[0][storyKey];
-	    async(storyKey, function(result){
-		if(result === null){
-		    nullcount++;
- 		} else { 
-		    results.push(result);
-		    if(results.length + nullcount == objnum) {
-			console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
-			final();
-		    }
-		};
-	    });
-	};		    
+        // add in null count incase some queries dont return
+        var nullcount = 0;
+        
+        // begin async queries and construct a array of
+        for(key in popularList[0]){
+            var storyKey = key;
+            var storyValue = popularList[0][storyKey];
+            async(storyKey, function(result){
+                if(result === null){
+                    nullcount++;
+                 } else { 
+                    results.push(result);
+                    if(results.length + nullcount == objnum) {
+                        console.log("null count of failed popular story queries: " + nullcount + " success count: " + results.length);
+                        final();
+                    }
+                };
+            });
+        };                    
     }
     
     // A simple async series:
-    var items = ['favorite'];
-    var favoriteList = [];
+    var items = ['get popular'];
+    var popularList = [];
     var results = [];
     function series(item) {
-	if(item) {
-	    async( item, function(result) {
-		favoriteList.push(result);
-		return series(items.shift());
-	    });
-	} else {
-	    return retrieveStories();
-	}
+        if(item) {
+            async( item, function(result) {
+                popularList.push(result);
+                return series(items.shift());
+            });
+        } else {
+            return retrieveStories();
+        }
     }
     series(items.shift());
     

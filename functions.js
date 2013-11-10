@@ -108,19 +108,19 @@ var NewsGridFunction = {
 
     },
 
-    get_favorite_list: function(date_since, num_return_values, service, cb){
+    get_favorite_list: function(date_since, num_return_values, service, userID, cb){
 	// returns json list of favorited entries from today to date_since, optional var num_return_values specifys the number of values to return - without num_return_values all will be returned.
 	console.log("get fave list called");
 	function async(arg, callback) {
             console.log('Retrieve histories from \''+arg+'\', to create most favorite page');
             switch(arg){
-            case 'fb':
+            case 'facebook':
                 global.db.FacebookFavorites.storiesFavoritedSinceJSON(date_since, callback);
                 break;
-            case 'tw':
-                global.db.TwitterFavorites.storiesFavoritedSinceJSON(date_since, callback);
+            case 'twitter':
+                global.db.TwitterFavorites.userStoriesFavoritedSinceJSON(date_since, userID, callback);
                 break;
-            case 'ps':
+            default:
                 global.db.PersonaFavorites.storiesFavoritedSinceJSON(date_since, callback);
                 break;
             }
