@@ -31,6 +31,17 @@ body {
 .glyphicon {                                                                                                                                                                                              
     display:inline;                                                                                                                                                                                        
 }
+
+
+/* color for favorite glyph */
+span.favorite {
+    color: gold;
+}
+a:hover > span > p > span.favorite {
+    color: #DAA520;
+}
+
+
 </style>
   <!-- lets get ac working -->
       <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -50,7 +61,28 @@ body {
     <!-- HoverIntent no start or fade on because we know all are read -->
     <script>
       $(document).ready(function() {
-       
+            //add and remove favorites
+      $('span.glyphicon-star').on('click',function(){
+        var storyclass = $(this).attr('class').split(/\s/);
+
+        if(!$(this).hasClass("favorite")){
+          $.post( "api/addstoryfavorited", { "storyFavorited": storyclass[storyclass.length -1]}, function() {});
+          $(this).addClass("favorite");
+          var faveStar = "div.";
+          faveStar += storyclass[storyclass.length -1];
+          faveStar += " span";
+          $(faveStar).show();
+
+        } else {
+          $.post( "api/removestoryfavorited", { "storyFavorited": storyclass[storyclass.length -2]}, function() {});
+          $(this).removeClass("favorite");
+          var faveStar = "div.";
+          faveStar += storyclass[storyclass.length -2];
+          faveStar += " span";
+          $(faveStar).hide();
+        };
+      });
+
       });
     </script>
     <!-- hoverintent finish -->
@@ -172,7 +204,7 @@ for (i; i >= 0 ; i--) {
         </div>
         <div class="modal-footer">
           <span class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-            <p class="text-center"><span class="glyphicon glyphicon-star"></span></p>
+            <p class="text-center"><span class="glyphicon glyphicon-star <%= list_stories[j].published %> favorite"></span></p>
           </span>
           <span class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <p class="text-center"><span class="glyphicon glyphicon-share"></span></p>
