@@ -209,20 +209,39 @@ module.exports = function(sequelize, DataTypes) {
 						cb(err);
 					    });
 					} else {
-						console.log("story doesn't exist - creating...");
-						var new_story_instance = _Stories.build({
-						    title: stories[ii].title[0],
-						    published: stories[ii].published,
-						    thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
-						    thumbnailbase64: base64img,
-						    link: stories[ii]['guid'][0]['_'], // link element
-						    description: stories[ii].description[0]
-						});
-						new_story_instance.save().success(function() {
-						    cb();
-						}).error(function(err) {
-						    cb(err);
-						});
+					    /* check if the image url is already referenced in the database - may overwrite story details */
+					    _Stories.find({where: {link: stories[ii]['guid'][0]['_']}}).success(function(story_instance3) {
+						if (story_instance) { 
+						    console.log("link exists - updating current story!");
+						    story_instance3.updateAttributes({
+							published: stories[ii].published,
+							thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+							thumbnailbase64: base64img,
+							title: stories[ii].title[0],
+							description: stories[ii].description[0]
+						    }).success(function() {
+							cb();
+						    }).error(function(err) {
+							cb(err);
+						    });
+						} else {
+
+						    console.log("story doesn't exist - creating...");
+						    var new_story_instance = _Stories.build({
+							title: stories[ii].title[0],
+							published: stories[ii].published,
+							thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+							thumbnailbase64: base64img,
+							link: stories[ii]['guid'][0]['_'], // link element
+							description: stories[ii].description[0]
+						    });
+						    new_story_instance.save().success(function() {
+							cb();
+						    }).error(function(err) {
+							cb(err);
+						    });
+						};
+					    });
 					};
 				    });
 				}
