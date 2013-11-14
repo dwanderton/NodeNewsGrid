@@ -32,7 +32,8 @@ body {
 <!-- Latest compiled and minified CSS -->
 <link href="css/Newsgrid.min.css" rel="stylesheet">
 
-
+<!-- font awesome -->
+<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
       <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="js/jquery.min.js"></script>                                
     <script src="js/bootstrap.min.js"></script>
@@ -55,6 +56,7 @@ max-width:100%;
 body { 
   /* padding added to support fixed navbar */
   padding-top: 70px;
+  font-family: 'Open Sans'; 
 }
 
 
@@ -217,14 +219,12 @@ rget=".navbar-collapse">
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <% if(user){ %>
-            <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></\
-li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></li>
             <% }else{ %>
+	    <li><b>Login below:</b></li>
+            <li><a href="/auth/facebook"><i class="fa fa-facebook fa-5x"></i></a></li>
+            <li><a href="/auth/twitter"><i class="fa fa-twitter fa-5x"></i></a></li>
 
-            <li><a href="/auth/twitter"><img height="80px" width="80px" src="https:/\
-/abs.twimg.com/a/1379631158/images/resources/twitter-bird-white-on-blue.png"></a></l\
-i>
-            <li><a href="/auth/facebook"><img height="80px" width="80px" src="/img/FB-f-Logo__blue_512.png"></a></li>
             <% }; %>
               </ul>
             </li>
