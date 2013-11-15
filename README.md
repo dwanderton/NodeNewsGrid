@@ -1,6 +1,6 @@
 # NewsGrid
 
-# Overview
+## Overview
 
 Welcome to NewsGrid Development!
 This is a simple template app for a Bitcoin-based crowdfunding site that
