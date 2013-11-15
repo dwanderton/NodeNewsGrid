@@ -1,5 +1,8 @@
+# NewsGrid
+
 # Overview
 
+Welcome to NewsGrid Development!
 This is a simple template app for a Bitcoin-based crowdfunding site that
 adds even more server-side and client-side dynamic behavior over our
 [earlier template](https://github.com/startup-class/bitstarter-ssjs-db). It
