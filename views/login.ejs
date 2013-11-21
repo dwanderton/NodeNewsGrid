@@ -218,14 +218,6 @@ rget=".navbar-collapse">
 
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <% if(user){ %>
-            <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></li>
-            <% }else{ %>
-	    <li><b>Login with:</b></li>
-            <li><a href="/auth/facebook"><i class="fa fa-facebook fa-5x"></i></a></li>
-            <li><a href="/auth/twitter"><i class="fa fa-twitter fa-5x"></i></a></li>
-
-            <% }; %>
               </ul>
             </li>
 
@@ -252,8 +244,26 @@ rget=".navbar-collapse">
 
        <div class="jumbotron">
         <h1>Jumbotron heading</h1>
+	    <br />        
+            <% if(user){ %>
+            <a href="/logout"><span class="glyphicon glyphicon-off"</span></a>
+            <% }else{ %>
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
+	    <h2><b>Login with:</b></h2>
+	    </div>
+
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
+            <a href="/auth/facebook"><i class="fa fa-facebook fa-5x"></i></a>
+	    </div>
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
+            <a href="/auth/twitter"><i class="fa fa-twitter fa-5x"></i></a>
+</div>
+            <% }; %>
+         </p>
+<br/>
+<br/>
         <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-        <p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
+	
       </div> 
   
   
