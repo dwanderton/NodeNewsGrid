@@ -4,7 +4,8 @@ var uu      = require('underscore')
   , util = require('util')
   , PersonaStrategy = require('passport-persona').Strategy
   , TwitterStrategy = require('passport-twitter').Strategy
-  , Constants = require('./constants');
+  , Constants = require('./constants')
+  , Functions = require('./functions');
 
 var build_errfn = function(errmsg, response) {
     return function errfn(err) {
@@ -69,6 +70,111 @@ var dashboardfn = function(request, response) {
     ensureAuthenticated(request, response, global.db.Order.allToJSON(successcb, errcb));
     
 };
+
+
+var popularfn = function(req, res){
+    var showMostPop = function(){
+	res.render("rpopular");
+    };
+    ensureAuthenticated(req, res, showMostPop());
+};
+
+var favoritefn = function(request, response) { 
+    var favoriteInternal = function(){
+	console.log("Construct Favorite at " + new Date()); 
+	var today = new Date();
+	var dateOffset = (24*60*60*1000) * 30; //30 days                                                                    
+	var myDate = new Date(today.getTime() - dateOffset);
+	var dateSince = myDate.toUTCString(); 
+	// Async task
+	function async(arg, callback) {
+            switch(arg){
+            case 'favorite':
+		Functions.get_favorite_list(dateSince, 60, request.user.provider, request.user.id, callback);
+		break;
+            }
+	}
+	// Async retrieve stories from db
+	function retrieveStories() { 
+            function async(arg, callback) {
+		global.db.Order.findFromPublished(arg, callback);
+            }
+
+            function final() { 
+		console.log('Done', results.length);
+		var resultsArray = [];
+		results.forEach(function(obj){
+                    try {
+			obj = JSON.parse(obj);
+			resultsArray.push(obj);                        
+		    } catch(e){
+			console.error("Parsing error:", e); 
+                    }
+                    
+		});
+		console.log("resultsArray: " + resultsArray);
+		response.render("favorite", {
+		    list_stories: resultsArray,
+                    name: Constants.APP_NAME,
+                    title:  Constants.APP_NAME,
+                    test_news_image: Constants.TESTIMAGE,
+                    product_name: Constants.PRODUCT_NAME,
+                    twitter_username: Constants.TWITTER_USERNAME,
+                    twitter_tweet: Constants.TWITTER_TWEET,
+                    product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+                    coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+		});
+            }
+
+            //get number of objects
+            var objnum = 0; 
+            for(key in favoriteList[0]){objnum++};
+            
+
+            // add in null count incase some queries dont return
+            var nullcount = 0;
+            console.log(favoriteList[0]);
+            // begin async queries and construct a array of
+            for(key in favoriteList[0]){
+		var storyKey = key;
+		var storyValue = favoriteList[0][storyKey]['bbcpublished'];
+		console.log("storyKey: " + storyKey + "storyValue: " + storyValue);
+		async(storyValue, function(result){
+                    if(result === null){
+			nullcount++;
+                    } else { 
+			results.push(result);
+			if(results.length + nullcount == objnum) {
+                            console.log("null count of failed favorite story queries: " + nullcount + " success count: " + results.length);
+                            final();
+			}
+                    };
+		});
+            };                    
+	}
+	
+	// A simple async series:
+	var items = ['favorite'];
+	var favoriteList = [];
+	var results = [];
+	function series(item) {
+	    console.log("series");
+            if(item) {
+		async( item, function(result) {
+                    favoriteList.push(result[0]);
+		    return series(items.shift());
+		});
+            } else {
+		return retrieveStories();
+            }
+	}
+	series(items.shift());
+    }
+
+    ensureAuthenticated(request, response, favoriteInternal);  
+};
+
+
 
 // POST /auth/browserid
 //  in web.js
@@ -171,6 +277,40 @@ var api_storyreadfn = function(req, res) {
         }
 };
 
+var api_storyfavoritedfn = function(req, res) {
+    var successcb = function(storiesRead) {
+	var data = storiesRead;
+	res.json(data);
+    };
+    var errcb = build_errfn('error posting to stories read', res);
+    if(req.user.provider == "twitter"){
+	        ensureAuthenticated(req, res, global.db.TwitterFavorites.listOfStoriesFavorited(req.user.id, successcb, errcb)); 
+    } else if (req.user.provider == "facebook"){
+	ensureAuthenticated(req, res, global.db.FacebookFavorites.listOfStoriesFavorited(req.user.id, successcb, errcb));
+        } else{
+	    ensureAuthenticated(req, res, global.db.PersonaFavorites.listOfStoriesFavorited(req.user.email, successcb, errcb));
+        }
+};
+
+var api_popularfn = function(req, res) {
+    
+    var errcb = build_errfn('error requesting stories viewed count',res);
+    var today = new Date();
+    var dateOffset = (24*60*60*1000) * 30; //30 days
+    var myDate = new Date(today.getTime() - dateOffset);
+    var dateSince = myDate.toUTCString();
+    var successcb = function(){
+	console.log("Success cb called")
+	
+	var cb = function(data){
+	    res.json(data);
+	};
+	Functions.get_popular_list(dateSince, 60, cb);
+    };
+    console.log("Api popular called");
+    ensureAuthenticated(req, res, successcb());
+};
+
 var refresh_orderfn = function(request, response) {
     var cb = function(err) {
 	if(err) {
@@ -213,7 +353,9 @@ var ROUTES = define_routes({
     '/': [undefined, indexfn],
     '/login': [undefined, loginfn],
     '/logout': [ undefined, logoutfn],
-// Now is in web.js as post not get request (this list is converted to gets )   '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
+    '/popular': [ undefined, popularfn],
+    '/favorites':[ undefined, favoritefn],
+    // Now is in web.js as post not get request (this list is converted to gets )   '/auth/browserid': [passport.authenticate('persona', { failureRedirect: '/login' }), personaAuthenticatefn],
     '/auth/twitter': [passport.authenticate('twitter'), twitterAuthenticatefn],
     '/auth/twitter/callback': [passport.authenticate('twitter', { failureRedirect: '/login' }), twitterCallbackAuthenticatefn],
     '/auth/facebook': [passport.authenticate('facebook'), facebookAuthenticatefn],
@@ -222,6 +364,8 @@ var ROUTES = define_routes({
     '/orders': [undefined, orderfn],
     '/api/orders': [undefined, api_orderfn],
     '/api/storyread': [undefined, api_storyreadfn],
+    '/api/storyfavorited': [undefined, api_storyfavoritedfn],
+    '/api/popular': [undefined, api_popularfn],
     '/refresh_orders': [undefined, refresh_orderfn]
 });
 
@@ -230,7 +374,7 @@ var ROUTES = define_routes({
 //   the request is authenticated (typically via a persistent login session),                                   
 //   the request will proceed.  Otherwise, the user will be redirected to the                                   //   login page. 
 function ensureAuthenticated(req, res, next) { 
-  if (req.isAuthenticated()) { return next; }
+  if (req.isAuthenticated()) { if(typeof(next)=="function"){ return next();} else { return next; }; }
     // consider passing the intended journey location to redirect so that the user journey can continue as planned
   res.redirect('/login')
 }

@@ -1,103 +1,481 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<title>Passport-Persona Example</title>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-		<script src="https://login.persona.org/include.js" type="text/javascript"></script>
-    <link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
+
+
+<!--
+#######################################
+- THE HEAD PART -
+######################################
+-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  <title>Login</title>
+  
+<style type="text/css">
+body { 
+  /* padding added to support fixed navbar */
+  padding-top: 70px;
+}
+</style>
+
+  <!-- get jQuery from the google apis -->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.js">
+  </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="David Anderton 2013">
 
-    <!-- Bootstrap core CSS -->
 <!-- Latest compiled and minified CSS -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/Newsgrid.min.css" rel="stylesheet">
 
-  <!-- attempt to get bg working -->
-<style type="text/css">
-body { background: url(img/bg.jpg) no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  /* padding added to support fixed navbar */
-  padding-top: 70px;
-}
-
-</style>
-  <!-- lets get ac working -->
+<!-- font awesome -->
+<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
       <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery.min.js"></script>
+   <script src="js/jquery.min.js"></script>                                
     <script src="js/bootstrap.min.js"></script>
     <!-- end jQuery-->
 
+  
+   
+  <!-- GOOGLE FONTS -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800' rel='stylesheet' type='text/css'>
 
-    
-    <!-- Google font for logo -->
-     <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
-      <style>
-	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
-	      </style>
-    <!-- end google font for logo -->
+
+<!--  style for hover boxes -->
+
+<style type="text/css">
+
+img{
+max-width:100%;
+}
+
+body { 
+  /* padding added to support fixed navbar */
+  padding-top: 70px;
+  font-family: 'Open Sans'; 
+}
+
+
+/* project cell */
+.project-cell{
+border-radius:7px;
+line-height:0px;
+padding:13px 25px;
+}
+
+.project-cell-thumb{
+position:relative;
+}
+
+.project-cell-thumb img{
+border-radius:7px;
+}
+
+.project-cell-bg{
+position:absolute;
+left:0px;
+top:0px;
+width:100%;
+height:100%;
+opacity:0;
+filter:alpha(opacity=0); /* For IE8 and earlier */
+border-radius:7px;
+transition: all 300ms ease-out; /*safari and chrome */
+-webkit-transition: all 300ms ease-out; /*safari and chrome */
+z-index:10;
+}
+
+.project-cell-hover{
+position:absolute;
+left:0px;
+top:50%;
+width:100%;
+height:70px;
+line-height:18px;
+text-align:center;
+margin-top:-35px;
+opacity:0;
+filter:alpha(opacity=0); /* For IE8 and earlier */
+transition: all 300ms ease-out; /*safari and chrome */
+-webkit-transition: all 300ms ease-out; /*safari and chrome */
+z-index:11;
+}
+
+.project-cell:hover .project-cell-bg{
+opacity:1;
+filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+.project-cell:hover .project-cell-hover{
+opacity:1;
+filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+.project-cell-title{
+padding-bottom:0px;
+}
+
+.project-cell-category{
+padding-bottom:8px;
+}
+
+/* post cell */
+.post-cell-title a{
+color:#404040;
+}
+
+.post-cell-title a:hover{
+color:#3498db;
+}
+
+.post-cell-content{
+color:#999999;
+}
+
+.white-text .post-cell-title a{
+color:white;
+}
+
+.white-text .post-cell-title a:hover{
+color:white;
+opacity:0.5;
+}
+
+.white-text .post-cell-content{
+color:white;
+opacity:0.7;
+}
+
+
+/* project single */
+
+
+.project-media{
+background-color:#f3f3f3;
+border:1px solid #e1e1e1;
+}
+
+/* project cell */
+.project-cell-bg{
+background-color:#3498db;
+}
+
+.project-cell-title a{
+color:white;
+}
+
+.project-cell-category a,.project-cell-category{
+color:rgba(255, 255, 255, 0.7);
+}
+
+</style>
+
+
+<!-- ga -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-43112444-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>  
 </head>
 
-	</head>
+
+
+<!--
+#######################################
+- THE BODY PART -
+######################################
+-->
 <body>
-
+  
 <div>
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">NewsGrid</h4>
-            </div>
-<% if (!user) { %>
-            <div class="modal-body">
-                  <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
-	 <a href="#"> <img height="80px" width="80px" src="http://people.mozilla.org/~smartell/persona/assets/persona-logo.png" id="browserid"/></a>
-          
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
-          <a href="/auth/twitter"><img height="80px" width="80px" src="https://abs.twimg.com/a/1379631158/images/resources/twitter-bird-white-on-blue.png"></a>
-          
-	</div><!-- /.col-lg-4 -->
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
-	  <a href="/auth/facebook"><img height="80px" width="80px" src="/img/FB-f-Logo__blue_512.png"></a>
-         
-	</div><!-- /.col-lg-4 -->
-      </div><!-- /.row -->
+    <!-- Fixed panel Navigation here -->
+<div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-ta\
+rget=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"><h1>&nbsp;NewsGrid&nbsp;</h1></a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
 
-            </div>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              </ul>
+            </li>
 
-            <div class="modal-footer">
-	      <p style="align:centre">Please login to NewsGrid with one of the above services!</p>
-            </div>
-<% } else { %>
-            <div class="modal-body">
-	      <p style="align:centre"> You are already logged in to NewsGrid click <a href="/">here</a> to continue.</p>
-            </div>
+</ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>  
 
-            <div class="modal-footer">
-	      <p style="align:centre"></p>
-            </div>
-<% } %>	
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
+  <!-- HEADER OLD
+  <header id="header">
+    <section class="container">
+      <article class="logo-container" style="font-size:28px;">
+        NewsGrid
+      </article>
+      <div style="clear:both">
+      </div>
+      
+    </section>
+    
+  </header>
+  
+   END OF HEADER -->
+  <div class="container">
+
+       <div class="jumbotron">
+        <h1>Jumbotron heading</h1>
+	    <br />        
+            <% if(user){ %>
+            <a href="/logout"><span class="glyphicon glyphicon-off"</span></a>
+            <% }else{ %>
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
+	    <h2><b>Login with:</b></h2>
+	    </div>
+
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
+            <a href="/auth/facebook"><i class="fa fa-facebook fa-5x"></i></a>
+	    </div>
+	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
+            <a href="/auth/twitter"><i class="fa fa-twitter fa-5x"></i></a>
+</div>
+            <% }; %>
+         </p>
+<br/>
+<br/>
+        <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+	
+      </div> 
+  
+  
+  
+  
+  
+
+  <div class="page-section primary-bg white-text">
+ 
+
+	<div class="col-sm-4 col-xs-12">
 
 
-		
+	<div class="project-cell">
+	  <div class="project-cell-thumb">
+	    <div class="project-cell-thumb-window">
+	      <a href="">
+		<img alt="project image" src="http://placekitten.com/800/593">
+		</a>
+	      <div class="project-cell-bg"></div>
+	      <div class="project-cell-hover">
+		<div class="project-cell-title">
+		  <a href=""> Partner Search</a>
+		  </div>
+		<div class="project-cell-category">
+		  <a href="">Your ideal co-founder</a> 
+		  <a href="">is here... looking for you.</a>
+		  </div>
+		</div>
+
+	    </div>
+	  </div>
+      </div>
+</div>
+      	<div class="col-xs-12 col-sm-4">
+
+	<div class="project-cell">
+	  <div class="project-cell-thumb">
+	    <div class="project-cell-thumb-window">
+	      <a href="">
+		<img alt="project image" src="http://placekitten.com/800/599">
+		</a>
+	      <div class="project-cell-bg"></div>
+	      <div class="project-cell-hover">
+		<div class="project-cell-title">
+		  <a href=""> Startup Forums</a>
+		  </div>
+		<div class="project-cell-category">
+		  <a href="">Use the Collective <br> Intelligence</a>  
+		  <a href=""></a>
+		  </div>
+		</div>
+	      </div>
+
+	  </div>
+	</div>
+</div>
+	<div class="col-xs-12 col-sm-4">
+      
+	<div class="project-cell">
+	  <div class="project-cell-thumb">
+	    <div class="project-cell-thumb-window">
+	      <a href="">
+		<img alt="project image" src="http://placekitten.com/800/602">
+		</a>
+	      <div class="project-cell-bg"></div>
+	      <div class="project-cell-hover">
+		<div class="project-cell-title">
+		  <a href="">Project Search</a>
+		  </div>
+		<div class="project-cell-category">
+		  <a href="">Find Projects. Propose yours.</a> /
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+
+</div>
+</div>
+
+
+
+      <div class="cleared"></div>
+
+<div class="row">
+	<div class="col-xs-12 col-sm-4">
+
+	<div class="project-cell">
+	  <div class="project-cell-thumb">
+	    <div class="project-cell-thumb-window">
+	      <a href="">
+		<img alt="project image" src="http://placekitten.com/799/600">
+		</a>
+	      <div class="project-cell-bg"></div>
+	      <div class="project-cell-hover">
+		<div class="project-cell-title">
+		  <a href=""> Mobile-ready</a>
+		  </div>
+		<div class="project-cell-category">
+		  <a href="">Connect with the community everywhere</a> 
+		  <a href=""></a>
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="col-xs-12 col-sm-4">
+
+	<div class="project-cell">
+	  <div class="project-cell-thumb">
+	    <div class="project-cell-thumb-window">
+	      <a href="">
+		<img alt="project image" src="http://placekitten.com/800/601">
+		</a>
+	      <div class="project-cell-bg"></div>
+	      <div class="project-cell-hover">
+		<div class="project-cell-title">
+		  <a href=""> Real-Time Twist</a>
+		  </div>
+		<div class="project-cell-category">
+		  <a href="">Chat. Notifications. Get instant updates.</a>
+		  <a href=""></a>
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<div class="col-xs-12 col-sm-4">
+
+	<div class="project-cell">
+	  <div class="project-cell-thumb">
+	    <div class="project-cell-thumb-window">
+	      <a href="">
+		<img alt="project image" src="http://placekitten.com/793/600">
+		</a>
+	      <div class="project-cell-bg"></div>
+	      <div class="project-cell-hover">
+		<div class="project-cell-title">
+		  <a href=" "> Real-Time Twist</a>
+		  </div>
+		<div class="project-cell-category">
+		  <a href="">Chat. Notifications. Get instant updates.</a>
+		  <a href=""></a>
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+      <div class="cleared"></div>
+</div>  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+    ##############################
+     - ACTIVATE THE BANNER HERE -
+     ##############################
+     -->
+
+
+  <!-- THE SHOWBIZ JS FILES  -->
+  <script type="text/javascript" src="showbizpro/js/jquery.themepunch.showbizpro.min.js"></script>
+
+
+  <script type="text/javascript">
+
+    jQuery(document).ready(function() {
+
+    jQuery('#example6').showbizpro({
+    dragAndScroll:"off",
+    visibleElementsArray:[2,2,2,1],
+    carousel:"on",
+    entrySizeOffset:0,
+    allEntryAtOnce:"off",
+    rewindFromEnd:"off",
+    autoPlay:"off",
+    delay:2000,
+    speed:250
+    });
+
+    // THE FANCYBOX PLUGIN INITALISATION
+    jQuery(".fancybox").fancybox();
+
+
+
+
+
+    });
+
+    </script>
+  
+  
 <form action="/auth/browserid" method="post" style="display:none;">
-	<input type="text" name="assertion"/>
+        <input type="text" name="assertion"/>
 </form>
-
-
-
-
-
-
 <script>
   $("#browserid").click(function(){
     navigator.id.get(function(assertion) {
@@ -111,5 +489,16 @@ body { background: url(img/bg.jpg) no-repeat center center fixed;
   });
 </script>
 
+<!-- ga -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-43112444-1', 'thenewsgrid.com');
+  ga('send', 'pageview');
+
+</script>
+  
 </body>
-</html>

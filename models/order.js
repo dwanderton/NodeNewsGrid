@@ -9,20 +9,33 @@
    table maps to the JS Order object. Note that we've omitted a fair bit of
    error handling from the classMethods and instanceMethods for simplicity.
 */
-var async = require('async');
-var util = require('util');
-var uu = require('underscore');
-var coinbase = require('./coinbase');
+var async = require('async')
+  , util = require('util')
+  , uu = require('underscore')
+  , coinbase = require('./coinbase')
+  , Functions = require('../functions');
 
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define("bbcstory", {
 	title: {type: DataTypes.STRING},
 	thumbnail: {type: DataTypes.STRING(150), allowNull: false},
+	thumbnailbase64: {type: DataTypes.BLOB, allowNull:false},
 	link: {type: DataTypes.STRING(150), allowNull: false},
 	published: {type: DataTypes.BIGINT, allowNull: false},
 	description: {type: DataTypes.STRING(600), allowNull: false}
     }, {
 	classMethods: {
+	    findFromPublished: function(publishedID, cb){
+		this.find({where: {published: publishedID}}).success(function(storyFound) {
+		    if(storyFound){
+			storyFound.thumbnailbase64 = storyFound.thumbnailbase64.toString('utf-8');
+			cb(JSON.stringify(storyFound)); 
+		    } else {
+			console.log("no result or base64 image");
+			cb();
+		    };
+		});
+	    },
 	    numOrders: function() {
 		this.count().success(function(c) {
 		    console.log("There are %s Orders", c);});
@@ -151,73 +164,108 @@ module.exports = function(sequelize, DataTypes) {
 		var stories = bbc_story_obj; // story json from bbc api
 		var _Stories = this;
 		for (var i = 0, len = stories.length; i < len; i++){
+
 		    !function outer(ii){
-		    _Stories.find({where: {title: stories[ii].title}}).success(function(story_instance) {
-			if (story_instance) {
-			    // story already exists, do nothing
-			    console.log("story exists - updating current story!");
-			    story_instance.updateAttributes({
-				published: stories[ii].published,
-				thumbnail: stories[ii].thumbnail,
-				link: stories[ii].link,
-				description: stories[ii].description
-			    }).success(function() {
+			if(stories[ii]['media:thumbnail'] == undefined){cb();};
+			var successcb = function(base64img) {
+			    if(stories[ii].title[0]== "VIDEO: One-minute World News"){
+				console.log("one-min world news - no thanks");
 				cb();
-			    }).error(function(err) {
-				cb(err);
+			    };
+			    if (stories[ii]['guid'][0]['_'].match(/^.*sport.*$/)){
+				console.log("sport - no thanks");
+				cb();
+			    };
+			    stories[ii].published = stories[ii]['guid'][0]['_'].match(/\d*$(?!-)/)[0];
+			    _Stories.find({where: {title: stories[ii].title[0]}}).success(function(story_instance) {
+				if (story_instance) {
+				    // story already exists, do nothing
+				    console.log("story exists - updating current story!");
+				    story_instance.updateAttributes({
+					published: stories[ii].published,
+					thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+					thumbnailbase64: base64img,
+					link: stories[ii]['guid'][0]['_'], //link element
+					description: stories[ii].description[0]
+				    }).success(function() {
+					cb();
+				    }).error(function(err) {
+					cb(err);
+				    });
+				} else {
+				    /* check if the image url is already referenced in the database - may overwrite story details */
+				    _Stories.find({where: {thumbnail: stories[ii]['media:thumbnail'][1]['$']['url']}}).success(function(story_instance2) {
+					if (story_instance) {
+					    console.log("thumbnail exists - updating current story!");
+					    story_instance2.updateAttributes({
+						published: stories[ii].published,
+						thumbnailbase64: base64img,
+						title: stories[ii].title[0],
+						link: stories[ii]['guid'][0]['_'], //link element
+						description: stories[ii].description[0]
+					    }).success(function() {
+						cb();
+					    }).error(function(err) {
+						cb(err);
+					    });
+					} else {
+					    /* check if the image url is already referenced in the database - may overwrite story details */
+					    _Stories.find({where: {link: stories[ii]['guid'][0]['_']}}).success(function(story_instance3) {
+						if (story_instance) { 
+						    console.log("link exists - updating current story!");
+						    story_instance3.updateAttributes({
+							published: stories[ii].published,
+							thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+							thumbnailbase64: base64img,
+							title: stories[ii].title[0],
+							description: stories[ii].description[0]
+						    }).success(function() {
+							cb();
+						    }).error(function(err) {
+							cb(err);
+						    });
+						} else {
+
+						    console.log("story doesn't exist - creating...");
+						    var new_story_instance = _Stories.build({
+							title: stories[ii].title[0],
+							published: stories[ii].published,
+							thumbnail: stories[ii]['media:thumbnail'][1]['$']['url'],
+							thumbnailbase64: base64img,
+							link: stories[ii]['guid'][0]['_'], // link element
+							description: stories[ii].description[0]
+						    });
+						    new_story_instance.save().success(function() {
+							cb();
+						    }).error(function(err) {
+							cb(err);
+						    });
+						};
+					    });
+					};
+				    });
+				}
 			    });
-			} else {
-			    /* check if the image url is already referenced in the database - may overwrite story details */
-			     _Stories.find({where: {thumbnail: stories[ii].thumbnail}}).success(function(story_instance2) {
-				 if (story_instance) {
-				     console.log("thumbnail exists - updating current story!");
-				     story_instance2.updateAttributes({
-					 published: stories[ii].published,
-					 title: stories[ii].title,
-					 link: stories[ii].link,
-					 description: stories[ii].description
-				     }).success(function() {
-					 cb();
-				     }).error(function(err) {
-					 cb(err);
-				     });
-				 } else {
-				     if (stories[ii].link.match(/^.*sport.*$/)){
-					 console.log("sport - no thanks");
-					 } else {
-				     console.log("story doesn't exist - creating...");
-				     var new_story_instance = _Stories.build({
-					 title: stories[ii].title,
-					 published: stories[ii].published,
-					 thumbnail: stories[ii].thumbnail,
-					 link: stories[ii].link,
-					 description: stories[ii].description
-				     });
-				     new_story_instance.save().success(function() {
-					 cb();
-				     }).error(function(err) {
-					 cb(err);
-				     });
-				 };
-				 };
-				 });
-			}
-			});
-			}(i)
-			}
-										      
-			    /*
-			       Above Build instance and save.
+			};
+			var errcb = function(err) { console.log("Error: Likely image 404 from " + err);};
+			Functions.base64_from_url(stories[ii]['media:thumbnail'][1]['$']['url'], successcb, errcb);
 
-			       Uses the _Order from the enclosing scope,
-			       as 'this' within the callback refers to the current
-			       found instance.
+			
+		    }(i)
+		}
+		
+		/*
+		  Above Build instance and save.
 
-			       Note also that for the amount, we convert
-			       satoshis (the smallest Bitcoin denomination,
-			       corresponding to 1e-8 BTC, aka 'Bitcents') to
-			       BTC.
-			    */ 
+		  Uses the _Order from the enclosing scope,
+		  as 'this' within the callback refers to the current
+		  found instance.
+
+		  Note also that for the amount, we convert
+		  satoshis (the smallest Bitcoin denomination,
+		  corresponding to 1e-8 BTC, aka 'Bitcents') to
+		  BTC.
+		*/ 
 		   
 		
 		

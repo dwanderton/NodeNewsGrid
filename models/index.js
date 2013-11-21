@@ -48,13 +48,19 @@ if (!global.hasOwnProperty('db')) {
         Sequelize: Sequelize,
         sequelize: sq,
         Order: sq.import(__dirname + '/order'),
+
 	PersonaUser: sq.import(__dirname + '/personauser'),
-	TwitterUser: sq.import(__dirname + '/twitteruser'),
-	FacebookUser: sq.import(__dirname + '/facebookuser'),
 	PersonaHistory: sq.import(__dirname + '/personahistories'),
+	PersonaFavorites: sq.import(__dirname + '/personafavorites'),
+
+	TwitterUser: sq.import(__dirname + '/twitteruser'),
 	TwitterHistory: sq.import(__dirname + '/twitterhistories'),
+	TwitterFavorites: sq.import(__dirname + '/twitterfavorites'),
+
+	FacebookUser: sq.import(__dirname + '/facebookuser'),
 	FacebookHistory: sq.import(__dirname + '/facebookhistories'),
-	PersonaHisAssoc: sq.import(__dirname + '/personahisassoc.js'),
+	FacebookFavorites: sq.import(__dirname + '/facebookfavorites'),
+
 	BBCSportStories: sq.import(__dirname + '/sportbbc.js')
     };
 }

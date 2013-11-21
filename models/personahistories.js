@@ -21,6 +21,19 @@ module.exports = function(sequelize, DataTypes) {
                     successcb(storiesRead);
                 }).error(errcb);
             },
+            storiesReadSinceJSON: function(dateSince, cb){
+                console.log("Test date since: "+ dateSince + "cb " + cb);
+                if(dateSince){
+		    this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+			var stringData = JSON.stringify(storiesRead);
+			cb(stringData);});
+		} else {
+                    this.findAll({attributes:['bbcpublished']}).success(function(storiesRead){
+                        var stringData = JSON.stringify(storiesRead);
+                        cb(stringData);});
+                };
+            },
+
 	    addToStoriesRead: function(userEmail, story_id, successcb, errcb) {
 		/* Posted to from /api/addstoryread, as a persona user has viewed the story the request is redirected to 
 		 here and the story id and user email will be added to the personahistories db*/

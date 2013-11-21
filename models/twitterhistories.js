@@ -12,6 +12,25 @@ module.exports = function(sequelize, DataTypes) {
 	bbcpublished: {type: DataTypes.BIGINT, allowNull: false}
     }, {
 	classMethods: {
+	    storiesReadSince: function(dateSince, successcb, errcb){
+		console.log("date since: "+ dateSince);
+		this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+		    successcb(storiesRead);
+		}).error(errcb);
+	    },
+	    storiesReadSinceJSON: function(dateSince, cb){
+		console.log("Test date since: "+ dateSince + "cb " + cb); 
+		   if(dateSince){
+		       this.findAll({ where:['"createdAt"::date > ?', dateSince], attributes: ['bbcpublished']} ).success(function(storiesRead){
+			   var stringData = JSON.stringify(storiesRead);
+			   cb(stringData);});
+		   } else {
+		       this.findAll({attributes:['bbcpublished']}).success(function(storiesRead){
+			   var stringData = JSON.stringify(storiesRead);
+			   cb(stringData);});
+		       };
+	    },
+
 	    numPersonaStoriesRead: function() {
 		this.count().success(function(c) {
 		    console.log("There have been  %s stories read by Persona Users", c);});

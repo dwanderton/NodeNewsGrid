@@ -1,24 +1,50 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-    <link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="David Anderton 2013">
 
     <title><%= title %></title>
 
-    <!-- Bootstrap core CSS -->
 <!-- Latest compiled and minified CSS -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
-    <link href="css/grid.css" rel="stylesheet">
-  <!-- attempt to get bg working -->
+<link href="css/Newsgrid.min.css" rel="stylesheet">
+<link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'>
+    <!-- Google font for logo -->
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+	 <style>
+	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
+	   </style>
+    <!-- end google font for logo -->
 <style type="text/css">
 body { 
   /* padding added to support fixed navbar */
   padding-top: 70px;
+}
+/* This stops the underlying container from shifting way to the right when the modal is open*/
+body.modal-open {
+margin-left: auto;
+margin-right: auto;
+}
+.label-viewed {
+    display: none;
+    position:absolute;
+    bottom:10px;
+    right:10px;
+}
+/* prevent glyph from being cut off on the right hand side*/
+.glyphicon {
+    display:inline;
+    font-size: 16px;
+}
+
+/* color for favorite glyph */
+span.favorite {
+    color: gold;
+}
+a:hover > span > p > span.favorite {
+    color: #DAA520;
 }
 
 </style>
@@ -53,29 +79,82 @@ body {
               $(this).addClass("indb");
             };
       });
+      $('a.externalModal').on('click', function(e) {
+      e.preventDefault();
+      var url = $(this).attr('href');
+      $(".fullStoryModalBody").html('<iframe width="100%" height="100%" frameborder="0" scrolling="yes" allowtransparency="true" src="'+url+'"></iframe>');
+      });
+
       
-    $.getJSON("/api/storyread", function( data ){
-      $.each(data, function(dataElement, dataValue){
-      var fadeMe = "div.";
-      fadeMe += dataValue.bbcpublished; 
-      fadeMe += " img";
-      $(fadeMe).fadeTo('fast', 0.5);
-      $(fadeMe).addClass("indb");
+      //add and remove favorites          
+      $('span.glyphicon-star').on('click',function(){ 
+        var storyclass = $(this).attr('class').split(/\s/);
+        
+        if(!$(this).hasClass("favorite")){
+          $.post( "api/addstoryfavorited", { "storyFavorited": storyclass[storyclass.length -1]}, function() {});
+          $(this).addClass("favorite");
+          var faveStar = "div.";
+          faveStar += storyclass[storyclass.length -1];
+          faveStar += " span";
+          $(faveStar).show();
+        
+        } else {
+          $.post( "api/removestoryfavorited", { "storyFavorited": storyclass[storyclass.length -2]}, function() {});
+          $(this).removeClass("favorite");  
+          var faveStar = "div.";
+          faveStar += storyclass[storyclass.length -2];
+          faveStar += " span";
+          $(faveStar).hide();
+        };
       });
-			
-    });
+
+      //get story read list and fade
+      $.getJSON("/api/storyread", function( data ){
+       $.each(data, function(dataElement, dataValue){
+         var fadeMe = "div.";
+         fadeMe += dataValue.bbcpublished; 
+         fadeMe += " img";
+         $(fadeMe).fadeTo('fast', 0.5);
+         $(fadeMe).addClass("indb");
+       });	
       });
+      
+      //get favorite list and show stars
+      $.getJSON("/api/storyfavorited", function( data ){
+       $.each(data, function(dataElement, dataValue){
+         var faveMe = "span.glyphicon-star.";
+         faveMe += dataValue.bbcpublished;
+         var showStar = "div."
+         showStar += dataValue.bbcpublished;
+         showStar += " span";
+         $(showStar).show(400);
+         $(faveMe).addClass("favorite");
+       });	
+      });
+      
+     });
     </script>
     <!-- hoverintent finish -->
-    <!-- Google font for logo -->
-    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
-	 <style>
-	   .navbar-brand {font-family: 'Indie Flower', cursive; font-size:24px;}
-	   </style>
-    <!-- end google font for logo -->
+
+<!-- ga -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-43112444-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
 </head>
 
   <body>
+<div class="page-container">
     <!-- Fixed panel Navigation here -->
 <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -93,7 +172,7 @@ body {
             <li><a href="/favorites"><span class="glyphicon glyphicon-star"></span></a></li>
             <li><a href="/popular"><span class="glyphicon glyphicon-eye-open"></span></a></li>
             <li><a href="/dashboard"><span class="glyphicon glyphicon-dashboard"></span></a></li>
-            <li><a href="#about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+            <li><a href="/login"><span class="glyphicon glyphicon-info-sign"></span></a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
 	    <li><a href="/logout"><span class="glyphicon glyphicon-off"</span></a></li>
@@ -136,7 +215,10 @@ for (i; i >= 0 ; i--) {
     // display stories currently in db %>
         <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
-	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnail %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
+	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
+	     <span class="label-viewed">
+              <span class="label label-info"><span class="glyphicon glyphicon-star"></span></span>
+            </span>
 	  </a>
 	</div>
 <% } %>
@@ -150,29 +232,77 @@ for (i; i >= 0 ; i--) {
 <% for (var j; j >= 0 ; j--) { 
     // modals for stories currently in db %>
   <div class="modal fade" id="storyModal<%= j %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= j %>" aria-hidden="true">
-    <div class="modal-dialog">                                                                                                                                                     
-      <div class="modal-content">                                                                                                                                                  
-        <div class="modal-header">                                                                                                                                                 
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>                                                                             
-          <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>                                                                                           
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>
         </div>                                                                                                                 
         <div class="modal-body">
-	  <div class="row">
-	    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-	      <img src="<%= world_bbc_stories[j].thumbnail %>">
+	  <div class="media">
+	    <div class="pull-left">
+	      <img class="thumbnail media-object" src="<%= world_bbc_stories[j].thumbnailbase64 %>">
 	    </div>
-	    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+	    <div class="media-body">
 	      <%= world_bbc_stories[j].description %> View the <a href="<%= world_bbc_stories[j].link %>" target="_blank">[full story]</a>.
+	      <a class="externalModal" data-toggle="modal" href="<%= world_bbc_stories[j].link %>" data-target="#fullStoryModal">Click me</a>
 	    </div>
 	  </div>              
-        </div>                                                                                                                                                                     
+        </div>
+        <div class="modal-footer">
+	  <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+	    <p class="text-center"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;
+	      <% if( popular_list[world_bbc_stories[j].published]){ %> 
+	        <%= popular_list[world_bbc_stories[j].published] %>
+	      <% } else { %> 
+	        0 
+	      <% }%>
+	    </p>
+	  </span>
+	  <a>
+	    <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+	      <p class="text-center"><span class="glyphicon glyphicon-star <%= world_bbc_stories[j].published %>"></span></p>
+	    </span>
+	  </a>
+	  <a>
+	    <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+	      <p class="text-center"><span class="glyphicon glyphicon-share <%= world_bbc_stories[j].published %>"></span></p>
+	    </span>
+	  </a>
+	</div>
       </div><!-- /.modal-content -->                                                                                                                                               
     </div><!-- /.modal-dialog -->                                                                                                                                                  
   </div><!-- /.modal -->                                                                                                                                                           
  <% } %>
                               
+<!-- fullStoryModal -->
 
+  <div class="modal fade" id="fullStoryModal" tabindex="-1" role="dialog" aria-labelledby="fullStoryModal" aria-hidden="true">
+    <div class="modal-dialog">                                                                                                                                                     
+      <div class="modal-content">
+        <div class="modal-header">
+        </div>                                                                                                                 
+        <div class="modal-body fullStoryModalBody">
 
+	  Modal Body 2
+        </div>
+        <div class="modal-footer">
+	</div>
+      </div><!-- /.modal-content -->                                                                                                                                               
+    </div><!-- /.modal-dialog -->                                                                                                                                                  
+  </div><!-- /.modal -->                                                                                                                               
+</div><!-- /page container -->
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-43112444-1', 'thenewsgrid.com');
+  ga('send', 'pageview');
+
+</script>
 
 </body>
 

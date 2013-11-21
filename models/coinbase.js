@@ -32,6 +32,9 @@
 var async = require('async');
 var request = require('request');
 var uu = require('underscore');
+var parseString = require('xml2js').parseString;
+var util = require('util');
+
 
 var coinbase_api_url = function(page) {
     return "https://coinbase.com/api/v1/orders?page=" +
@@ -39,8 +42,13 @@ var coinbase_api_url = function(page) {
 };
 
 
+//bbc api now defunct - use rss instead
 var bbc_api_url = function() {
     return "http://api.bbcnews.appengine.co.uk/stories/world";
+};
+
+var bbc_rss_url = function() {
+    return "http://feeds.bbci.co.uk/news/world/rss.xml"
 };
 
 
@@ -70,22 +78,56 @@ var ncoinbase_page2coinbase_json = function(npage, cb) {
     });
 };
 
-
+// now defunct that rss feed is being used
 var bbc_api_url2world_news_json = function(cb) {
    request.get(bbc_api_url(), function(err,resp,body){
-       var world_news_json = JSON.parse(body);
-       console.log("Finished API request for BBC World News Stories"); 
-       if(world_news_json === null || world_news_json === undefined){       
-	   console.log("Error parsing BBC World stories api");
-	   cb(1, undefined);
+	   try { 
+	       var world_news_json = JSON.parse(body);
+	   } catch (e) {
+	       console.log("Error parsing BBC API data: " + e);    
+	   }
+	   console.log("Finished API request for BBC World News Stories"); 
+	   if(world_news_json === null || world_news_json === undefined){       
+	       console.log("Error parsing BBC World stories world_news_json");
+	       cb(1, undefined);
 	   } else {
 	       console.log("BBC World stories api var not null - probable success");
       	       cb(null, world_news_json.stories);
+	   };
+    });
+};
+
+var bbc_rss_url2world_news_json = function(cb) {
+   request.get(bbc_rss_url(), function(err,resp,body){
+       try {
+	   var world_news_json = {};
+	   
+	   var world_news_xml2js = function(successcb){
+		   parseString(body, function (err, result) {
+		       storyListFromXML = result['rss']['channel'][0]['item'];
+		       successcb(storyListFromXML);
+		   });
 	       };
+	   
+	   world_news_xml2js(function(storyList){
+	       world_news_json = storyList;
+	   });
+	   console.log(world_news_json[0]);
+       } catch (e) {
+	   console.log("Error parsing BBC rss data: " + e);    
+       }
+       console.log("Finished rss request for BBC World News Stories"); 
+       if(world_news_json === null || world_news_json === undefined){       
+	   console.log("Error parsing rss BBC World stories world_news_json");
+	   cb(1, undefined);
+       } else {
+	   console.log("BBC World stories rss world_news_json var not null - probable success");
+      	   cb(null, world_news_json);
+       };
    });
 };
 
-var get_bbc_world_news_json = bbc_api_url2world_news_json;
+var get_bbc_world_news_json = bbc_rss_url2world_news_json;
 
 var get_coinbase_json = async.compose(ncoinbase_page2coinbase_json,
                                       get_ncoinbase_page);
