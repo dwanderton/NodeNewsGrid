@@ -18,7 +18,9 @@ var express = require('express')
 var build_errfn = function(errmsg, response) {
     return function errfn(err) { 
 	console.log(err);
-	response.send(errmsg);
+	if(response){
+	    response.send(errmsg);
+	}
     };
 };
 
