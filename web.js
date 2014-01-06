@@ -178,13 +178,13 @@ passport.use(new FacebookStrategy({
   schedule.
 */
 var app = express();
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-app.set('port', process.env.PORT || 7080);
 
 //enable gzip compression http://stackoverflow.com/a/14341423 using express compress
 app.use(express.compress());
 
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.set('port', process.env.PORT || 7080);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
