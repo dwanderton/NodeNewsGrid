@@ -181,24 +181,28 @@ var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.set('port', process.env.PORT || 7080);
+
+//enable gzip compression http://stackoverflow.com/a/14341423 using express compress
+app.use(express.compress());
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.favicon(path.join(__dirname, 'public/img/favicon.ico')));
 app.use(express.logger("dev"));
 app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.session({ secret: 'keyboard cat' }));
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.session({ secret: 'keyboard cat' }));
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+app.use(passport.initialize());
+app.use(passport.session());
 app.post('/auth/browserid', 
-  passport.authenticate('persona', { failureRedirect: '/login' }),
-  function(req, res) {
-      console.log("Assumed Persona Logged in - Check if user account exists.");
-      global.db.PersonaUser.addPersonaUserElseContinue(req.user.email, function(){});
-      res.redirect('/');
-  });
+	 passport.authenticate('persona', { failureRedirect: '/login' }),
+	 function(req, res) {
+	     console.log("Assumed Persona Logged in - Check if user account exists.");
+	     global.db.PersonaUser.addPersonaUserElseContinue(req.user.email, function(){});
+	     res.redirect('/');
+	 });
 
 // api for jQuery posting of stories read
 app.post('/api/addstoryread', function(req, res) {
