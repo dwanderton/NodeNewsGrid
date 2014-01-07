@@ -154,7 +154,7 @@ $(window).scroll(function()
     {
         $('div#loadmoreajaxloader').show();
         $.ajax({
-        url: "js/scrolltest.htm",
+        url: "api/scroll",
         success: function(html)
         {
             if(html)
@@ -270,15 +270,13 @@ for (i; i >= 0 ; i--) {
             </span>
 	  </a>
 	</div>
-<% } %>
-
+	<% } %>
+	<!-- ajax load --> 
+	<div id="postswrapper"></div>
       </div>
-	<blockquote>
-	  <div id="postswrapper">
-	    <div class="item">content<br/></div>
-	    ...
+	  
 	    
-	</blockquote><br/>
+	   
 	<div id="loadmoreajaxloader" style="display:none;"><center><img src="http://www.jquery4u.com/demos/infinite-scrolling-demo2/ajax-loader.gif" height="11" width="43"/></center></div>
 	  </div>
       </div> <!-- /container -->

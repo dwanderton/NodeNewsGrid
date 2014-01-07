@@ -5,7 +5,10 @@ var uu      = require('underscore')
   , PersonaStrategy = require('passport-persona').Strategy
   , TwitterStrategy = require('passport-twitter').Strategy
   , Constants = require('./constants')
-  , Functions = require('./functions');
+  , Functions = require('./functions')
+  , check = require('validator').check
+  , sanitize = require('validator').sanitize;
+
 
 var build_errfn = function(errmsg, response) {
     return function errfn(err) {
@@ -262,6 +265,11 @@ var api_orderfn = function(request, response) {
 };
 
 
+var api_scrollfn = function(req, res){
+    var paramPassed = sanitize(req.param('money')).toInt();
+        res.render("rhomepage2");
+};
+
 var api_storyreadfn = function(req, res) {
     var successcb = function(storiesRead) {
 	var data = storiesRead;
@@ -363,6 +371,7 @@ var ROUTES = define_routes({
     '/dashboard': [undefined, dashboardfn],
     '/orders': [undefined, orderfn],
     '/api/orders': [undefined, api_orderfn],
+    '/api/scroll': [undefined, api_scrollfn],
     '/api/storyread': [undefined, api_storyreadfn],
     '/api/storyfavorited': [undefined, api_storyfavoritedfn],
     '/api/popular': [undefined, api_popularfn],

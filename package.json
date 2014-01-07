@@ -19,7 +19,8 @@
     "passport-facebook": "~1.0.1",
     "passport-twitter": "~1.0.2",
     "xml2js": "~0.2.8",
-    "bufferlist": "~0.0.0"
+    "bufferlist": "~0.0.0",
+    "validator": "~2.0.0"
   },
   "engines": {
     "node": "0.10.12",

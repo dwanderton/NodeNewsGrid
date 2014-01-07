@@ -1,0 +1,19 @@
+ <% 
+if (60 >= world_bbc_stories.length-1){
+ var i = world_bbc_stories.length-1;
+ var j = world_bbc_stories.length-1;
+} else {
+ var i = 60;
+ var j = 60;
+}
+for (i; i >= 0 ; i--) { 
+    // display stories currently in db %>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
+	  <a class="externalModal" data-toggle="modal" href="#fullStoryModal">  
+	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" storytitle="<%= world_bbc_stories[i].title %>" class="tooltipnow" fullstorylink="<%= world_bbc_stories[i].link %>" description="<%= world_bbc_stories[i].description %>" numviews="<% if( popular_list[world_bbc_stories[i].published]){ %><%= popular_list[world_bbc_stories[j].published] %><% } else { %>0<% }%>" published="<%= world_bbc_stories[i].published %>"/>
+	     <span class="label-viewed">
+              <span class="label label-info"><span class="glyphicon glyphicon-star"></span></span>
+            </span>
+	  </a>
+	</div>
+<% } %>
