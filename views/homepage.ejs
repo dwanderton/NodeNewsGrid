@@ -82,7 +82,10 @@ a:hover > span > p > span.favorite {
       $('a.externalModal').on('click', function(e) {
       e.preventDefault();
       var url = $(this).attr('href');
-      $(".fullStoryModalBody").html('<iframe width="100%" height="100%" frameborder="0" scrolling="yes" allowtransparency="true" src="'+url+'"></iframe>');
+      console.log("hello");
+      console.log("done?");
+      var image = $(this).parent().parent().children(".pull-left").children("img").attr("src");
+      $(".fullStoryModalBody").html('<img src="'+image+'" />');
       });
 
       
@@ -252,7 +255,7 @@ if (60 >= world_bbc_stories.length-1){
 }
 for (i; i >= 0 ; i--) { 
     // display stories currently in db %>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>" fullstorylink="http:www.google.com" description="hello">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	     <span class="label-viewed">
