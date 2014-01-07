@@ -161,6 +161,8 @@ $(window).scroll(function()
             {
                 $("#postswrapper").append(html);
                 $('div#loadmoreajaxloader').hide();
+                $(".tooltipnow").tooltip();
+
             }else
             {
                 $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
