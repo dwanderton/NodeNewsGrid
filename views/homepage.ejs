@@ -69,7 +69,7 @@ a:hover > span > p > span.favorite {
     <!-- Lets get our fade on -->
     <script>
       $(document).ready(function() {
-        $('div.col-lg-1 img').hoverIntent(function(){
+        $('div.col-lg-2 img').hoverIntent(function(){
             $(this).fadeTo('fast', 1);
         }, function(){
             $(this).fadeTo('fast', 0.5);
@@ -135,6 +135,32 @@ a:hover > span > p > span.favorite {
      });
     </script>
     <!-- hoverintent finish -->
+<!-- basic ajax infinite scroll -->
+
+<script type="text/javascript">
+$(window).scroll(function()
+{
+    if($(window).scrollTop() == $(document).height() - ($(window).height()))
+    {
+        $('div#loadmoreajaxloader').show();
+        $.ajax({
+        url: "js/scrolltest.htm",
+        success: function(html)
+        {
+            if(html)
+            {
+                $("#postswrapper").append(html);
+                $('div#loadmoreajaxloader').hide();
+            }else
+            {
+                $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
+            }
+        }
+        });
+    }
+});
+</script>
+
 
 <!-- ga -->
 <script type="text/javascript">
@@ -150,6 +176,19 @@ a:hover > span > p > span.favorite {
   })();
 
 </script>
+
+
+<style type="text/css">
+
+#loadmoreajaxloader
+{
+    position: fixed;
+    margin: auto;
+    left: 30px;
+    bottom: 10px;
+}
+
+</style>
 
 </head>
 
@@ -213,7 +252,7 @@ if (60 >= world_bbc_stories.length-1){
 }
 for (i; i >= 0 ; i--) { 
     // display stories currently in db %>
-        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a data-toggle="modal" href="#storyModal<%= i %>">  
 	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
 	     <span class="label-viewed">
@@ -224,9 +263,18 @@ for (i; i >= 0 ; i--) {
 <% } %>
 
       </div>
+	<blockquote>
+	  <div id="postswrapper">
+	    <div class="item">content<br/></div>
+	    ...
+	    
+	</blockquote><br/>
+	<div id="loadmoreajaxloader" style="display:none;"><center><img src="http://www.jquery4u.com/demos/infinite-scrolling-demo2/ajax-loader.gif" height="11" width="43"/></center></div>
+	  </div>
+      </div> <!-- /container -->
 
 
-    </div> <!-- /container -->
+
   <!-- Modal -->
 
 <% for (var j; j >= 0 ; j--) { 
