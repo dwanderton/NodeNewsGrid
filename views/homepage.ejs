@@ -68,7 +68,7 @@ a:hover > span > p > span.favorite {
 
     <!-- Lets get our fade on -->
     <script>
-      $(document).ready(function() {
+      function refreshHover() {
         $('div.col-lg-2 img').hoverIntent(function(){
             $(this).fadeTo('fast', 1);
         }, function(){
@@ -77,10 +77,11 @@ a:hover > span > p > span.favorite {
               var storyclass = $(this).parent().parent().attr('class').split(/\s/);
               $.post( "api/addstoryread", { "storyViewed": storyclass[storyclass.length -1]}, function() {});
               $(this).addClass("indb");
-            };
-      });
+          };
+         });
+      };
 
-
+      function modalsFavesFades() {
       // remove modal duplicate content and spawn on demand
       $('a.externalModal').on('click', function(e) {
       e.preventDefault();
@@ -142,27 +143,38 @@ a:hover > span > p > span.favorite {
        });	
       });
       
-     });
+     };
+
+      $(document).ready(function(){
+	refreshHover();
+	modalsFavesFades();
+	});
     </script>
     <!-- hoverintent finish -->
 <!-- basic ajax infinite scroll -->
 
 <script type="text/javascript">
+var numscroll = 0;
 $(window).scroll(function()
 {
     if($(window).scrollTop() == $(document).height() - ($(window).height()))
     {
+        numscroll+=1;
         $('div#loadmoreajaxloader').show();
         $.ajax({
-        url: "api/scroll",
+        url: 'api/scroll?numscroll='+numscroll,
         success: function(html)
         {
+console.log("success");
+console.log(numscroll);
+
             if(html)
             {
                 $("#postswrapper").append(html);
                 $('div#loadmoreajaxloader').hide();
                 $(".tooltipnow").tooltip();
-
+                refreshHover();
+                modalsFavesFades();
             }else
             {
                 $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
