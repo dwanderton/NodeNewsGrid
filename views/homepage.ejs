@@ -88,13 +88,16 @@ a:hover > span > p > span.favorite {
       console.log("hello");
       console.log();
       var image = $(this).children("img").attr("src");
+      var published = $(this).children("img").attr("published");
+      var numviews = $(this).children("img").attr("numviews");
       var title = $(this).children("img").attr("storytitle");
       var fullstorylink = $(this).children("img").attr("fullstorylink");
       var description = $(this).children("img").attr("description");
       $(".fullStoryModalHeader").html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">'+title+'</h4>');
       $(".fullStoryModalBody").html('<div class="media"><div class="pull-left"><img class="thumbnail media-object" src="'+image+'" /></div><div class="media-body">'+description+' View the <a href="'+fullstorylink+'" target="_blank">[full story]</a>.</div>');
+	$(".fullStoryModalFooter").html('<span class="col-lg-4 col-md-4 col-sm-4 col-xs-4"><p class="text-center"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;'+numviews+'</p></span><a><span class="col-lg-4 col-md-4 col-sm-4 col-xs-4"><p class="text-center"><span class="glyphicon glyphicon-star '+published+'"></span></p></span></a><a><span class="col-lg-4 col-md-4 col-sm-4 col-xs-4"><p class="text-center"><span class="glyphicon glyphicon-share '+published+'"></span></p></span></a>')
       });
-
+	
       
       //add and remove favorites          
       $('span.glyphicon-star').on('click',function(){ 
@@ -264,7 +267,7 @@ for (i; i >= 0 ; i--) {
     // display stories currently in db %>
         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
 	  <a class="externalModal" data-toggle="modal" href="#fullStoryModal">  
-	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" storytitle="<%= world_bbc_stories[i].title %>" class="tooltipnow" fullstorylink="<%= world_bbc_stories[i].link %>" description="<%= world_bbc_stories[i].description %>"/>
+	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" storytitle="<%= world_bbc_stories[i].title %>" class="tooltipnow" fullstorylink="<%= world_bbc_stories[i].link %>" description="<%= world_bbc_stories[i].description %>" numviews="<% if( popular_list[world_bbc_stories[i].published]){ %><%= popular_list[world_bbc_stories[j].published] %><% } else { %>0<% }%>" published="<%= world_bbc_stories[i].published %>"/>
 	     <span class="label-viewed">
               <span class="label label-info"><span class="glyphicon glyphicon-star"></span></span>
             </span>
@@ -283,47 +286,7 @@ for (i; i >= 0 ; i--) {
 	  </div>
       </div> <!-- /container -->
 
-
-
-  <!-- Modal -->
-
-<% for (var j; j >= 0 ; j--) { 
-    // modals for stories currently in db %>
-  <div class="modal fade" id="storyModal<%= j %>" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel<%= j %>" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-        </div>                                                                                                                 
-        <div class="modal-body">
-	  
-	  </div>              
-        </div>
-        <div class="modal-footer">
-	  <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-	    <p class="text-center"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;
-	      <% if( popular_list[world_bbc_stories[j].published]){ %> 
-	        <%= popular_list[world_bbc_stories[j].published] %>
-	      <% } else { %> 
-	        0 
-	      <% }%>
-	    </p>
-	  </span>
-	  <a>
-	    <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-	      <p class="text-center"><span class="glyphicon glyphicon-star <%= world_bbc_stories[j].published %>"></span></p>
-	    </span>
-	  </a>
-	  <a>
-	    <span class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-	      <p class="text-center"><span class="glyphicon glyphicon-share <%= world_bbc_stories[j].published %>"></span></p>
-	    </span>
-	  </a>
-	</div>
-      </div><!-- /.modal-content -->                                                                                                                                               
-    </div><!-- /.modal-dialog -->                                                                                                                                                  
-  </div><!-- /.modal -->                                                                                                                                                           
- <% } %>
-                              
+                         
 <!-- fullStoryModal -->
 
   <div class="modal fade" id="fullStoryModal" tabindex="-1" role="dialog" aria-labelledby="fullStoryModal" aria-hidden="true">
