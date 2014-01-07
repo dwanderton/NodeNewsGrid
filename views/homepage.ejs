@@ -81,12 +81,9 @@ a:hover > span > p > span.favorite {
       });
 
 
-      // remove modal duplicate content
+      // remove modal duplicate content and spawn on demand
       $('a.externalModal').on('click', function(e) {
       e.preventDefault();
-      var url = $(this).attr('href');
-      console.log("hello");
-      console.log();
       var image = $(this).children("img").attr("src");
       var published = $(this).children("img").attr("published");
       var numviews = $(this).children("img").attr("numviews");
