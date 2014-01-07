@@ -79,13 +79,20 @@ a:hover > span > p > span.favorite {
               $(this).addClass("indb");
             };
       });
+
+
+      // remove modal duplicate content
       $('a.externalModal').on('click', function(e) {
       e.preventDefault();
       var url = $(this).attr('href');
       console.log("hello");
-      console.log("done?");
-      var image = $(this).parent().parent().children(".pull-left").children("img").attr("src");
-      $(".fullStoryModalBody").html('<img src="'+image+'" />');
+      console.log();
+      var image = $(this).children("img").attr("src");
+      var title = $(this).children("img").attr("storytitle");
+      var fullstorylink = $(this).children("img").attr("fullstorylink");
+      var description = $(this).children("img").attr("description");
+      $(".fullStoryModalHeader").html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">'+title+'</h4>');
+      $(".fullStoryModalBody").html('<div class="media"><div class="pull-left"><img class="thumbnail media-object" src="'+image+'" /></div><div class="media-body">'+description+' View the <a href="'+fullstorylink+'" target="_blank">[full story]</a>.</div>');
       });
 
       
@@ -255,9 +262,9 @@ if (60 >= world_bbc_stories.length-1){
 }
 for (i; i >= 0 ; i--) { 
     // display stories currently in db %>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>" fullstorylink="http:www.google.com" description="hello">
-	  <a data-toggle="modal" href="#storyModal<%= i %>">  
-	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" class="tooltipnow" />
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 <%= world_bbc_stories[i].published %>">
+	  <a class="externalModal" data-toggle="modal" href="#fullStoryModal">  
+	    <img data-toggle="tooltip" src="<%= world_bbc_stories[i].thumbnailbase64 %>" title="<%= world_bbc_stories[i].title %>" storytitle="<%= world_bbc_stories[i].title %>" class="tooltipnow" fullstorylink="<%= world_bbc_stories[i].link %>" description="<%= world_bbc_stories[i].description %>"/>
 	     <span class="label-viewed">
               <span class="label label-info"><span class="glyphicon glyphicon-star"></span></span>
             </span>
@@ -286,18 +293,9 @@ for (i; i >= 0 ; i--) {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title"><%= world_bbc_stories[j].title %></h4>
         </div>                                                                                                                 
         <div class="modal-body">
-	  <div class="media">
-	    <div class="pull-left">
-	      <img class="thumbnail media-object" src="<%= world_bbc_stories[j].thumbnailbase64 %>">
-	    </div>
-	    <div class="media-body">
-	      <%= world_bbc_stories[j].description %> View the <a href="<%= world_bbc_stories[j].link %>" target="_blank">[full story]</a>.
-	      <a class="externalModal" data-toggle="modal" href="<%= world_bbc_stories[j].link %>" data-target="#fullStoryModal">Click me</a>
-	    </div>
+	  
 	  </div>              
         </div>
         <div class="modal-footer">
@@ -331,13 +329,11 @@ for (i; i >= 0 ; i--) {
   <div class="modal fade" id="fullStoryModal" tabindex="-1" role="dialog" aria-labelledby="fullStoryModal" aria-hidden="true">
     <div class="modal-dialog">                                                                                                                                                     
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header fullStoryModalHeader">
         </div>                                                                                                                 
         <div class="modal-body fullStoryModalBody">
-
-	  Modal Body 2
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer fullStoryModalFooter">
 	</div>
       </div><!-- /.modal-content -->                                                                                                                                               
     </div><!-- /.modal-dialog -->                                                                                                                                                  
