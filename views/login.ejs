@@ -1,11 +1,5 @@
 <!DOCTYPE html>
 
-
-<!--
-#######################################
-- THE HEAD PART -
-######################################
--->
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -191,13 +185,6 @@ color:rgba(255, 255, 255, 0.7);
 </script>  
 </head>
 
-
-
-<!--
-#######################################
-- THE BODY PART -
-######################################
--->
 <body>
   
 <div>
@@ -225,28 +212,16 @@ rget=".navbar-collapse">
         </div><!--/.nav-collapse -->
       </div>
     </div>  
-
-  <!-- HEADER OLD
-  <header id="header">
-    <section class="container">
-      <article class="logo-container" style="font-size:28px;">
-        NewsGrid
-      </article>
-      <div style="clear:both">
-      </div>
-      
-    </section>
-    
-  </header>
-  
-   END OF HEADER -->
   <div class="container">
 
        <div class="jumbotron">
-        <h1>Jumbotron heading</h1>
-	    <br />        
+	    <br />
             <% if(user){ %>
-            <a href="/logout"><span class="glyphicon glyphicon-off"</span></a>
+	    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+            <a href="/logout"><span style="margin:auto;" class="glyphicon glyphicon-off"</span>
+				    <p><strong>Logout</strong></p></a>
+				    
+            </div>
             <% }else{ %>
 	    <div class="col-lg-4 col-md-4 col-sm-4 col-xs- text-center">
 	    <h2><b>Login with:</b></h2>
