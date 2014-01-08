@@ -41,7 +41,7 @@ module.exports = function(sequelize, DataTypes) {
 		    console.log("There are %s Orders", c);});
 	    },
 	    allToJSON: function(successcb, errcb) {
-		this.findAll({order: '"updatedAt" DESC',limit: '60'})
+		this.findAll({order: '"updatedAt" DESC',limit: '600'})
 		    .success(function(orders) {
 			successcb(uu.invoke(orders, 'toJSON'));
 		    })
@@ -248,7 +248,8 @@ module.exports = function(sequelize, DataTypes) {
 			    });
 			};
 			var errcb = function(err) { console.log("Error: Likely image 404 from " + err);};
-			Functions.base64_from_url(stories[ii]['media:thumbnail'][1]['$']['url'], successcb, errcb);
+			try { Functions.base64_from_url(stories[ii]['media:thumbnail'][1]['$']['url'], successcb, errcb); }
+			catch(e){ console.log(e);}
 
 			
 		    }(i)

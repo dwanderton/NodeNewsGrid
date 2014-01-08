@@ -326,7 +326,7 @@ for(var ii in ROUTES) {
 
 
 
-// constructHomepage Function
+// constructHomepages Function
 var constructHomepage = function() {
     console.log("Construct Homepage at " + new Date()); 
     var today = new Date();
@@ -344,6 +344,7 @@ var constructHomepage = function() {
     // Final task (same in all the examples)
     function final() { 
 	var successcb = function(world_bbc_stories_json){
+console.log(world_bbc_stories_json.length);
 	    app.render("homepage", {
 		popular_list: results[0],
 		world_bbc_stories: world_bbc_stories_json,

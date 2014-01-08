@@ -267,7 +267,7 @@ var api_orderfn = function(request, response) {
 
 var api_scrollfn = function(req, res){
     var paramPassed = sanitize(req.param('numscroll')).toInt();
-        if(paramPassed==10){res.render("rhomepage2");} else {res.send(String(paramPassed));};
+        if(paramPassed<=10){res.render("rhomepage"+paramPassed);} else {res.send(false);};
 };
 
 var api_storyreadfn = function(req, res) {
