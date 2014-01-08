@@ -165,8 +165,6 @@ $(window).scroll(function()
         url: 'api/scroll?numscroll='+numscroll,
         success: function(html)
         {
-console.log("success");
-console.log(numscroll);
 
             if(html)
             {
@@ -177,7 +175,7 @@ console.log(numscroll);
                 modalsFavesFades();
             }else
             {
-                $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
+                $('div#loadmoreajaxloader').html('<div style="background-color:rgba(230, 230, 230, 0.8)"><strong><center>No more posts to show.</center></strong></div>');
             }
         }
         });

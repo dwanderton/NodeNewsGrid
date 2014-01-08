@@ -347,7 +347,7 @@ var constructHomepage = function() {
 console.log(world_bbc_stories_json.length);
 	    app.render("homepage", {
 		popular_list: results[0],
-		world_bbc_stories: world_bbc_stories_json,
+		world_bbc_stories: world_bbc_stories_json.slice(0,60),
 		name: Constants.APP_NAME,
 		title:  Constants.APP_NAME,
 		test_news_image: Constants.TESTIMAGE,
@@ -367,28 +367,30 @@ console.log(world_bbc_stories_json.length);
 		    }
 		}); 				
 	    });
-	    app.render("scrollpage", {
-		popular_list: results[0],
-		world_bbc_stories: world_bbc_stories_json,
-		name: Constants.APP_NAME,
-		title:  Constants.APP_NAME,
-		test_news_image: Constants.TESTIMAGE,
-		product_name: Constants.PRODUCT_NAME,
-		twitter_username: Constants.TWITTER_USERNAME,
-		twitter_tweet: Constants.TWITTER_TWEET,
-		product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
-		coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
-	    }, function(err,html) {
-		// handling of the rendered html output goes here
-		fs.writeFile(__dirname + "/views/rhomepage2.ejs", html, function(err) {
-		    if(err) {
-			console.log("Failed to render new homepage html")
-			console.log(err);
-		    } else {
-			console.log("The newly rendered homepage html was saved!");
-		    }
-		}); 				
-	    });
+	    for(i=1, j=60;i<10;i++, j+= 60){
+		app.render("scrollpage", {
+		    popular_list: results[0],
+		    world_bbc_stories: world_bbc_stories_json.slice(j,(j+60)),
+		    name: Constants.APP_NAME,
+		    title:  Constants.APP_NAME,
+		    test_news_image: Constants.TESTIMAGE,
+		    product_name: Constants.PRODUCT_NAME,
+		    twitter_username: Constants.TWITTER_USERNAME,
+		    twitter_tweet: Constants.TWITTER_TWEET,
+		    product_short_description: Constants.PRODUCT_SHORT_DESCRIPTION,
+		    coinbase_preorder_data_code: Constants.COINBASE_PREORDER_DATA_CODE
+		}, function(err,html) {
+		    // handling of the rendered html output goes here
+		    fs.writeFile(__dirname + "/views/rhomepage"+i+".ejs", html, function(err) {
+			if(err) {
+			    console.log("Failed to render new homepage html")
+			    console.log(err);
+			} else {
+			    console.log("The newly rendered homepage html was saved!");
+			}
+		    }); 				
+		});
+	    }
 	};
 	var errcb = build_errfn('unable to retrieve orders');
 
